@@ -1,0 +1,58 @@
+# The installer medium's packages.
+#
+# This list is deliberately the smallest set that lets `oem-install` run: pacstrap and
+# arch-chroot (arch-install-scripts), the partition and filesystem tools it calls, the network
+# client it downloads Apple's images with, and enough diagnostics to say why a machine cannot
+# host the guest. It is not a rescue toolkit.
+#
+# `tools/check-manifest.py` validates these names against the live Arch repositories in CI, the
+# same way it validates host/packages/packages.txt, so a name that does not exist fails the
+# build instead of producing a medium that fails at install time.
+
+# --- base ----------------------------------------------------------------------
+base
+linux
+linux-firmware
+mkinitcpio
+systemd
+systemd-sysvcompat
+pacman
+archlinux-keyring
+
+# --- the installer itself ------------------------------------------------------
+# pacstrap, arch-chroot, genfstab.
+arch-install-scripts
+# parted, wipefs, blockdev, lsblk, udevadm.
+util-linux
+parted
+# mkfs.fat and mkfs.ext4, which partition_disk calls.
+dosfstools
+e2fsprogs
+
+# --- network -------------------------------------------------------------------
+# check_network and the Apple download both need these.
+iproute2
+curl
+ca-certificates
+dnsmasq
+
+# --- diagnostics ---------------------------------------------------------------
+# check_gpu reads lspci; a user who hits a failure needs to see what was found.
+pciutils
+usbutils
+hwdata
+jq
+less
+nano
+bash
+coreutils
+grep
+sed
+gawk
+findutils
+which
+
+# --- bootloader for the installed system ---------------------------------------
+# install_bootloader runs `bootctl` in the chroot; systemd provides it, and the ESP is written
+# by it. Listed here as well because the medium's own systemd-boot needs it present.
+efibootmgr

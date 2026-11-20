@@ -353,6 +353,28 @@ install_host_config() {
         install -m 0644 "$here/../systemd/$unit" "$OEM_ROOT/usr/lib/systemd/system/$unit"
     done
 
+    # The unit is useless without its binary, and nothing else installed it: the installed disk
+    # got `ExecStart=/usr/bin/oem-core boot` pointing at a file that did not exist, which fails
+    # as a unit-not-found at boot with no guest to fall back to. `make install-dist` builds it
+    # into oem/target/release; the medium carries that build in $OEM_PAYLOAD.
+    local core="${OEM_PAYLOAD:-/usr/lib/oem-macos/payload}/oem-core"
+    [ -x "$core" ] || die "the oem-core binary is missing at $core; this medium is incomplete"
+    install -Dm755 "$core" "$OEM_ROOT/usr/bin/oem-core"
+
+    # The installer and the veil are needed on the installed system too: maintenance mode runs
+    # oem-install, and oem-veil is what keeps the console blank.
+    #
+    # They are installed as a tree, not as loose files, because oem-install locates everything
+    # it needs relative to itself (`$here/../packages`, `$here/../../VERSION`). A copy at
+    # /usr/bin/oem-install would find none of them, so the tree keeps its shape under
+    # /usr/lib/oem-macos and /usr/bin/oem-install is a symlink into it.
+    local dest=$OEM_ROOT/usr/lib/oem-macos
+    install -d "$dest"
+    cp -a "$here/.." "$dest/host"
+    install -m644 "$here/../../VERSION" "$dest/VERSION"
+    install -Dm755 "$core" "$dest/payload/oem-core"
+    ln -sfn /usr/lib/oem-macos/host/installer/oem-install "$OEM_ROOT/usr/bin/oem-install"
+
     install -d "$OEM_ROOT/etc/sysctl.d" "$OEM_ROOT/etc/modules-load.d"
     install -m 0644 "$here/../kernel/oem-sysctl.conf" "$OEM_ROOT/etc/sysctl.d/90-oem.conf"
     install -m 0644 "$here/../kernel/oem-modules-load.conf" \

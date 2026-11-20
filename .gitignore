@@ -3,3 +3,6 @@
 # Editor and OS noise
 *.swp
 .DS_Store
+
+# ISO build output
+/out/

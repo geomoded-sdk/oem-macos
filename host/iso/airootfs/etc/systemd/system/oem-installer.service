@@ -1,0 +1,27 @@
+[Unit]
+Description=OEM-macOS installer
+# The installer needs the network (it downloads Apple's images) and a settled udev, or
+# `lsblk` reports no disks and `--silent` refuses with a confusing message.
+After=network-online.target systemd-udev-settle.service
+Wants=network-online.target
+# Nothing may draw on tty1 before this does.
+Conflicts=getty@tty1.service
+# The install must not be interrupted by a stray dependency wanting a different console.
+Before=getty.target
+
+[Service]
+Type=oneshot
+# `--silent` inside the script needs root; this unit is the only thing that runs it.
+ExecStart=/usr/local/bin/oem-installer-autostart
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+# A failure must not be masked by a restart loop: the script itself drops to a shell, and a
+# restart would erase the message the user needs.
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

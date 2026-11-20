@@ -1,0 +1,88 @@
+name: iso
+
+# Builds the installer medium. This is the only job that produces something a user can boot, so
+# it is the only one that runs on a full VM rather than a container: mkarchiso mounts sysfs,
+# devtmpfs and loop devices, and a container on a shared runner cannot do the first two.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'host/**'
+      - 'oem/**'
+      - 'tools/build-iso.sh'
+      - '.github/workflows/iso.yml'
+  pull_request:
+    paths:
+      - 'host/**'
+      - 'oem/**'
+      - 'tools/build-iso.sh'
+      - '.github/workflows/iso.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: iso-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: build the installer medium
+    runs-on: ubuntu-latest
+    # The build downloads ~700 MB of packages and compresses a 750 MB squashfs.
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # archiso must run on Arch: it calls pacstrap against the Arch repositories, and the
+      # resulting image has to be an Arch userland. The container is `--privileged` because
+      # mkarchiso mounts sysfs, devtmpfs and loop devices inside the chroot it builds.
+      - name: Build the ISO
+        run: |
+          set -euo pipefail
+          docker run --rm --privileged \
+            -v "$PWD":/work \
+            -w /work \
+            archlinux:latest \
+            bash -c '
+              set -euo pipefail
+              pacman -Syu --noconfirm
+              pacman -S --needed --noconfirm \
+                archiso squashfs-tools libisoburn mtools dosfstools \
+                rustup base-devel git
+              rustup default stable
+              ./tools/build-iso.sh
+            '
+
+      # The medium cannot check what it writes to the target, so that is a separate test. It
+      # runs after the build because it needs the oem-core binary the build produced.
+      - name: Test what the medium installs
+        run: |
+          set -euo pipefail
+          docker run --rm --privileged -v "$PWD":/work -w /work archlinux:latest \
+            bash -c 'pacman -Syu --noconfirm && ./tools/test-install-host-config.sh'
+
+      # The medium is checked by build-iso.sh itself, inside the same container, because the
+      # check needs xorriso and unsquashfs. This step only proves it came out.
+      - name: Show the result
+        run: |
+          set -euo pipefail
+          ls -lh out/
+          cat out/*.sha256
+          # A medium under 100 MB would mean packages silently failed to install.
+          size=$(stat -c %s out/*.iso)
+          if [ "$size" -lt 100000000 ]; then
+            echo "the ISO is $size bytes, which is too small to contain a userland" >&2
+            exit 1
+          fi
+
+      - name: Upload the ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: oem-macos-iso
+          path: |
+            out/*.iso
+            out/*.sha256
+          # Long enough to fetch a medium built from a commit, short enough not to accumulate.
+          retention-days: 14
+          # 806 MB compressed; the default 2 GB limit is fine, but say so explicitly.
+          compression-level: 0

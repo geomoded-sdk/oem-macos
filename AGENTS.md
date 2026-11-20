@@ -131,6 +131,31 @@ Read these before changing graphics or power code.
 - Every claim in docs distinguishes *built and run* from *not demonstrated*. Do not blur that.
 - `docs/measurements.md` holds the numbers; regenerate them rather than editing them by hand.
 
+## The installer medium
+
+`tools/build-iso.sh` builds it, `make iso` wraps that, and `.github/workflows/iso.yml` runs it on
+a full VM (mkarchiso needs sysfs, devtmpfs and loop devices; a container on a shared runner has
+neither of the first two).
+
+Two traps cost real time and are worth remembering:
+
+1. **`mkarchiso` copies `airootfs` with `cp -af --no-preserve=ownership,mode`.** Everything lands
+   as 0644, and only paths listed in `profiledef.sh`'s `file_permissions` get an executable bit.
+   An unlisted script is a data file, and the medium boots to a black screen. The permission
+   entries are load-bearing, not tidiness.
+2. **`oem-install` finds its data relative to itself** (`$here/../packages/packages.txt`,
+   `$here/../../VERSION`). Anything installing it must preserve that tree shape and put a symlink
+   on PATH; a loose copy in `/usr/bin` finds nothing. This was a real bug in both `install-dist`
+   and `install_host_config`, fixed by installing `host/` under `/usr/lib/oem-macos/`.
+
+`verify_iso` (inside `build-iso.sh`) checks the finished image, not the source tree: executables,
+the units, the getty mask, the loader entry, the kernel and the El Torito record. The kernel and
+initramfs are at `/arch/boot/x86_64/` in the ISO, *outside* the squashfs, so looking for them in
+the unpacked root finds nothing on a good medium.
+
+`tools/test-install-host-config.sh` covers the other half: what the medium writes to the target.
+It calls `install_host_config` against an empty directory with only `arch-chroot` stubbed.
+
 ## Not done
 
 - Nothing has booted on real hardware. No `/dev/kvm`, no GPU in this environment.

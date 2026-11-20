@@ -7,7 +7,7 @@ UPSTREAM ?= /workspace/vendor/reims-vgpu
 CARGO ?= cargo
 PREFIX ?= /usr
 
-.PHONY: all help check test fmt clippy manifest host core install-dist clean
+.PHONY: all help check test fmt clippy manifest host core install-dist iso test-installer clean
 
 help:
 	@echo "make check      - run every check that does not need a GPU"
@@ -18,6 +18,8 @@ help:
 	@echo "make core       - build oem-core in release"
 	@echo "make host       - build the minimal host package list (needs Arch)"
 	@echo "make install-dist DESTDIR=... - install the OEM files"
+	@echo "make iso        - build the installer medium (needs Arch and root)"
+	@echo "make test-installer - prove the medium writes a bootable target"
 
 all: check
 
@@ -49,7 +51,12 @@ host: manifest
 # Install the OEM files into an already-prepared root.
 install-dist:
 	install -Dm755 oem/target/release/oem-core $(DESTDIR)$(PREFIX)/bin/oem-core
-	install -Dm755 host/installer/oem-install $(DESTDIR)$(PREFIX)/bin/oem-install
+	# oem-install resolves its data as $$here/../packages and $$here/../../VERSION, so it is
+	# installed as a tree with a symlink on PATH. A loose copy in /bin would find none of it.
+	install -d $(DESTDIR)$(PREFIX)/lib/oem-macos
+	cp -a host $(DESTDIR)$(PREFIX)/lib/oem-macos/host
+	install -Dm644 VERSION $(DESTDIR)$(PREFIX)/lib/oem-macos/VERSION
+	ln -sfn $(PREFIX)/lib/oem-macos/host/installer/oem-install $(DESTDIR)$(PREFIX)/bin/oem-install
 	install -Dm644 host/systemd/oem-core.service $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-core.service
 	install -Dm644 host/systemd/oem-maintenance.service $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-maintenance.service
 	install -Dm644 host/systemd/oem-poweroff-on-guest-stop.path $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-poweroff-on-guest-stop.path
@@ -64,5 +71,16 @@ install-dist:
 	install -d $(DESTDIR)$(PREFIX)/share/doc/oem-macos
 	install -m644 docs/*.md $(DESTDIR)$(PREFIX)/share/doc/oem-macos/
 
+# The installer medium. Needs root because mkarchiso mounts loop devices, and needs Arch
+# because it runs pacstrap against the Arch repositories.
+iso:
+	./tools/build-iso.sh
+
+# What the medium writes to the target, which the medium's own verification cannot check.
+# Runs on Arch as root; the CI job iso.yml provides both.
+test-installer:
+	./tools/test-install-host-config.sh
+
 clean:
 	cd oem && $(CARGO) clean
+	rm -rf out
