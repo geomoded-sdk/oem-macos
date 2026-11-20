@@ -38,20 +38,29 @@ than this project first recorded — that earlier version of this file was wrong
   `use_relocations = ver < 8` — so Gen7 and Gen7.5 get **1.2**, and it computes a `deviceUUID`.
 
 So the three things reims-vgpu checks — Vulkan 1.2, a graphics+compute queue, a device UUID —
-are **met in principle on HD 4000 and HD 4600 alike**. There is a **fourth** requirement, and
-it is the one that decides the hardware: `plane_copy.rs` refuses a device that does not list
+are **met in principle on HD 4000 and HD 4600 alike**. That is the whole gate: `Seen::candidate`
+in `device_choice.rs` accepts a device on `api_version >= 1.2 && graphics_compute && uuid.is_some()`
+and on nothing else.
 
-- `VK_KHR_external_memory_fd`
-- `VK_EXT_external_memory_dma_buf`
-- `VK_EXT_image_drm_format_modifier`
-- `VK_EXT_queue_family_foreign`
+There are four dma-buf extensions — `VK_KHR_external_memory_fd`, `VK_EXT_external_memory_dma_buf`,
+`VK_EXT_image_drm_format_modifier`, `VK_EXT_queue_family_foreign` — that decide whether guest
+RAM reaches the GPU **without a copy**. They do not decide whether the guest starts. A device
+without them still runs; `reims-vgpu` copies the surfaces ("IOSurfaces are copied for the
+GPU") and pays for it in bandwidth. An earlier revision of this project treated them as a
+refusal and would have hidden working hardware. That was wrong, and this was the experiment
+that showed it:
 
-These are how guest RAM reaches the GPU as a dma-buf. A device that meets 1.2, has a UUID and
-lacks any of them still cannot host the guest. `oem-core gpu` now probes the extension list
-and reports exactly which are missing, rather than blaming the version. Measured on this
-machine with `vulkaninfo`: **lavapipe lists three of the four and lacks
-`VK_EXT_image_drm_format_modifier`**, so software Vulkan is refused for a concrete reason and
-not a guess. HASVK lists all four.
+```
+$ qemu-system-x86_64 -accel tcg -machine q35 -m 2G -display none \
+    -device reims-graphics-pci,resolution=1920x1080 -S
+warning: reims-graphics-pci: no guest RAM is a shared memfd in pages of the host's size:
+         IOSurfaces are copied for the GPU
+metal2vulkan: the device llvmpipe (LLVM 19.1.7, 256 bits): ...
+[ran for the full 40 s until the timeout killed it]
+```
+
+`llvmpipe` lacks `VK_EXT_image_drm_format_modifier` and the device initialised anyway. So the
+extension list is reported by `oem-core gpu` as a **degradation**, not as a failure.
 
 That does not make HD 4000 and HD 4600 "supported":
 

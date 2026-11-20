@@ -39,5 +39,84 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Lint the installer
-        run: shellcheck -S warning host/installer/oem-install tools/measure-footprint.sh
+      - name: Lint the installer and the veil
+        run: shellcheck -S warning host/installer/oem-install host/bin/oem-veil tools/measure-footprint.sh
+
+  # The one check that needs the real thing: build the upstream fork, then instantiate the
+  # virtual GPU. A unit test cannot tell whether the device opens; this can. It runs under TCG,
+  # so it needs no /dev/kvm and works on a stock GitHub runner.
+  vgpu-device:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+      - name: Check out the pinned upstream
+        run: |
+          set -euo pipefail
+          # The installer declares it as `UPSTREAM_PIN=${UPSTREAM_PIN:-<sha>}`, so the sha is
+          # what follows `:-`. A pattern anchored at `^UPSTREAM_PIN=` silently yields an empty
+          # string and the clone then checks out nothing.
+          pin=$(sed -n 's/.*UPSTREAM_PIN=.*:-\([0-9a-f]\{40\}\).*/\1/p' host/installer/oem-install | head -1)
+          test -n "$pin" || { echo "::error::could not read UPSTREAM_PIN from the installer"; exit 1; }
+          echo "pinned upstream: $pin"
+          git clone --filter=blob:none https://github.com/steelbrain/reims-vgpu upstream/reims-vgpu
+          git -C upstream/reims-vgpu checkout --detach "$pin"
+          # `make qemu` needs vendor/qemu, which is a submodule and not in a plain clone.
+          git -C upstream/reims-vgpu submodule update --init --recursive
+      - name: Install the build dependencies
+        # Upstream's own list, from scripts/install-ctl.sh `apt_pkgs`. QEMU's configure needs
+        # the -dev packages, not only the runtime ones; the runtime libraries are pulled in
+        # as dependencies of them.
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential git curl ca-certificates pkg-config python3 python3-venv ninja-build \
+            flex bison bzip2 cmake binutils libglib2.0-dev libpixman-1-dev libslirp-dev \
+            zlib1g-dev libfdt-dev libpipewire-0.3-dev libpulse-dev libasound2-dev \
+            libusb-1.0-0-dev libspice-server-dev libvulkan1 \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxi-dev libxfixes-dev \
+            libxss-dev libxtst-dev libxkbcommon-dev libwayland-dev libwayland-bin \
+            libdecor-0-dev libegl-dev libgl-dev libdrm-dev libgbm-dev libdbus-1-dev \
+            libudev-dev libgtk-3-dev \
+            mesa-vulkan-drivers vulkan-tools
+      - name: Build the library and the QEMU fork
+        # `make qemu` is upstream's own target (README: "the library ... then vendor/qemu's
+        # qemu-system-x86_64 with reims-graphics-pci on ... in build/qemu"). There is no other
+        # build entry point and this workflow does not invent one.
+        run: |
+          set -euo pipefail
+          cd upstream/reims-vgpu
+          make qemu
+      - name: Instantiate reims-graphics-pci and prove it stays up
+        run: |
+          set -euo pipefail
+          qemu=upstream/reims-vgpu/build/qemu/qemu-system-x86_64
+          test -x "$qemu" || { echo "::error::the QEMU fork was not built"; exit 1; }
+          mkdir -p /tmp/xdg && chmod 700 /tmp/xdg
+          export XDG_RUNTIME_DIR=/tmp/xdg
+          # A device that refuses its host exits at once. One that works stays until the timeout
+          # kills it (124), which is the success this asserts.
+          set +e
+          timeout 45 "$qemu" -accel tcg -machine q35 -m 2G -display none \
+            -device reims-graphics-pci,resolution=1920x1080 \
+            -monitor none -serial none -S > vgpu.log 2>&1
+          status=$?
+          set -e
+          cat vgpu.log
+          if [ "$status" -ne 124 ]; then
+            echo "::error::the virtual GPU did not stay up (exit $status)"
+            exit 1
+          fi
+          if grep -q "rvg_graphics_device_create: the host refused" vgpu.log; then
+            echo "::error::the host refused the GPU device"
+            exit 1
+          fi
+          grep "reims-vgpu: degradation counts" vgpu.log || true
+          echo "the virtual GPU initialised and ran"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vgpu-log
+          path: vgpu.log

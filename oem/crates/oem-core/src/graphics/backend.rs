@@ -62,8 +62,10 @@ pub enum Requirement {
     VulkanTooOld { found: String },
     /// The device reports no `deviceUUID`, which reims-vgpu's device choice requires.
     NoDeviceUuid,
-    /// The device does not list device extensions reims-vgpu refuses a device without.
-    MissingDeviceExtensions { missing: Vec<String> },
+    /// The device does not list the dma-buf extensions. This is **not** a refusal: reims-vgpu
+    /// copies the surfaces instead of importing them, which is slower but works. It is reported
+    /// as a degradation, never as an unmet requirement.
+    DmaBufUnavailable { missing: Vec<String> },
 }
 
 impl Requirement {
@@ -80,9 +82,9 @@ impl Requirement {
             Requirement::VulkanTooOld { found } => {
                 format!("the device reports Vulkan {found}; reims-vgpu needs 1.2 or newer")
             }
-            Requirement::MissingDeviceExtensions { missing } => format!(
-                "the device lists no {}; reims-vgpu refuses a device without it, so guest memory \
-                 cannot be shared with the GPU",
+            Requirement::DmaBufUnavailable { missing } => format!(
+                "the device lists no {}; reims-vgpu copies surfaces to the GPU instead of \
+                 importing them, which costs bandwidth but works",
                 missing.join(", ")
             ),
             Requirement::NoDeviceUuid => {
@@ -99,15 +101,16 @@ pub struct Candidate {
     pub caps: VulkanCaps,
     /// Whether the device is a CPU implementation (lavapipe), which is never acceleration.
     pub cpu: bool,
-    /// Device extensions reims-vgpu requires that the device does not list. Empty when the
-    /// probe could not be asked, which is treated as "not known to be missing".
+    /// Dma-buf extensions the device does not list. These do not make the device unusable: the
+    /// runtime copies surfaces instead. Empty when the probe could not be asked.
     pub missing_device_extensions: Vec<String>,
 }
 
 impl Candidate {
-    /// Every requirement reims-vgpu states, checked against what this device reported.
-    ///
-    /// The order is the order a report reads best in: loader, version, UUID, extensions.
+    /// Every requirement reims-vgpu actually refuses a device for, checked against what this
+    /// device reported: Vulkan 1.2, a graphics+compute queue, and a `deviceUUID`
+    /// (`device_choice.rs`, `Seen::candidate`). The dma-buf extensions are deliberately absent:
+    /// they change how surfaces reach the GPU, not whether the guest can start.
     pub fn unmet(&self) -> Vec<Requirement> {
         let mut unmet = Vec::new();
         let (major, minor, _) = self.caps.api_version;
@@ -119,12 +122,13 @@ impl Candidate {
         if self.caps.device_uuid.is_none() {
             unmet.push(Requirement::NoDeviceUuid);
         }
-        if !self.missing_device_extensions.is_empty() {
-            unmet.push(Requirement::MissingDeviceExtensions {
-                missing: self.missing_device_extensions.clone(),
-            });
-        }
         unmet
+    }
+
+    /// Whether the device shares guest memory with the GPU as dma-bufs, or the runtime has to
+    /// copy surfaces. `false` is a real slowdown, not a failure to start.
+    pub fn shares_dma_bufs(&self) -> bool {
+        self.missing_device_extensions.is_empty()
     }
 
     /// Whether this device can host the guest.
@@ -338,12 +342,14 @@ mod tests {
         assert!(legacy.support.accelerated());
     }
 
-    /// The requirement that decides real legacy hardware: a device can report Vulkan 1.2 and a
-    /// UUID and still be refused, because reims-vgpu needs dma-buf external memory to share the
-    /// guest's RAM with the GPU. lavapipe is exactly this case — it lists three of the four and
-    /// lacks `VK_EXT_image_drm_format_modifier` (measured with vulkaninfo on Mesa 26.3.1).
+    /// The dma-buf extensions are a degradation, not a refusal, and this test pins that because
+    /// the opposite was believed here once. `device_choice.rs` accepts a device on
+    /// `api_version >= 1.2 && graphics_compute && uuid.is_some()` and nothing else. Missing
+    /// dma-buf extensions make the runtime copy surfaces ("IOSurfaces are copied for the GPU"),
+    /// which is slower but starts. Measured: the real `reims-graphics-pci` initialised against
+    /// llvmpipe, which lacks `VK_EXT_image_drm_format_modifier`, and ran.
     #[test]
-    fn missing_extensions_refuse_a_device_that_meets_the_version() {
+    fn a_device_without_dma_buf_extensions_still_runs() {
         let d = select(
             true,
             &[dev_missing(
@@ -355,44 +361,40 @@ mod tests {
             )],
             None,
         );
+        assert!(
+            d.unmet.is_empty(),
+            "missing extensions must not refuse a device: {:?}",
+            d.unmet
+        );
+        assert_eq!(
+            d.backend.device(),
+            "reims-graphics-pci",
+            "the device is still offered to the guest; only its speed differs"
+        );
         assert!(!d.backend.accelerates(), "a CPU device never accelerates");
-        assert_eq!(d.backend.device(), "vmware-svga");
-        assert_eq!(
-            d.unmet,
-            vec![Requirement::MissingDeviceExtensions {
-                missing: vec!["VK_EXT_image_drm_format_modifier".into()]
-            }]
-        );
-        let why = d.unmet[0].describe();
-        assert!(why.contains("VK_EXT_image_drm_format_modifier"), "{why}");
-        assert!(why.contains("refuses"), "{why}");
     }
 
-    /// A real GPU that lacks an extension is not accelerated either, and the report names the
-    /// extension rather than blaming the version.
+    /// The degradation is still visible in the report, so a slow machine can be explained.
     #[test]
-    fn a_real_gpu_without_dma_buf_is_not_accelerated() {
-        let d = select(
+    fn a_missing_dma_buf_extension_is_reported_as_a_degradation() {
+        let c = dev_missing(
+            "Intel HD 4600 (intel_hasvk)",
+            (1, 2, 0),
             true,
-            &[dev_missing(
-                "Intel HD 4600 (intel_hasvk)",
-                (1, 2, 0),
-                true,
-                false,
-                &["VK_EXT_external_memory_dma_buf"],
-            )],
-            Some((0x8086, 0x0412)),
+            false,
+            &["VK_EXT_external_memory_dma_buf"],
         );
-        assert!(!d.backend.accelerates());
-        assert_eq!(
-            d.unmet,
-            vec![Requirement::MissingDeviceExtensions {
-                missing: vec!["VK_EXT_external_memory_dma_buf".into()]
-            }]
-        );
+        assert!(c.usable(), "the device must still be selectable");
+        assert!(!c.shares_dma_bufs());
+        let why = Requirement::DmaBufUnavailable {
+            missing: c.missing_device_extensions.clone(),
+        }
+        .describe();
+        assert!(why.contains("VK_EXT_external_memory_dma_buf"), "{why}");
+        assert!(why.contains("copies surfaces"), "{why}");
     }
 
-    /// A device that meets all four requirements is accelerated, and one that misses several
+    /// A device that meets every real requirement is accelerated, and one that misses several
     /// reports all of them, not just the first.
     #[test]
     fn every_unmet_requirement_is_reported() {
@@ -409,16 +411,12 @@ mod tests {
         );
         assert_eq!(
             d.unmet.len(),
-            3,
-            "version, uuid and extensions: {:?}",
+            2,
+            "version and uuid only, never extensions: {:?}",
             d.unmet
         );
         assert!(matches!(d.unmet[0], Requirement::VulkanTooOld { .. }));
         assert_eq!(d.unmet[1], Requirement::NoDeviceUuid);
-        assert!(matches!(
-            d.unmet[2],
-            Requirement::MissingDeviceExtensions { .. }
-        ));
     }
 
     /// A 1.2 device without a UUID fails on the UUID alone.

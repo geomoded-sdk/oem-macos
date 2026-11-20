@@ -52,6 +52,32 @@ The guest resolution is not a constant: `detect_resolution` reads the first conn
 connector's preferred mode from `/sys/class/drm/*/modes`, so a 2560x1600 panel gets a
 2560x1600 guest instead of a 1920x1080 window with black bars.
 
+## The graphics gate, measured
+
+The gate is `device_choice.rs` `Seen::candidate`: `api_version >= 1.2 && graphics_compute &&
+uuid.is_some()`. Nothing else refuses a device.
+
+The four dma-buf extensions (`VK_KHR_external_memory_fd`, `VK_EXT_external_memory_dma_buf`,
+`VK_EXT_image_drm_format_modifier`, `VK_EXT_queue_family_foreign`) only choose between an
+import and a copy. Do not treat a missing one as a refusal: that hides working hardware and
+this project already made that mistake once.
+
+Reproduce the proof without KVM, which is the only way to test this in a container:
+
+```sh
+# The QEMU fork needs libslirp, libusb and libpipewire at run time.
+sudo apt-get install -y libslirp0 libusb-1.0-0 libpipewire-0.3-0 \
+    mesa-vulkan-drivers vulkan-tools
+cd /workspace/vendor/reims-vgpu
+XDG_RUNTIME_DIR=/tmp/xdg ./build/qemu/qemu-system-x86_64 -accel tcg -machine q35 -m 2G \
+    -display none -device reims-graphics-pci,resolution=1920x1080 -monitor none -serial none -S
+```
+
+It prints the degradations and stays up. `llvmpipe` lacks
+`VK_EXT_image_drm_format_modifier`; the device still initialises, with "IOSurfaces are copied
+for the GPU". A `-machine max-ram-below-4g=1G` warning appears when QEMU is driven by hand;
+`reims-ctl` always passes that flag, so it is not a defect in the OEM path.
+
 ## Facts that were expensive to establish
 
 Read these before changing graphics or power code.
