@@ -12,7 +12,7 @@ Pinned upstream commit: `818868564e31f9023c074f73840de97542592c91`.
 
 ```sh
 make check                                  # fmt, clippy -D warnings, tests, manifest
-cd oem && cargo test                        # 82 tests, incl. a live Vulkan probe
+cd oem && cargo test                        # 83 tests, incl. a live Vulkan probe
 cd oem && cargo run -- gpu                  # the graphics decision on this machine
 cd oem && cargo run -- report               # full report as JSON
 tools/check-manifest.py                     # package names vs the live Arch repos
@@ -40,10 +40,22 @@ Read these before changing graphics or power code.
 4. **`reims-ctl start` detaches QEMU** and returns once QMP answers. It never learns why the
    guest later stopped. The only evidence is QEMU's QMP `SHUTDOWN` event, which exists only
    while the guest runs — hence `vm::qmp`, which watches the socket and records the reason.
-5. **Legacy Intel, measured not assumed:** Ivy Bridge (HD 4000) has *no* Vulkan driver; Haswell
-   (HD 4400/4600/5000) has Vulkan **1.0** via `intel_hasvk`; ANV starts at Gen8, so Broadwell
-   (HD 5500) is the oldest accelerated option. `graphics::legacy` encodes this, and
-   `graphics::select` lets the live probe override it.
+5. **Legacy Intel — corrected once already, so verify before changing.** Ivy Bridge (HD 4000)
+   and Haswell (HD 4400/4600/5000) both have Vulkan **1.2** via `intel_hasvk`, with a computed
+   `deviceUUID`. The evidence, from Mesa 25.0.0 source: `vulkan_hasvk/meson.build` builds
+   `gfx7`, `gfx75`, `gfx8`; `anv_device.c` sets `.apiVersion = use_softpin ? 1.3 : 1.2` where
+   `use_softpin = !(ver < 8)`, so Gen7/7.5 get 1.2; `intel_uuid_compute_device_id` fills the
+   UUID. ANV is the one that starts at Gen8 (`iris_pci_ids.h` has no Gen7 IDs).
+   They are still classified **Experimental**, not Supported: Mesa's CI only runs HASVK on
+   Haswell (`hasvk-hsw-*.txt`), the driver prints "Ivy Bridge Vulkan support is incomplete",
+   and `has_a64_buffer_access = ver >= 8` means no `bufferDeviceAddress` on Gen7/7.5.
+   An earlier version of this file said "Ivy Bridge has no Vulkan; Haswell is 1.0" — that was
+   wrong and was corrected. Do not reintroduce it.
+
+9. **Zink is not a Vulkan provider.** It is an OpenGL driver running over Vulkan, so it never
+   appears in `vkEnumeratePhysicalDevices` and cannot satisfy reims-vgpu. `mesa` and
+   `vulkan-mesa-layers` install **no ICD**; the ICDs come from `vulkan-intel`,
+   `vulkan-radeon`, `vulkan-swrast`.
 6. **lavapipe reports Vulkan 1.4 *and* a deviceUUID**, so it passes reims-vgpu's technical gate
    while rendering on the CPU. `Backend::VulkanOnCpu` exists so it is never reported as
    acceleration.

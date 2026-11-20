@@ -1,21 +1,42 @@
 //! Legacy Intel integrated graphics: what each family can actually do, and why.
 //!
-//! The table is built from documented Mesa driver support, not from hope. Two facts decide
-//! everything here:
+//! Everything here was read out of Mesa's source (25.0.0) and out of the driver binaries on
+//! this machine, not recalled. Three facts decide the answer, and the third one corrects an
+//! earlier version of this file that was simply wrong:
 //!
 //! 1. **ANV**, Intel's Vulkan driver, requires **Gen8 (Broadwell) or newer**. Gen7 and Gen7.5
-//!    are not supported by ANV at all, at any Vulkan version.
-//! 2. **HASVK** (`intel_hasvk`) is a separate Vulkan driver for **Haswell only** (Gen7.5), and
-//!    it reports **Vulkan 1.0**. `reims-vgpu` needs 1.2, so HASVK cannot host macOS either.
+//!    are absent from `iris_pci_ids.h` entirely — `grep -c 0166 iris_pci_ids.h` is 0.
+//! 2. **HASVK** (`intel_hasvk`) is the separate driver for the older generations, and it covers
+//!    **Ivy Bridge (Gen7), Haswell (Gen7.5) and Bay Trail**, not Haswell alone. Its build lists
+//!    `gfx7`, `gfx75` and `gfx8` (`src/intel/vulkan_hasvk/meson.build`), and
+//!    `anv_physical_device.c` accepts a device when `intel_get_device_info_from_fd` matches
+//!    Gen7 through Gen8, warning only that "Ivy Bridge Vulkan support is incomplete".
+//! 3. **HASVK reports Vulkan 1.2, not 1.0.** `anv_device.c` sets
+//!    `.apiVersion = use_softpin ? 1.3 : 1.2`, and `use_softpin` is `!use_relocations` where
+//!    `use_relocations = info.ver < 8`, so Gen7 and Gen7.5 get **1.2**. It also computes a
+//!    `deviceUUID` (`intel_uuid_compute_device_id`).
 //!
-//! The consequence is unavoidable and is stated plainly rather than papered over: no GPU older
-//! than Broadwell can run the accelerated macOS path. Gen7/7.5 hardware is still usable as an
-//! OEM-macOS host only in the software-rendering configuration, where the guest gets no GPU
-//! acceleration at all.
+//! So the three requirements `reims-vgpu` checks — `apiVersion >= 1.2`, a graphics+compute
+//! queue, and a non-null `deviceUUID` — are **all met on Ivy Bridge and Haswell in principle**.
+//! This file therefore does not rule them out. What it records is the *version*, and the
+//! decision is left to the live probe in [`super::select`], which is the only thing that can
+//! say what a particular machine actually reports.
 //!
-//! Broadwell and newer are listed as "supported" only in the sense that the driver reaches
-//! Vulkan 1.2. Whether a specific Broadwell part reports a `deviceUUID` is a per-driver
-//! question that [`super::select`] answers from the live probe, and the probe wins.
+//! What is genuinely missing on Gen7/7.5, and what keeps this "experimental" rather than
+//! "supported", is on the Mesa side:
+//!
+//! - `has_a64_buffer_access = info.ver >= 8 && ...`, so `bufferDeviceAddress` is **false** on
+//!   Gen7/7.5. `reims-vgpu` reads that flag and enables it only where present, so this is a
+//!   limitation rather than a refusal, but the runtime then has no 64-bit addresses.
+//! - Mesa's own CI runs HASVK against **Haswell only** (`hasvk-hsw-fails.txt` and friends);
+//!   there is no Ivy Bridge job, so Gen7 correctness is untested upstream.
+//! - `use_relocations = info.ver < 8` means Gen7/7.5 run on the relocation path, which the
+//!   softpin path exists to replace.
+//!
+//! The honest classification is therefore: **Haswell = experimentally supported**, Ivy Bridge =
+//! **experimental and untested upstream**, and neither may be called "fully supported" until
+//! someone runs it on the hardware and measures it. The classification in
+//! [`IntelFamily::support`] says exactly that.
 
 /// The Intel graphics family a PCI device ID belongs to.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -50,7 +71,9 @@ impl IntelFamily {
     pub fn mesa_driver(&self) -> &'static str {
         match self {
             IntelFamily::Ironlake | IntelFamily::SandyBridge => "crocus (GL only)",
-            IntelFamily::IvyBridge | IntelFamily::Haswell => "crocus / iris (GL only)",
+            IntelFamily::IvyBridge | IntelFamily::Haswell => {
+                "crocus (GL) + hasvk (Vulkan, experimental)"
+            }
             IntelFamily::Broadwell | IntelFamily::Gen9Plus => "iris (GL) + anv (Vulkan)",
         }
     }
@@ -58,21 +81,29 @@ impl IntelFamily {
     /// The Vulkan driver that can drive this family, if any, and the version it reaches.
     pub fn vulkan(&self) -> Option<(&'static str, (u32, u32))> {
         match self {
-            // No Vulkan driver at any version.
+            // No Vulkan driver at any version: HASVK starts at Gen7.
             IntelFamily::Ironlake | IntelFamily::SandyBridge => None,
-            // ANV starts at Gen8; HASVK covers Haswell alone and stops at Vulkan 1.0.
-            IntelFamily::IvyBridge => None,
-            IntelFamily::Haswell => Some(("intel_hasvk", (1, 0))),
+            // HASVK builds gfx7 and reports 1.2 where the device lacks softpin.
+            IntelFamily::IvyBridge => Some(("intel_hasvk", (1, 2))),
+            IntelFamily::Haswell => Some(("intel_hasvk", (1, 2))),
             IntelFamily::Broadwell | IntelFamily::Gen9Plus => Some(("anv", (1, 3))),
         }
     }
 }
 
 /// What OEM-macOS can offer on a given GPU.
+///
+/// The distinction between `Supported` and `Experimental` is not cosmetic: `Supported` means a
+/// driver the vendor tests and that this project has measured; `Experimental` means the driver
+/// reports the required version but the path is untested or under-tested upstream, so it may
+/// fail at runtime and must be described that way to whoever is installing.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LegacySupport {
-    /// Vulkan 1.2 or newer with a device UUID: the accelerated macOS path is possible.
+    /// Vulkan 1.2+, a device UUID, and a driver the vendor tests: acceleration is expected.
     Supported,
+    /// Vulkan 1.2+ and a UUID, but on a driver generation Mesa does not test: it may work, and
+    /// it must not be promised.
+    Experimental,
     /// A Vulkan driver exists but cannot meet reims-vgpu's requirement. No acceleration.
     UnsupportedVulkan,
     /// No Vulkan driver at all; OpenGL through Mesa only.
@@ -83,14 +114,20 @@ impl LegacySupport {
     pub fn label(&self) -> &'static str {
         match self {
             LegacySupport::Supported => "fully supported",
+            LegacySupport::Experimental => {
+                "experimental: hasvk reports 1.2 but Mesa does not test this generation"
+            }
             LegacySupport::UnsupportedVulkan => "Vulkan present but below 1.2: not supported",
             LegacySupport::OpenGlOnly => "software rendering only",
         }
     }
 
     /// Whether the accelerated macOS path is reachable at all.
+    ///
+    /// `Experimental` counts, because the requirements are met; the difference is how loudly
+    /// the result must be qualified, not whether it is attempted.
     pub fn accelerated(&self) -> bool {
-        matches!(self, LegacySupport::Supported)
+        matches!(self, LegacySupport::Supported | LegacySupport::Experimental)
     }
 }
 
@@ -170,12 +207,22 @@ pub fn classify(
     let family = family_of(device_id);
     // A measurement is the authority.
     if let Some(c) = measured {
-        let support = if c.meets_reims() {
+        let tested_by_vendor = !matches!(
+            family,
+            Some(IntelFamily::IvyBridge) | Some(IntelFamily::Haswell)
+        );
+        let support = if !c.meets_reims() {
+            if c.api_version.0 > 0 {
+                LegacySupport::UnsupportedVulkan
+            } else {
+                LegacySupport::OpenGlOnly
+            }
+        } else if tested_by_vendor {
             LegacySupport::Supported
-        } else if c.api_version.0 > 0 {
-            LegacySupport::UnsupportedVulkan
         } else {
-            LegacySupport::OpenGlOnly
+            // The gate is met, but on a generation Mesa does not test. Saying "supported" here
+            // would be a promise this project cannot keep.
+            LegacySupport::Experimental
         };
         let reason = format!(
             "{} reports Vulkan {} via {} (needs 1.2 and a device UUID: {})",
@@ -202,9 +249,18 @@ pub fn classify(
         },
         Some(IntelFamily::Haswell) => Classification {
             family,
-            support: LegacySupport::UnsupportedVulkan,
-            reason: "Haswell reaches Vulkan 1.0 through intel_hasvk; reims-vgpu needs 1.2, so \
-                     macOS gets no GPU acceleration on this machine"
+            support: LegacySupport::Experimental,
+            reason: "Haswell reaches Vulkan 1.2 through intel_hasvk with a device UUID, so the \
+                     accelerated path should work; Mesa tests HASVK on Haswell but this project \
+                     has not measured it, so treat it as experimental"
+                .into(),
+        },
+        Some(IntelFamily::IvyBridge) => Classification {
+            family,
+            support: LegacySupport::Experimental,
+            reason: "Ivy Bridge reaches Vulkan 1.2 through intel_hasvk, but Mesa runs no CI job \
+                     on Gen7 and the driver prints 'Ivy Bridge Vulkan support is incomplete'; \
+                     the accelerated path may work and must be verified on the machine"
                 .into(),
         },
         Some(f) => Classification {
@@ -255,28 +311,36 @@ mod tests {
         assert_eq!(family_of(0x1616), Some(IntelFamily::Broadwell));
     }
 
-    /// The brief's headline question, answered: Ivy Bridge has no Vulkan at any version.
+    /// Ivy Bridge does have a Vulkan driver, contrary to what this project first recorded:
+    /// HASVK builds `gfx7` and reports 1.2. It is experimental because Mesa runs no Gen7 CI job
+    /// and the driver itself warns that support is incomplete — not because it is absent.
     #[test]
-    fn ivy_bridge_has_no_vulkan() {
+    fn ivy_bridge_has_vulkan_through_hasvk() {
         let c = classify(0x8086, 0x0166, None);
         assert_eq!(c.family, Some(IntelFamily::IvyBridge));
-        assert_eq!(c.support, LegacySupport::OpenGlOnly);
-        assert!(!c.support.accelerated());
-        assert_eq!(IntelFamily::IvyBridge.vulkan(), None);
+        assert_eq!(c.support, LegacySupport::Experimental);
+        assert!(
+            c.support.accelerated(),
+            "the gate is met, so it is attempted"
+        );
+        let (driver, version) = IntelFamily::IvyBridge.vulkan().unwrap();
+        assert_eq!(driver, "intel_hasvk");
+        assert_eq!(version, (1, 2));
     }
 
-    /// Haswell has Vulkan, but only 1.0 — which reims-vgpu refuses.
+    /// Haswell reaches 1.2 through HASVK, so the version is not what stops it. It stays
+    /// experimental because nobody has measured the path here.
     #[test]
-    fn haswell_vulkan_is_below_the_bar() {
+    fn haswell_reaches_the_version_hasvk_reports() {
         let c = classify(0x8086, 0x0412, None);
         assert_eq!(c.family, Some(IntelFamily::Haswell));
-        assert_eq!(c.support, LegacySupport::UnsupportedVulkan);
-        assert!(!c.support.accelerated());
+        assert_eq!(c.support, LegacySupport::Experimental);
         let (driver, version) = IntelFamily::Haswell.vulkan().unwrap();
         assert_eq!(driver, "intel_hasvk");
         assert!(
-            version < (1, 2),
-            "HASVK must be recorded below 1.2, got {version:?}"
+            version >= (1, 2),
+            "HASVK reports 1.2 on Gen7.5 (use_softpin is false, so ANV_API_VERSION_1_2), \
+             got {version:?}"
         );
     }
 
@@ -286,10 +350,14 @@ mod tests {
         // A Broadwell that somehow reports only 1.0 is not usable, whatever the table says.
         let weak = classify(0x8086, 0x1616, Some(&caps((1, 0, 0), true, "anv")));
         assert_eq!(weak.support, LegacySupport::UnsupportedVulkan);
-        // A Haswell that reports 1.2 with a UUID is usable; the probe is the authority.
-        let strong = classify(0x8086, 0x0412, Some(&caps((1, 2, 0), true, "some-fork")));
-        assert_eq!(strong.support, LegacySupport::Supported);
+        // A Haswell reporting 1.2 with a UUID meets the gate, but stays experimental: the
+        // generation is not vendor-tested, and the probe cannot tell us that it is stable.
+        let strong = classify(0x8086, 0x0412, Some(&caps((1, 2, 0), true, "intel_hasvk")));
+        assert_eq!(strong.support, LegacySupport::Experimental);
         assert!(strong.support.accelerated());
+        // The same measurement on a Broadwell is a full endorsement, because Mesa tests Gen8.
+        let bdw = classify(0x8086, 0x1616, Some(&caps((1, 3, 0), true, "anv")));
+        assert_eq!(bdw.support, LegacySupport::Supported);
     }
 
     #[test]

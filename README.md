@@ -11,7 +11,7 @@ recovery path. The virtual GPU itself is upstream and is not modified.
 | Area | State |
 |---|---|
 | Upstream build (library, QEMU, `reims-ctl`) | **Built and verified** on this machine |
-| OEM Core (detect, graphics, VM, power, recovery) | **Implemented, 82 tests passing** |
+| OEM Core (detect, graphics, VM, power, recovery) | **Implemented, 83 tests passing** |
 | Host package manifest | **51 packages, every name checked against the live Arch repos** |
 | systemd boot orchestration | **Implemented, `systemd-analyze verify` clean** |
 | Installer | **Implemented, `shellcheck` clean, syntax-verified** |
@@ -25,21 +25,40 @@ the first group was run; nothing in the second group is presented as if it were.
 ## The graphics question, answered
 
 The brief asks for legacy Intel support, naming the HD 4000, 4400, 4600, 5000 and 5500. The
-answer comes from what the drivers do, not from a compatibility table:
+answer was read out of Mesa 25.0.0's source and out of the driver binaries, and it is better
+than this project first recorded — that earlier version of this file was wrong:
 
-- **HD 4000 (Ivy Bridge, Gen7)** has **no Vulkan driver at all**. ANV starts at Gen8. OpenGL
-  through Mesa is all there is.
-- **HD 4400 / 4600 / 5000 (Haswell, Gen7.5)** have Vulkan, but only **1.0**, through
-  `intel_hasvk`. reims-vgpu requires **1.2**.
-- **HD 5500 (Broadwell, Gen8)** is the oldest family that reaches Vulkan 1.2 through ANV, and so
-  the oldest that can host the accelerated macOS path.
+- **ANV** needs **Gen8 (Broadwell) or newer**. Gen7/7.5 IDs are absent from `iris_pci_ids.h`.
+- **HASVK** (`intel_hasvk`) covers **Ivy Bridge (Gen7), Haswell (Gen7.5) and Bay Trail**. Its
+  build lists `gfx7`, `gfx75` and `gfx8`, and it accepts a Gen7 device while warning that
+  "Ivy Bridge Vulkan support is incomplete".
+- **HASVK reports Vulkan 1.2, not 1.0.** `anv_device.c` sets
+  `.apiVersion = use_softpin ? 1.3 : 1.2`, and `use_softpin = !use_relocations` where
+  `use_relocations = ver < 8` — so Gen7 and Gen7.5 get **1.2**, and it computes a `deviceUUID`.
 
-So on the named legacy GPUs the accelerated path is not available, and `oem-core gpu` says so
-with the reason. What OEM-macOS does offer there is an honest fallback: it installs, boots, and
-reports that the guest has no acceleration, rather than silently producing a black window.
+So the three things reims-vgpu checks — Vulkan 1.2, a graphics+compute queue, a device UUID —
+are **met in principle on HD 4000 and HD 4600 alike**. That does not make them "supported":
+
+| GPU | Driver | Reported | Classification |
+|---|---|---|---|
+| HD 4000 (Ivy Bridge) | `intel_hasvk` | 1.2 | **experimental** — no Mesa CI job on Gen7 |
+| HD 4400/4600/5000 (Haswell) | `intel_hasvk` | 1.2 | **experimental** — Mesa tests HASVK on Haswell, this project has not measured it |
+| HD 5500 (Broadwell) | `anv` | 1.3 | **supported** — vendor-tested generation |
+
+What is genuinely weaker on Gen7/7.5 is `bufferDeviceAddress`, which is `false` there because
+`has_a64_buffer_access = ver >= 8`. reims-vgpu reads that flag and enables it only where
+present, so it is a limitation rather than a refusal — but nobody has run it.
 
 `oem-core` never decides this from the table alone. It asks the Vulkan loader, and the
-measurement wins. The table exists only to explain the result.
+measurement wins. The table explains the result; the probe decides it.
+
+### Why not Zink
+
+Zink is an OpenGL driver that runs *over* Vulkan. It cannot help here: reims-vgpu needs a
+Vulkan physical device, and Zink is a consumer of Vulkan, not a provider. It never appears in
+`vkEnumeratePhysicalDevices` — verified on this machine, where `zink_dri.so` is installed and
+`vulkaninfo` still lists only llvmpipe. Also note that `mesa` and `vulkan-mesa-layers` install
+no Vulkan ICD at all; the ICDs come from `vulkan-intel`, `vulkan-radeon` or `vulkan-swrast`.
 
 ## Quick start
 

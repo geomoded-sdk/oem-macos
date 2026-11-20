@@ -92,7 +92,7 @@ Verified end to end: four failed boots, and the fourth printed
 
 ## Tests
 
-**82 passing, 0 failing.** They include:
+**83 passing, 0 failing.** They include:
 
 - the real Vulkan probe against this machine's loader, which found a genuine bug: the probe
   created a Vulkan 1.0 instance, and lavapipe does not fill the 1.1 `VkPhysicalDeviceIDProperties`

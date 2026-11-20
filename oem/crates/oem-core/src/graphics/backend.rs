@@ -241,9 +241,11 @@ mod tests {
         assert!(d.backend.summary().contains("Arc A770"));
     }
 
-    /// Haswell: Vulkan 1.0 through HASVK, so the gate fails for the right reason.
+    /// A Haswell whose HASVK reports only 1.0 (an old Mesa, or a broken install) fails on the
+    /// version and says so. Note the device here is what the *probe* saw; a current HASVK
+    /// reports 1.2, which the next test covers.
     #[test]
-    fn haswell_fails_on_version_with_a_real_reason() {
+    fn a_vulkan_too_old_device_fails_with_a_real_reason() {
         let d = select(
             true,
             &[dev("Intel HD 4600 (HASVK)", (1, 0, 0), true, false)],
@@ -260,6 +262,27 @@ mod tests {
         let legacy = d.legacy.expect("Haswell is classified");
         assert_eq!(legacy.family, Some(legacy::IntelFamily::Haswell));
         assert!(d.unmet[0].describe().contains("needs 1.2"));
+    }
+
+    /// Haswell on a current HASVK reports 1.2 with a UUID, so the gate passes and the backend
+    /// is chosen — but the classification stays experimental, because Mesa does not test the
+    /// path here and neither has this project.
+    #[test]
+    fn haswell_on_a_current_hasvk_is_selected_but_flagged_experimental() {
+        let d = select(
+            true,
+            &[dev("Intel HD 4600 (intel_hasvk)", (1, 2, 0), true, false)],
+            Some((0x8086, 0x0412)),
+        );
+        assert!(d.unmet.is_empty(), "unmet: {:?}", d.unmet);
+        assert!(d.backend.accelerates());
+        let legacy = d.legacy.expect("Haswell is classified");
+        assert_eq!(
+            legacy.support,
+            legacy::LegacySupport::Experimental,
+            "a generation Mesa does not test must not be called supported"
+        );
+        assert!(legacy.support.accelerated());
     }
 
     /// A 1.2 device without a UUID fails on the UUID alone.
