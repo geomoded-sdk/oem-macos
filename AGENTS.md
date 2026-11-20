@@ -75,8 +75,10 @@ XDG_RUNTIME_DIR=/tmp/xdg ./build/qemu/qemu-system-x86_64 -accel tcg -machine q35
 
 It prints the degradations and stays up. `llvmpipe` lacks
 `VK_EXT_image_drm_format_modifier`; the device still initialises, with "IOSurfaces are copied
-for the GPU". A `-machine max-ram-below-4g=1G` warning appears when QEMU is driven by hand;
-`reims-ctl` always passes that flag, so it is not a defect in the OEM path.
+for the GPU". `reims-ctl` always passes `-machine max-ram-below-4g=1G` (crates/reims-ctl/src/qemu.rs), so
+drive QEMU with it too: without it the device starts but warns that a macOS guest's kext would
+find no GPU region at all. Measured here: with the flag the warning is gone and the device still
+initialises. The CI `vgpu-device` job passes the flag and fails if the warning reappears.
 
 ## Facts that were expensive to establish
 

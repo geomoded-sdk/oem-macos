@@ -99,7 +99,11 @@ jobs:
           # A device that refuses its host exits at once. One that works stays until the timeout
           # kills it (124), which is the success this asserts.
           set +e
-          timeout 45 "$qemu" -accel tcg -machine q35 -m 2G -display none \
+          # `max-ram-below-4g=1G` is what `reims-ctl` always passes (crates/reims-ctl/src/qemu.rs)
+          # so the guest kext finds the GPU's second BAR below 4 GiB. Without it the device
+          # still starts but warns that a macOS guest would find no region, so the flag
+          # belongs in the test: this asserts the configuration the product uses.
+          timeout 45 "$qemu" -accel tcg -machine q35,max-ram-below-4g=1G -m 2G -display none \
             -device reims-graphics-pci,resolution=1920x1080 \
             -monitor none -serial none -S > vgpu.log 2>&1
           status=$?
@@ -111,6 +115,12 @@ jobs:
           fi
           if grep -q "rvg_graphics_device_create: the host refused" vgpu.log; then
             echo "::error::the host refused the GPU device"
+            exit 1
+          fi
+          # The BAR warning means the guest's kext would not find the GPU at all, so it must
+          # not appear when the machine is configured the way `reims-ctl` configures it.
+          if grep -q "no address and its kext finds no region" vgpu.log; then
+            echo "::error::the GPU's BAR got no address below 4 GiB"
             exit 1
           fi
           grep "reims-vgpu: degradation counts" vgpu.log || true
