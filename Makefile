@@ -55,6 +55,8 @@ install-dist:
 	install -Dm644 host/systemd/oem-poweroff-on-guest-stop.path $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-poweroff-on-guest-stop.path
 	install -Dm644 host/systemd/oem-poweroff-on-guest-stop.service $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-poweroff-on-guest-stop.service
 	install -Dm644 host/systemd/seatd.service $(DESTDIR)$(PREFIX)/lib/systemd/system/seatd.service
+	install -Dm755 host/bin/oem-veil $(DESTDIR)$(PREFIX)/lib/oem-macos/oem-veil
+	install -Dm644 host/systemd/oem-veil.service $(DESTDIR)$(PREFIX)/lib/systemd/system/oem-veil.service
 	install -Dm644 host/kernel/oem-sysctl.conf $(DESTDIR)/etc/sysctl.d/90-oem.conf
 	install -Dm644 host/kernel/oem-modules-load.conf $(DESTDIR)/etc/modules-load.d/oem.conf
 	install -Dm644 host/mkinitcpio/oem-macos.conf $(DESTDIR)/etc/mkinitcpio.conf

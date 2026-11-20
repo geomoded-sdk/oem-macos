@@ -1,0 +1,77 @@
+#!/bin/bash
+# oem-veil: make the Linux console invisible.
+#
+# The user must never see Linux: no kernel log, no login prompt, no cursor, no text. This
+# script does the three things that are actually under our control, and it does them for
+# every virtual terminal, not just the active one, because Ctrl+Alt+Fn is handled by the
+# kernel's keyboard driver and cannot be disabled from userspace.
+#
+# What it cannot do, stated plainly: it cannot stop a user who presses Ctrl+Alt+F3 from
+# switching virtual terminals. What it can do is guarantee that every terminal they can
+# switch to is black and has no shell on it. That is why the gettys are masked as well
+# (`90-oem-mask-gettys.preset`); a blank terminal with no login is not a Linux desktop and
+# gives nothing away.
+#
+# On failure the veil is lifted by design: `oem-core boot` exiting with the maintenance
+# status brings up a shell on tty1, because a machine that cannot start macOS is worse off
+# hiding why.
+set -euo pipefail
+
+readonly VTS=${OEM_VEIL_VTS:-12}
+
+log() { printf 'oem-veil: %s\n' "$*"; }
+
+# A terminal that has never been opened is not a console yet. Writing to it opens it, which
+# is what allocates the VT, so this both blanks and reserves each one.
+blank_all() {
+    local tty
+    for ((tty = 1; tty <= VTS; tty++)); do
+        [ -c "/dev/tty$tty" ] || continue
+        # Clears the screen, hides the cursor, resets attributes. Sent to every VT so that a
+        # switch finds black rather than whatever the kernel last printed there.
+        printf '\033[?25l\033[H\033[2J\033[3J\033[0m' >"/dev/tty$tty" 2>/dev/null || true
+    done
+}
+
+# The active terminal is the one the firmware handed over, so it is the one that matters
+# most: blank it through setterm as well, which asks the driver to clear rather than writing
+# characters over whatever the kernel already printed.
+blank_active() {
+    local active
+    active=$(cat /sys/class/tty/tty0/active 2>/dev/null || echo tty1)
+    if [ -w "/dev/$active" ]; then
+        setterm --blank 1 --cursor off --clear rest >"/dev/$active" 2>/dev/null || true
+        printf '\033[?25l\033[H\033[2J' >"/dev/$active" 2>/dev/null || true
+    fi
+}
+
+# Kernel messages that arrive after this point still land on the console the kernel was told
+# to use. The bootloader quiets the log at boot; this lowers the level so nothing routine
+# prints afterwards, including anything a module says while the GPU is initialized.
+quiet_kernel() {
+    if [ -w /proc/sys/kernel/printk ]; then
+        echo 0 >/proc/sys/kernel/printk 2>/dev/null || true
+    fi
+    if [ -w /proc/sys/kernel/printk_devkmsg ]; then
+        echo off >/proc/sys/kernel/printk_devkmsg 2>/dev/null || true
+    fi
+}
+
+# The blinking block cursor is what makes a black screen look like a broken machine rather
+# than a switched-off one.
+disable_cursor() {
+    if [ -w /sys/module/vt/parameters/cur_default ]; then
+        # 0 = invisible. Written before the VTs are opened, so every one inherits it.
+        echo 0 >/sys/module/vt/parameters/cur_default 2>/dev/null || true
+    fi
+}
+
+main() {
+    disable_cursor
+    quiet_kernel
+    blank_all
+    blank_active
+    log "console veiled on tty1..tty$VTS"
+}
+
+main "$@"

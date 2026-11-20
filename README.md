@@ -11,10 +11,11 @@ recovery path. The virtual GPU itself is upstream and is not modified.
 | Area | State |
 |---|---|
 | Upstream build (library, QEMU, `reims-ctl`) | **Built and verified** on this machine |
-| OEM Core (detect, graphics, VM, power, recovery) | **Implemented, 83 tests passing** |
+| OEM Core (detect, graphics, VM, power, recovery) | **Implemented, 89 tests passing** |
 | Host package manifest | **51 packages, every name checked against the live Arch repos** |
 | systemd boot orchestration | **Implemented, `systemd-analyze verify` clean** |
-| Installer | **Implemented, `shellcheck` clean, syntax-verified** |
+| Installer | **Implemented, `shellcheck` clean, syntax-verified; `--silent` installs with no prompt** |
+| Invisible Linux (no console, no getty, no cursor) | **Implemented**; a VT switch still reaches a *blank* terminal |
 | Booted on real hardware | **Not done.** This environment has no KVM and no GPU |
 | GPU performance on target hardware | **Not measured, and not claimed** |
 | macOS guest actually booting | **Not demonstrated.** It needs a machine with `/dev/kvm` |
@@ -37,7 +38,22 @@ than this project first recorded — that earlier version of this file was wrong
   `use_relocations = ver < 8` — so Gen7 and Gen7.5 get **1.2**, and it computes a `deviceUUID`.
 
 So the three things reims-vgpu checks — Vulkan 1.2, a graphics+compute queue, a device UUID —
-are **met in principle on HD 4000 and HD 4600 alike**. That does not make them "supported":
+are **met in principle on HD 4000 and HD 4600 alike**. There is a **fourth** requirement, and
+it is the one that decides the hardware: `plane_copy.rs` refuses a device that does not list
+
+- `VK_KHR_external_memory_fd`
+- `VK_EXT_external_memory_dma_buf`
+- `VK_EXT_image_drm_format_modifier`
+- `VK_EXT_queue_family_foreign`
+
+These are how guest RAM reaches the GPU as a dma-buf. A device that meets 1.2, has a UUID and
+lacks any of them still cannot host the guest. `oem-core gpu` now probes the extension list
+and reports exactly which are missing, rather than blaming the version. Measured on this
+machine with `vulkaninfo`: **lavapipe lists three of the four and lacks
+`VK_EXT_image_drm_format_modifier`**, so software Vulkan is refused for a concrete reason and
+not a guess. HASVK lists all four.
+
+That does not make HD 4000 and HD 4600 "supported":
 
 | GPU | Driver | Reported | Classification |
 |---|---|---|---|

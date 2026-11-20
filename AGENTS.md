@@ -12,16 +12,45 @@ Pinned upstream commit: `818868564e31f9023c074f73840de97542592c91`.
 
 ```sh
 make check                                  # fmt, clippy -D warnings, tests, manifest
-cd oem && cargo test                        # 83 tests, incl. a live Vulkan probe
+cd oem && cargo test                        # 89 tests, incl. a live Vulkan probe
 cd oem && cargo run -- gpu                  # the graphics decision on this machine
 cd oem && cargo run -- report               # full report as JSON
 tools/check-manifest.py                     # package names vs the live Arch repos
 tools/measure-footprint.sh                  # host RAM/storage on this machine
 systemd-analyze verify host/systemd/*.service host/systemd/*.path
-shellcheck -S warning host/installer/oem-install tools/measure-footprint.sh
+shellcheck -S warning host/installer/oem-install host/bin/oem-veil tools/measure-footprint.sh
 ```
 
 Rust is nightly (`rustc 1.101.0-nightly`); `cargo` is at `/home/openhands/.cargo/bin`.
+
+## Invisible Linux: the three mechanisms
+
+The product requirement is that a user never sees Linux. Three separate things make that true,
+and each is installed by `host/installer/oem-install`, not by `make install-dist`:
+
+1. **The kernel prints nothing.** The boot entry carries `quiet loglevel=0
+   vt.global_cursor_default=0 systemd.show_status=no`.
+2. **`oem-veil` blanks every VT** (`host/bin/oem-veil`, unit `oem-veil.service`, wanted by
+   `sysinit.target`). It hides the cursor through `/sys/module/vt/parameters/cur_default`,
+   clears tty1..tty12, and drops `kernel.printk` to 0 so nothing a module says later reappears.
+3. **No getty exists.** `getty@.service`, `serial-getty@.service` and `autovt@.service` are
+   masked with symlinks to `/dev/null`. `autovt@` is the one a VT switch asks for, so
+   Ctrl+Alt+F2 gets a blank screen instead of a login prompt.
+
+The veil cannot stop a VT switch — that is the kernel keyboard driver, not userspace. It
+guarantees the target of a switch is black and has no shell. Recovery does not need a getty:
+`oem-core boot` exits 3 and `oem-maintenance.service` starts a root shell on tty1.
+
+## Silent installation
+
+`oem-install --silent` asks nothing: it takes the only non-removable disk, the newest macOS,
+and skips the confirmation. It refuses rather than guessing when more than one candidate disk
+exists, because erasing the wrong disk is unrecoverable. `pick_only_disk` skips removable
+media (the installer stick) and `loop`/`ram`/`zram`/`dm-`/`sr` devices.
+
+The guest resolution is not a constant: `detect_resolution` reads the first connected
+connector's preferred mode from `/sys/class/drm/*/modes`, so a 2560x1600 panel gets a
+2560x1600 guest instead of a 1920x1080 window with black bars.
 
 ## Facts that were expensive to establish
 

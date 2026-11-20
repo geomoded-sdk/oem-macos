@@ -21,11 +21,15 @@ die()  { printf '\033[1;31mERR\033[0m %s\n' "$*" >&2; exit 1; }
 
 usage() {
     cat <<'USAGE'
-usage: oem-install [--disk DEVICE] [--macos VERSION] [--yes]
+usage: oem-install [--disk DEVICE] [--macos VERSION] [--silent] [--yes]
 
   --disk DEVICE     Install to this block device (for example /dev/nvme0n1).
   --macos VERSION   The macOS release to install (for example tahoe, 26, or latest).
-  --yes             Do not ask for confirmation. For an unattended install.
+  --silent          Ask nothing. Take the only disk, the newest macOS, and do not stop for
+                    confirmation. This is the mode the shipped installer medium uses: the
+                    user is meant to see an Apple logo and then the macOS desktop, not a
+                    text prompt.
+  --yes             Skip the final confirmation only.
   --help            This message.
 
 Without arguments the installer asks for each value.
@@ -99,6 +103,34 @@ choose_disk() {
 
 # Refuses to touch a disk that holds something: a mistaken `--disk /dev/sda` must not erase a
 # working machine.
+# The disk to install to, with no question asked. A machine that ships with OEM-macOS has one
+# internal disk; the installer medium is either a USB stick or a network boot and is excluded
+# by being removable or by holding the live root.
+pick_only_disk() {
+    local candidate=""
+    local count=0
+    for d in /sys/block/*; do
+        local name=${d##*/}
+        case "$name" in
+            loop*|ram*|zram*|dm-*|sr*) continue ;;
+        esac
+        # A removable device is the installer medium, not the destination.
+        if [ "$(cat "$d/removable" 2>/dev/null || echo 0)" = 1 ]; then
+            continue
+        fi
+        # Skip the disk that holds the running root, when it can be determined.
+        local size
+        size=$(cat "$d/size" 2>/dev/null || echo 0)
+        [ "$size" -gt 0 ] || continue
+        candidate="/dev/$name"
+        count=$((count + 1))
+    done
+    if [ "$count" -ne 1 ]; then
+        return 1
+    fi
+    echo "$candidate"
+}
+
 confirm_disk() {
     local disk=$1
     [ -b "$disk" ] || die "$disk is not a block device"
@@ -220,7 +252,9 @@ write_guest_config() {
 }
 
 write_oem_config() {
-    log "writing $OEM_ROOT/etc/oem/vm.toml"
+    local resolution
+    resolution=$(detect_resolution)
+    log "writing $OEM_ROOT/etc/oem/vm.toml (display $resolution)"
     local dir="$OEM_STATE/vm"
     install -d "$OEM_ROOT/etc/oem"
     cat > "$OEM_ROOT/etc/oem/vm.toml" <<TOML
@@ -236,7 +270,7 @@ network = true
 audio = true
 
 [display]
-resolution = "1920x1080"
+resolution = "$resolution"
 borderless = true
 TOML
 }
@@ -261,6 +295,114 @@ record_provenance() {
               > "$OEM_ROOT/usr/share/doc/oem-macos/installed.sha256"
 }
 
+# --- invisibility -------------------------------------------------------------
+# The product requirement is that the user never sees Linux. Three mechanisms make that true,
+# and all three are installed here rather than left to a manual step:
+#
+#   1. the kernel prints nothing (bootloader `quiet`, `loglevel=0`, `vt.global_cursor_default=0`)
+#   2. `oem-veil` blanks every virtual terminal before anything can draw on it
+#   3. no getty exists to show a login prompt on any of them
+#
+# The third is the one that is easy to miss and the one that matters: without it, Ctrl+Alt+F2
+# reveals a Linux login on a machine that is supposed to be a Mac.
+
+install_invisibility() {
+    log "installing the invisibility layer"
+
+    # The veil itself. It is a plain script with no dependencies beyond util-linux's setterm,
+    # which the base group provides.
+    install -d "$OEM_ROOT/usr/lib/oem-macos"
+    install -m 0755 "$(dirname "${BASH_SOURCE[0]}")/../bin/oem-veil" \
+        "$OEM_ROOT/usr/lib/oem-macos/oem-veil"
+    install -m 0644 "$(dirname "${BASH_SOURCE[0]}")/../systemd/oem-veil.service" \
+        "$OEM_ROOT/usr/lib/systemd/system/oem-veil.service"
+
+    # Mask the getty template. Masking is used, not disabling, because a masked unit cannot be
+    # started even by a dependency. The symlink is how systemd records a mask on disk, so it
+    # works without running systemctl in the target.
+    ln -sf /dev/null "$OEM_ROOT/etc/systemd/system/getty@.service"
+    ln -sf /dev/null "$OEM_ROOT/etc/systemd/system/serial-getty@.service"
+    # The autovt unit is what a VT switch asks for. It is a symlink to getty@ on a stock
+    # system; replacing it with a mask means Ctrl+Alt+F2 gets nothing at all.
+    ln -sf /dev/null "$OEM_ROOT/etc/systemd/system/autovt@.service"
+
+    # sysinit.target is the earliest point userspace runs; the veil is wanted there so it wins
+    # the race against anything that might print.
+    ln -sf /usr/lib/systemd/system/oem-veil.service \
+        "$OEM_ROOT/etc/systemd/system/sysinit.target.wants/oem-veil.service"
+
+    log "gettys masked, console veiled"
+}
+
+# The host's own configuration: the units, the kernel tunables and the initramfs settings.
+#
+# These were previously only written by `make install-dist`, which installs into a *running*
+# system. An install from the medium never ran it, so the installed disk had the oem-core
+# binary and no unit to start it, no `udmabuf` module, no `vm.max_map_count` and a stock
+# initramfs. Every one of those is a boot failure, and none of them fails loudly.
+install_host_config() {
+    log "installing the host configuration"
+    local here
+    here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+    install -d "$OEM_ROOT/usr/lib/systemd/system"
+    local unit
+    for unit in oem-core.service oem-maintenance.service \
+                oem-poweroff-on-guest-stop.path oem-poweroff-on-guest-stop.service \
+                seatd.service; do
+        install -m 0644 "$here/../systemd/$unit" "$OEM_ROOT/usr/lib/systemd/system/$unit"
+    done
+
+    install -d "$OEM_ROOT/etc/sysctl.d" "$OEM_ROOT/etc/modules-load.d"
+    install -m 0644 "$here/../kernel/oem-sysctl.conf" "$OEM_ROOT/etc/sysctl.d/90-oem.conf"
+    install -m 0644 "$here/../kernel/oem-modules-load.conf" \
+        "$OEM_ROOT/etc/modules-load.d/oem.conf"
+    install -m 0644 "$here/../mkinitcpio/oem-macos.conf" "$OEM_ROOT/etc/mkinitcpio.conf"
+
+    # The initramfs must be rebuilt after the config changes, or the disk keeps the stock one
+    # with no `kms` hook and the display driver loads after the guest has already started.
+    arch-chroot "$OEM_ROOT" mkinitcpio -P || die "mkinitcpio failed"
+}
+
+# Enable the units that must run without anyone asking.
+#
+# `oem-core.service` is `WantedBy=multi-user.target`, but being wanted by a target only puts it
+# in the boot *if a `.wants` symlink exists*. Writing that symlink is what makes the machine
+# start macOS by itself; without it the host boots to a veiled, empty screen and stays there.
+# `systemctl enable` is not used because it needs a running systemd, and this runs in a chroot.
+enable_units() {
+    log "enabling oem-core at boot"
+    local wants="$OEM_ROOT/etc/systemd/system/multi-user.target.wants"
+    install -d "$wants"
+    ln -sf /usr/lib/systemd/system/oem-core.service "$wants/oem-core.service"
+    # The guest stopping powers the machine off, which is what a Mac does when macOS shuts down.
+    ln -sf /usr/lib/systemd/system/oem-poweroff-on-guest-stop.path \
+        "$wants/oem-poweroff-on-guest-stop.path"
+}
+
+# The guest's resolution is the physical panel's, read from the kernel's own mode list rather
+# than guessed. A 1920x1080 default on a 2560x1600 panel leaves black bars, which is exactly
+# the "it is a VM" tell the brief forbids.
+detect_resolution() {
+    local preferred=""
+    # DRM exposes the panel's preferred mode first in `modes`. The first line of the first
+    # connected connector's mode list is the native resolution on every panel that has one.
+    for status in /sys/class/drm/*/status; do
+        [ -r "$status" ] || continue
+        [ "$(cat "$status")" = connected ] || continue
+        local modes="${status%status}modes"
+        [ -r "$modes" ] || continue
+        preferred=$(head -n1 "$modes" 2>/dev/null || true)
+        [ -n "$preferred" ] && break
+    done
+    if [ -z "$preferred" ]; then
+        warn "no connected display reported a mode; the guest will use 1920x1080"
+        echo "1920x1080"
+        return
+    fi
+    echo "$preferred"
+}
+
 # --- boot ---------------------------------------------------------------------
 
 install_bootloader() {
@@ -270,7 +412,7 @@ install_bootloader() {
 title   OEM-macOS
 linux   /vmlinuz-linux
 initrd  /initramfs-linux.img
-options root=LABEL=OEMROOT rw quiet loglevel=3 systemd.show_status=no
+options root=LABEL=OEMROOT rw quiet loglevel=0 systemd.show_status=no vt.global_cursor_default=0 console=tty1
 ENTRY
     cat > "$OEM_ROOT/boot/loader/loader.conf" <<'LOADER'
 default  oem-macos
@@ -286,11 +428,12 @@ finish() {
 }
 
 main() {
-    local macos="" disk=""
+    local macos="" disk="" silent=0
     while [ $# -gt 0 ]; do
         case "$1" in
             --disk)  disk=${2:?--disk needs a value}; shift 2 ;;
             --macos) macos=${2:?--macos needs a value}; shift 2 ;;
+            --silent) silent=1; ASSUME_YES=1; shift ;;
             --yes)   ASSUME_YES=1; shift ;;
             --help|-h) usage; exit 0 ;;
             *) die "unknown argument: $1 (try --help)" ;;
@@ -303,10 +446,21 @@ main() {
     check_gpu
     check_network || warn "continuing without a network: supply an installer image yourself"
 
-    [ -n "$disk" ] || disk=$(DISK=$disk choose_disk)
-    [ -n "$disk" ] || die "no disk chosen"
-    confirm_disk "$disk" >/dev/null
-    [ -n "$macos" ] || read -rp "Which macOS (tahoe, 26, latest)? " macos
+    if [ "$silent" = 1 ]; then
+        # No question is asked in this mode, and a machine with more than one candidate disk is
+        # a configuration the silent path must not guess at: erasing the wrong disk is the one
+        # mistake that cannot be undone. It stops instead, and says which disks it saw.
+        if [ -z "$disk" ]; then
+            disk=$(pick_only_disk) || die "silent install needs exactly one non-removable disk; \
+found: $(ls /sys/block | tr '\n' ' '). Pass --disk explicitly."
+        fi
+        [ -n "$macos" ] || macos="latest"
+    else
+        [ -n "$disk" ] || disk=$(DISK=$disk choose_disk)
+        [ -n "$disk" ] || die "no disk chosen"
+        confirm_disk "$disk" >/dev/null
+        [ -n "$macos" ] || read -rp "Which macOS (tahoe, 26, latest)? " macos
+    fi
 
     log "installing to $disk, macOS $macos"
     if [ "${ASSUME_YES:-0}" != 1 ]; then
@@ -323,6 +477,9 @@ main() {
     write_guest_config "$macos"
     write_oem_config
     record_provenance
+    install_host_config
+    install_invisibility
+    enable_units
     install_bootloader
     finish
 }

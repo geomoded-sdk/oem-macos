@@ -11,6 +11,15 @@
 
 use crate::graphics::VulkanCaps;
 
+/// The device extensions `reims-vgpu` refuses a device without
+/// (`crates/reims-vgpu-vulkan/src/os/linux/plane_copy.rs`, the `needed` array).
+pub const REQUIRED_DEVICE_EXTENSIONS: [&str; 4] = [
+    "VK_KHR_external_memory_fd",
+    "VK_EXT_external_memory_dma_buf",
+    "VK_EXT_image_drm_format_modifier",
+    "VK_EXT_queue_family_foreign",
+];
+
 /// One device the loader reported.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ProbedDevice {
@@ -25,6 +34,21 @@ pub struct ProbedDevice {
     pub cpu: bool,
     /// Whether a graphics+compute queue family exists, the second of reims-vgpu's requirements.
     pub has_graphics_compute_queue: bool,
+    /// Device extensions reims-vgpu requires that this device does not list.
+    ///
+    /// This is the requirement that decides real hardware, and it cannot be inferred from the
+    /// Vulkan version: `plane_copy.rs` refuses a device that lists no
+    /// `VK_KHR_external_memory_fd`, `VK_EXT_external_memory_dma_buf`,
+    /// `VK_EXT_image_drm_format_modifier` or `VK_EXT_queue_family_foreign`. A device that meets
+    /// 1.2 and has a UUID but lacks one of these still cannot host the guest.
+    pub missing_device_extensions: Vec<String>,
+}
+
+impl ProbedDevice {
+    /// Whether this device can host `reims-graphics-pci` at all, version aside.
+    pub fn has_reims_extensions(&self) -> bool {
+        self.missing_device_extensions.is_empty()
+    }
 }
 
 /// The result of a probe.
@@ -39,10 +63,15 @@ pub struct ProbeResult {
 
 impl ProbeResult {
     /// The devices reduced to the shape [`crate::graphics::select`] takes.
-    pub fn as_selection_input(&self) -> Vec<(String, VulkanCaps, bool)> {
+    pub fn as_selection_input(&self) -> Vec<crate::graphics::backend::Candidate> {
         self.devices
             .iter()
-            .map(|d| (d.name.clone(), d.caps.clone(), d.cpu))
+            .map(|d| crate::graphics::backend::Candidate {
+                name: d.name.clone(),
+                caps: d.caps.clone(),
+                cpu: d.cpu,
+                missing_device_extensions: d.missing_device_extensions.clone(),
+            })
             .collect()
     }
 }
@@ -126,6 +155,21 @@ mod imp {
                             q.queue_flags
                                 .contains(vk::QueueFlags::GRAPHICS | vk::QueueFlags::COMPUTE)
                         });
+                    // The extensions reims-vgpu refuses a device without. Reading the list is
+                    // an instance-level call; nothing is enabled, so a legacy driver that
+                    // advertises one and then fails still costs only this query.
+                    let listed: Vec<String> = instance
+                        .enumerate_device_extension_properties(pd)
+                        .unwrap_or_default()
+                        .iter()
+                        .filter_map(|e| e.extension_name_as_c_str().ok())
+                        .map(|c| c.to_string_lossy().into_owned())
+                        .collect();
+                    let missing_device_extensions: Vec<String> = super::REQUIRED_DEVICE_EXTENSIONS
+                        .iter()
+                        .filter(|want| !listed.iter().any(|have| have == *want))
+                        .map(|want| (*want).to_owned())
+                        .collect();
                     devices.push(ProbedDevice {
                         name,
                         vendor_id: p.vendor_id,
@@ -138,6 +182,7 @@ mod imp {
                         },
                         cpu,
                         has_graphics_compute_queue,
+                        missing_device_extensions,
                     });
                 }
             }

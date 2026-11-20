@@ -155,8 +155,27 @@ impl Config {
     /// Only `start` is used: the guest is created by the installer, and the boot never creates
     /// or deletes anything. Keeping the boot's vocabulary to one verb is what makes the
     /// lifecycle auditable.
+    /// The `reims-ctl start` arguments.
+    ///
+    /// The display flags are not decoration. `reims-ctl start` opens the guest's window under
+    /// its own defaults unless told otherwise, and its default is a decorated window that does
+    /// not fill the screen — a title bar, a border and a desktop behind it, which is exactly
+    /// the "this is a virtual machine" tell the product must not have. `--borderless` makes the
+    /// window the whole screen; `--resolution` sizes it to the panel the installer measured.
+    ///
+    /// The flags are only sent for the accelerated path. A `vmware-svga` guest has no
+    /// reims-vgpu window to configure, and passing them would be rejected by a reims-ctl that
+    /// was built without the library.
     pub fn start_args(&self) -> Vec<String> {
-        vec!["start".to_owned(), self.name.clone()]
+        let mut args = vec!["start".to_owned(), self.name.clone()];
+        if self.graphics == Graphics::ReimsVgpu {
+            args.push("--resolution".to_owned());
+            args.push(self.display.resolution.clone());
+            if self.display.borderless {
+                args.push("--borderless".to_owned());
+            }
+        }
+        args
     }
 
     /// The guest's QMP socket, at the path `reims-ctl` puts it
@@ -175,6 +194,45 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The guest must fill the screen with no window decoration. `reims-ctl`'s default is a
+    /// decorated window, so the flags have to be sent explicitly or the user sees a title bar
+    /// and a host desktop behind the guest.
+    #[test]
+    fn start_asks_for_a_borderless_window_at_the_panel_resolution() {
+        let dir = Path::new("/var/lib/oem/vm");
+        let mut c = good(dir);
+        c.display.resolution = "2560x1600".into();
+        let args = c.start_args();
+        assert_eq!(args[0], "start");
+        assert_eq!(args[1], "mac");
+        let at = |flag: &str| args.iter().position(|a| a == flag);
+        assert!(at("--borderless").is_some(), "args: {args:?}");
+        let res = at("--resolution").expect("resolution flag");
+        assert_eq!(args[res + 1], "2560x1600");
+    }
+
+    /// A software guest has no reims-vgpu window, so the display flags are not sent: reims-ctl
+    /// would reject them.
+    #[test]
+    fn a_software_guest_gets_no_display_flags() {
+        let dir = Path::new("/var/lib/oem/vm");
+        let mut c = good(dir);
+        c.graphics = Graphics::VmwareSvga;
+        assert_eq!(c.start_args(), vec!["start".to_owned(), "mac".to_owned()]);
+    }
+
+    /// Turning the borderless option off is honoured, which is what a maintenance session with
+    /// a window manager would want.
+    #[test]
+    fn a_windowed_display_is_possible() {
+        let dir = Path::new("/var/lib/oem/vm");
+        let mut c = good(dir);
+        c.display.borderless = false;
+        let args = c.start_args();
+        assert!(!args.iter().any(|a| a == "--borderless"), "args: {args:?}");
+        assert!(args.iter().any(|a| a == "--resolution"), "args: {args:?}");
+    }
 
     fn good(dir: &Path) -> Config {
         Config {
@@ -304,11 +362,15 @@ mod tests {
         assert!(!Graphics::VmwareSvga.can_accelerate());
     }
 
+    /// `start` carries the display flags and `stop` carries nothing extra. Both name the guest,
+    /// which is how `reims-ctl` finds it in its registry.
     #[test]
-    fn the_boot_speaks_only_start_and_stop() {
+    fn the_boot_speaks_start_and_stop() {
         let d = temp("verbs");
         let c = good(&d);
-        assert_eq!(c.start_args(), vec!["start", "mac"]);
+        let args = c.start_args();
+        assert_eq!(args[0], "start");
+        assert_eq!(args[1], "mac");
         assert_eq!(c.stop_args(), vec!["stop", "mac"]);
         let _ = std::fs::remove_dir_all(&d);
     }

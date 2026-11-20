@@ -62,6 +62,8 @@ pub enum Requirement {
     VulkanTooOld { found: String },
     /// The device reports no `deviceUUID`, which reims-vgpu's device choice requires.
     NoDeviceUuid,
+    /// The device does not list device extensions reims-vgpu refuses a device without.
+    MissingDeviceExtensions { missing: Vec<String> },
 }
 
 impl Requirement {
@@ -78,10 +80,56 @@ impl Requirement {
             Requirement::VulkanTooOld { found } => {
                 format!("the device reports Vulkan {found}; reims-vgpu needs 1.2 or newer")
             }
+            Requirement::MissingDeviceExtensions { missing } => format!(
+                "the device lists no {}; reims-vgpu refuses a device without it, so guest memory \
+                 cannot be shared with the GPU",
+                missing.join(", ")
+            ),
             Requirement::NoDeviceUuid => {
                 "the device reports no deviceUUID, which reims-vgpu's device choice requires".into()
             }
         }
+    }
+}
+
+/// What the probe saw of one device, as [`select`] takes it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Candidate {
+    pub name: String,
+    pub caps: VulkanCaps,
+    /// Whether the device is a CPU implementation (lavapipe), which is never acceleration.
+    pub cpu: bool,
+    /// Device extensions reims-vgpu requires that the device does not list. Empty when the
+    /// probe could not be asked, which is treated as "not known to be missing".
+    pub missing_device_extensions: Vec<String>,
+}
+
+impl Candidate {
+    /// Every requirement reims-vgpu states, checked against what this device reported.
+    ///
+    /// The order is the order a report reads best in: loader, version, UUID, extensions.
+    pub fn unmet(&self) -> Vec<Requirement> {
+        let mut unmet = Vec::new();
+        let (major, minor, _) = self.caps.api_version;
+        if !(major > 1 || (major == 1 && minor >= 2)) {
+            unmet.push(Requirement::VulkanTooOld {
+                found: self.caps.version_string(),
+            });
+        }
+        if self.caps.device_uuid.is_none() {
+            unmet.push(Requirement::NoDeviceUuid);
+        }
+        if !self.missing_device_extensions.is_empty() {
+            unmet.push(Requirement::MissingDeviceExtensions {
+                missing: self.missing_device_extensions.clone(),
+            });
+        }
+        unmet
+    }
+
+    /// Whether this device can host the guest.
+    pub fn usable(&self) -> bool {
+        self.unmet().is_empty()
     }
 }
 
@@ -103,7 +151,7 @@ pub struct Decision {
 /// `cpu` being true (the probe sets it from `VK_PHYSICAL_DEVICE_TYPE_CPU`).
 pub fn select(
     loader_present: bool,
-    devices: &[(String, VulkanCaps, bool)],
+    devices: &[Candidate],
     intel_device: Option<(u16, u16)>,
 ) -> Decision {
     if !loader_present {
@@ -125,54 +173,42 @@ pub fn select(
         };
     }
 
-    // A real GPU that meets the gate wins over a CPU implementation that also meets it, no
-    // matter what order the loader listed them in.
-    let usable = |(_, c, cpu): &(String, VulkanCaps, bool)| c.meets_reims() && !cpu;
-    let cpu_usable = |(_, c, cpu): &(String, VulkanCaps, bool)| c.meets_reims() && *cpu;
-
-    if let Some((name, caps, _)) = devices.iter().find(|d| usable(d)) {
+    // A real GPU that meets every requirement wins over a CPU implementation that also meets
+    // them, no matter what order the loader listed them in.
+    if let Some(d) = devices.iter().find(|d| d.usable() && !d.cpu) {
         return Decision {
             backend: Backend::Accelerated {
-                gpu: name.clone(),
-                vulkan: caps.version_string(),
+                gpu: d.name.clone(),
+                vulkan: d.caps.version_string(),
             },
             unmet: Vec::new(),
-            legacy: intel_device.map(|(v, d)| legacy::classify(v, d, Some(caps))),
+            legacy: intel_device.map(|(v, id)| legacy::classify(v, id, Some(&d.caps))),
         };
     }
-    if let Some((name, caps, _)) = devices.iter().find(|d| cpu_usable(d)) {
+    if let Some(d) = devices.iter().find(|d| d.usable() && d.cpu) {
         return Decision {
             backend: Backend::VulkanOnCpu {
-                gpu: name.clone(),
-                vulkan: caps.version_string(),
+                gpu: d.name.clone(),
+                vulkan: d.caps.version_string(),
             },
             // A CPU device is a deliberate fallback, not a failed requirement.
             unmet: Vec::new(),
-            legacy: intel_device.map(|(v, d)| legacy::classify(v, d, Some(caps))),
+            legacy: intel_device.map(|(v, id)| legacy::classify(v, id, Some(&d.caps))),
         };
     }
 
-    // Nothing meets the gate. Say precisely why, using the best device present.
-    let (name, caps, _) = devices
+    // Nothing meets every requirement. Say precisely why, using the device that came closest:
+    // the one with the fewest unmet requirements, then the highest version.
+    let best = devices
         .iter()
-        .max_by_key(|(_, c, _)| c.api_version)
+        .min_by_key(|d| (d.unmet().len(), std::cmp::Reverse(d.caps.api_version)))
         .expect("devices is not empty");
-    let mut unmet = Vec::new();
-    let (major, minor, _) = caps.api_version;
-    if !(major > 1 || (major == 1 && minor >= 2)) {
-        unmet.push(Requirement::VulkanTooOld {
-            found: caps.version_string(),
-        });
-    }
-    if caps.device_uuid.is_none() {
-        unmet.push(Requirement::NoDeviceUuid);
-    }
     Decision {
         backend: Backend::Software {
-            reason: format!("{name} cannot host reims-graphics-pci"),
+            reason: format!("{} cannot host reims-graphics-pci", best.name),
         },
-        unmet,
-        legacy: intel_device.map(|(v, d)| legacy::classify(v, d, Some(caps))),
+        unmet: best.unmet(),
+        legacy: intel_device.map(|(v, id)| legacy::classify(v, id, Some(&best.caps))),
     }
 }
 
@@ -188,8 +224,25 @@ mod tests {
         }
     }
 
-    fn dev(name: &str, v: (u32, u32, u32), uuid: bool, cpu: bool) -> (String, VulkanCaps, bool) {
-        (name.into(), caps(v, uuid, "test"), cpu)
+    /// A device that lists every extension reims-vgpu needs. `uuid` and `cpu` are the two facts
+    /// the tests vary; the extension list is added by `dev_missing`.
+    fn dev(name: &str, v: (u32, u32, u32), uuid: bool, cpu: bool) -> Candidate {
+        dev_missing(name, v, uuid, cpu, &[])
+    }
+
+    fn dev_missing(
+        name: &str,
+        v: (u32, u32, u32),
+        uuid: bool,
+        cpu: bool,
+        missing: &[&str],
+    ) -> Candidate {
+        Candidate {
+            name: name.into(),
+            caps: caps(v, uuid, "test"),
+            cpu,
+            missing_device_extensions: missing.iter().map(|s| (*s).to_owned()).collect(),
+        }
     }
 
     #[test]
@@ -283,6 +336,89 @@ mod tests {
             "a generation Mesa does not test must not be called supported"
         );
         assert!(legacy.support.accelerated());
+    }
+
+    /// The requirement that decides real legacy hardware: a device can report Vulkan 1.2 and a
+    /// UUID and still be refused, because reims-vgpu needs dma-buf external memory to share the
+    /// guest's RAM with the GPU. lavapipe is exactly this case — it lists three of the four and
+    /// lacks `VK_EXT_image_drm_format_modifier` (measured with vulkaninfo on Mesa 26.3.1).
+    #[test]
+    fn missing_extensions_refuse_a_device_that_meets_the_version() {
+        let d = select(
+            true,
+            &[dev_missing(
+                "llvmpipe",
+                (1, 4, 305),
+                true,
+                true,
+                &["VK_EXT_image_drm_format_modifier"],
+            )],
+            None,
+        );
+        assert!(!d.backend.accelerates(), "a CPU device never accelerates");
+        assert_eq!(d.backend.device(), "vmware-svga");
+        assert_eq!(
+            d.unmet,
+            vec![Requirement::MissingDeviceExtensions {
+                missing: vec!["VK_EXT_image_drm_format_modifier".into()]
+            }]
+        );
+        let why = d.unmet[0].describe();
+        assert!(why.contains("VK_EXT_image_drm_format_modifier"), "{why}");
+        assert!(why.contains("refuses"), "{why}");
+    }
+
+    /// A real GPU that lacks an extension is not accelerated either, and the report names the
+    /// extension rather than blaming the version.
+    #[test]
+    fn a_real_gpu_without_dma_buf_is_not_accelerated() {
+        let d = select(
+            true,
+            &[dev_missing(
+                "Intel HD 4600 (intel_hasvk)",
+                (1, 2, 0),
+                true,
+                false,
+                &["VK_EXT_external_memory_dma_buf"],
+            )],
+            Some((0x8086, 0x0412)),
+        );
+        assert!(!d.backend.accelerates());
+        assert_eq!(
+            d.unmet,
+            vec![Requirement::MissingDeviceExtensions {
+                missing: vec!["VK_EXT_external_memory_dma_buf".into()]
+            }]
+        );
+    }
+
+    /// A device that meets all four requirements is accelerated, and one that misses several
+    /// reports all of them, not just the first.
+    #[test]
+    fn every_unmet_requirement_is_reported() {
+        let d = select(
+            true,
+            &[dev_missing(
+                "broken",
+                (1, 0, 0),
+                false,
+                false,
+                &["VK_KHR_external_memory_fd", "VK_EXT_queue_family_foreign"],
+            )],
+            None,
+        );
+        assert_eq!(
+            d.unmet.len(),
+            3,
+            "version, uuid and extensions: {:?}",
+            d.unmet
+        );
+        assert!(matches!(d.unmet[0], Requirement::VulkanTooOld { .. }));
+        assert_eq!(d.unmet[1], Requirement::NoDeviceUuid);
+        assert!(matches!(
+            d.unmet[2],
+            Requirement::MissingDeviceExtensions { .. }
+        ));
     }
 
     /// A 1.2 device without a UUID fails on the UUID alone.

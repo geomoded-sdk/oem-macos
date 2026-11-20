@@ -1,0 +1,24 @@
+[Unit]
+Description=OEM Veil: hide the Linux console before anything can print to it
+Documentation=file:/usr/share/doc/oem-macos/architecture.md
+# This must run before any unit that could print to a terminal, and before the guest starts,
+# so it is ordered against the earliest point userspace can act rather than against a target.
+DefaultDependencies=no
+# Ordered after vconsole-setup so the veil's blanking is the last word on the console, but
+# not `Requires=`: a host where that unit is absent must still get a veiled console, not a
+# skipped one.
+After=systemd-vconsole-setup.service
+Before=sysinit.target oem-core.service getty@tty1.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/oem-macos/oem-veil
+# A veil that fails must not stop the boot: a visible console is a cosmetic failure, and the
+# machine still needs to reach macOS.
+SuccessExitStatus=0
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=sysinit.target
