@@ -1,0 +1,28 @@
+OEM-macOS
+=========
+
+This project builds on and redistributes work by others. Their licences and attributions are
+kept here, as the brief requires.
+
+reims-vgpu
+----------
+https://github.com/steelbrain/reims-vgpu
+Licence: GPL-2.0-or-later
+Pinned commit: 818868564e31f9023c074f73840de97542592c91
+
+OEM-macOS does not modify reims-vgpu. It builds it, installs it, and drives it through
+`reims-ctl`. The library, the QEMU fork (`vendor/qemu`, from
+https://github.com/steelbrain/qemu-reims-vgpu) and `reims-ctl` are used as upstream ships them.
+
+QEMU
+----
+https://www.qemu.org/
+Licence: GPL-2.0
+The QEMU fork reims-vgpu builds from carries the `reims-graphics-pci` device.
+
+Apple
+-----
+macOS is Apple's. OEM-macOS does not redistribute any Apple installation files. The installer
+downloads the recovery image from Apple's own servers and verifies it against the chunklist
+Apple serves, which is what `reims-ctl` does. Anyone running macOS under this project is bound
+by Apple's licence, including its restrictions on virtualisation.

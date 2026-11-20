@@ -1,0 +1,330 @@
+#!/bin/bash
+# oem-install: the guided installation of OEM-macOS.
+#
+# The user answers three questions: which macOS, which disk, confirm. Everything else is this
+# script's job. It is written in bash on purpose: it runs in the installer environment, before
+# anything else on the system is built, so it can depend on nothing but the Arch ISO's own
+# tools.
+#
+# Every step that can fail does so loudly and stops. An install that half-succeeds is worse
+# than one that does not start.
+set -euo pipefail
+
+readonly OEM_ROOT=${OEM_ROOT:-/mnt}
+readonly OEM_STATE=${OEM_STATE:-/var/lib/oem}
+readonly UPSTREAM_REPO=${UPSTREAM_REPO:-https://github.com/steelbrain/reims-vgpu}
+readonly UPSTREAM_PIN=${UPSTREAM_PIN:-818868564e31f9023c074f73840de97542592c91}
+
+log()  { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
+warn() { printf '\033[1;33m!!!\033[0m %s\n' "$*" >&2; }
+die()  { printf '\033[1;31mERR\033[0m %s\n' "$*" >&2; exit 1; }
+
+usage() {
+    cat <<'USAGE'
+usage: oem-install [--disk DEVICE] [--macos VERSION] [--yes]
+
+  --disk DEVICE     Install to this block device (for example /dev/nvme0n1).
+  --macos VERSION   The macOS release to install (for example tahoe, 26, or latest).
+  --yes             Do not ask for confirmation. For an unattended install.
+  --help            This message.
+
+Without arguments the installer asks for each value.
+USAGE
+}
+
+# --- preconditions ------------------------------------------------------------
+# Checked before anything is written, so a machine that cannot host the guest is not
+# half-installed first.
+
+check_uefi() {
+    [ -d /sys/firmware/efi ] || die "this machine booted in BIOS mode; OEM-macOS needs UEFI"
+    log "UEFI: ok"
+}
+
+check_cpu() {
+    grep -qw -e vmx -e svm /proc/cpuinfo \
+        || die "the CPU exposes neither vmx nor svm: enable virtualization in the firmware"
+    log "virtualization: ok"
+}
+
+check_network() {
+    # The macOS installer is downloaded from Apple, so a network is required unless the user
+    # supplies an installer image separately.
+    if ! timeout 10 ping -c1 -W3 1.1.1.1 >/dev/null 2>&1 \
+       && ! timeout 15 curl -fsS -o /dev/null https://osrecovery.apple.com/ 2>/dev/null; then
+        warn "no network reachable: macOS cannot be downloaded from Apple"
+        return 1
+    fi
+    log "network: ok"
+}
+
+check_gpu() {
+    # This is a warning, not a failure: the machine installs and boots, and simply gets no GPU
+    # acceleration, which oem-core reports honestly at boot.
+    local gpu
+    gpu=$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display' || true)
+    if [ -z "$gpu" ]; then
+        warn "no display controller found on the PCI bus"
+        return 0
+    fi
+    log "display: $gpu"
+    case "$gpu" in
+        *8086:0166*|*8086:0152*|*8086:0162*)
+            warn "this is an Ivy Bridge iGPU: it has no Vulkan driver, so macOS gets no"
+            warn "acceleration. The install proceeds and runs with software rendering."
+            ;;
+        *8086:0412*|*8086:041e*|*8086:0a26*|*8086:0a16*)
+            warn "this is a Haswell iGPU: its Vulkan driver reaches 1.0, and reims-vgpu needs"
+            warn "1.2. macOS gets no acceleration on this machine."
+            ;;
+    esac
+}
+
+# --- the target disk ----------------------------------------------------------
+
+list_disks() {
+    lsblk -dno NAME,SIZE,MODEL,TYPE | awk '$4=="disk"'
+}
+
+choose_disk() {
+    if [ -n "${DISK:-}" ]; then
+        echo "$DISK"
+        return
+    fi
+    log "Available disks:" >&2
+    list_disks >&2
+    read -rp "Install to which device (for example /dev/nvme0n1)? " d
+    echo "$d"
+}
+
+# Refuses to touch a disk that holds something: a mistaken `--disk /dev/sda` must not erase a
+# working machine.
+confirm_disk() {
+    local disk=$1
+    [ -b "$disk" ] || die "$disk is not a block device"
+    local sigs
+    sigs=$(wipefs --noheadings --output TYPE "$disk" 2>/dev/null | tr -d ' ' || true)
+    if [ -n "$sigs" ]; then
+        warn "$disk already holds: $sigs"
+        if [ "${ASSUME_YES:-0}" != 1 ]; then
+            read -rp "Erase $disk completely? Type ERASE to continue: " answer
+            [ "$answer" = ERASE ] || die "not erasing $disk"
+        fi
+    fi
+    local size_bytes
+    size_bytes=$(blockdev --getsize64 "$disk")
+    # macOS needs room for itself plus working space. 64 GiB is the practical floor.
+    if [ "$size_bytes" -lt $((64 * 1024 * 1024 * 1024)) ]; then
+        die "$disk is smaller than 64 GiB, which is too little for macOS"
+    fi
+    echo "$disk"
+}
+
+partition_disk() {
+    local disk=$1
+    log "partitioning $disk (GPT: ESP 1 GiB, rest for macOS)"
+    wipefs --all --force "$disk"
+    parted --script "$disk" \
+        mklabel gpt \
+        mkpart ESP fat32 1MiB 1025MiB \
+        set 1 esp on \
+        mkpart OEM ext4 1025MiB 100%
+    udevadm settle
+    local part_prefix
+    # NVMe and MMC name partitions p1, p2; SATA and virtio name them 1, 2.
+    if [[ "$disk" =~ (nvme|mmcblk) ]]; then part_prefix="${disk}p"; else part_prefix="${disk}"; fi
+    ESP="${part_prefix}1"
+    ROOT="${part_prefix}2"
+    mkfs.fat -F32 -n OEMESP "$ESP"
+    mkfs.ext4 -q -L OEMROOT "$ROOT"
+}
+
+mount_target() {
+    mkdir -p "$OEM_ROOT"
+    mount "$ROOT" "$OEM_ROOT"
+    mkdir -p "$OEM_ROOT/boot"
+    mount "$ESP" "$OEM_ROOT/boot"
+}
+
+# --- the host system ----------------------------------------------------------
+# The package list is the repository's own manifest, so the installer and the build agree by
+# construction rather than by two lists that drift.
+
+install_base() {
+    log "installing the base system"
+    local here
+    here=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+    local manifest="$here/../packages/packages.txt"
+    [ -f "$manifest" ] || die "the package manifest is missing at $manifest"
+    # Comments and blank lines out; the rest is one `pacman -S` argument list.
+    mapfile -t packages < <(sed 's/#.*//' "$manifest" | tr -d '[:space:]' | grep -v '^$')
+    [ "${#packages[@]}" -gt 0 ] || die "the package manifest is empty"
+    log "installing ${#packages[@]} packages"
+    pacstrap -K "$OEM_ROOT" "${packages[@]}"
+}
+
+write_fstab() {
+    log "writing fstab"
+    genfstab -U "$OEM_ROOT" > "$OEM_ROOT/etc/fstab"
+    # A machine with no fstab is unbootable; a machine with an empty one is worse than a
+    # failure here.
+    [ -s "$OEM_ROOT/etc/fstab" ] || die "genfstab produced nothing"
+}
+
+# --- the guest ----------------------------------------------------------------
+
+install_engine() {
+    log "building the VM engine from $UPSTREAM_REPO at $UPSTREAM_PIN"
+    local build=/var/tmp/reims-build
+    rm -rf "$build"
+    arch-chroot "$OEM_ROOT" pacman -S --needed --noconfirm git rustup cmake ninja meson clang \
+        pkgconf glib2 pixman zlib libslirp libusb sdl3 \
+        xorgproto libx11 libxext libxrandr libxinerama libxcursor libxi libxtst \
+        wayland wayland-protocols libxkbcommon libdecor libdrm mesa \
+        || die "the build dependencies could not be installed"
+
+    mkdir -p "$build"
+    git clone --filter=blob:none "$UPSTREAM_REPO" "$build/reims-vgpu"
+    git -C "$build/reims-vgpu" checkout --detach "$UPSTREAM_PIN" \
+        || die "the pinned commit $UPSTREAM_PIN is not in the repository"
+    git -C "$build/reims-vgpu" submodule update --init --recursive
+
+    log "building the library and QEMU (this takes a while)"
+    arch-chroot "$OEM_ROOT" env PATH=/root/.cargo/bin:/usr/bin:/bin \
+        make -C /var/tmp/reims-build/reims-vgpu qemu \
+        || die "the upstream build failed; the log is above"
+}
+
+install_ctl() {
+    log "installing reims-ctl"
+    install -Dm755 /var/tmp/reims-build/reims-vgpu/crates/reims-ctl/target/release/reims-ctl \
+        "$OEM_ROOT/usr/bin/reims-ctl"
+    install -Dm755 /var/tmp/reims-build/reims-vgpu/build/qemu/qemu-system-x86_64 \
+        "$OEM_ROOT/usr/bin/qemu-system-x86_64-reims"
+}
+
+write_guest_config() {
+    local macos=$1
+    log "creating the guest for macOS $macos"
+    # `reims-ctl create` owns the OpenCore image, the disk layout and the Apple download. The
+    # installer does not reimplement any of that.
+    arch-chroot "$OEM_ROOT" /usr/bin/reims-ctl create mac \
+        --macos "$macos" \
+        --dir "$OEM_STATE/vm" \
+        --cpus "$(nproc)" \
+        --memory 8G \
+        --disk-size 96G \
+        --graphics reims-vgpu \
+        --borderless \
+        || die "reims-ctl could not create the guest"
+}
+
+write_oem_config() {
+    log "writing $OEM_ROOT/etc/oem/vm.toml"
+    local dir="$OEM_STATE/vm"
+    install -d "$OEM_ROOT/etc/oem"
+    cat > "$OEM_ROOT/etc/oem/vm.toml" <<TOML
+name = "mac"
+cpus = $(nproc)
+memory_mib = 8192
+disk = "$dir/disk.qcow2"
+opencore = "$dir/opencore.qcow2"
+firmware_code = "$dir/OVMF_CODE.fd"
+firmware_vars = "$dir/OVMF_VARS.fd"
+graphics = "reims-vgpu"
+network = true
+audio = true
+
+[display]
+resolution = "1920x1080"
+borderless = true
+TOML
+}
+
+# --- integrity ----------------------------------------------------------------
+# The brief forbids executing unverified downloads. `reims-ctl` verifies Apple's own chunks
+# against the chunklist Apple serves, and refuses a mismatch. This function records the
+# upstream commit that was built, so the installed binaries can be traced to a source.
+
+record_provenance() {
+    log "recording provenance"
+    install -d "$OEM_ROOT/usr/share/doc/oem-macos"
+    {
+        echo "upstream_repo=$UPSTREAM_REPO"
+        echo "upstream_commit=$UPSTREAM_PIN"
+        echo "installed_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        echo "oem_version=$(cat "$(dirname "${BASH_SOURCE[0]}")/../../VERSION" 2>/dev/null || echo unknown)"
+    } > "$OEM_ROOT/usr/share/doc/oem-macos/provenance"
+    # The hashes of what was installed, so a later check can tell whether it changed.
+    sha256sum "$OEM_ROOT/usr/bin/reims-ctl" \
+              "$OEM_ROOT/usr/bin/qemu-system-x86_64-reims" \
+              > "$OEM_ROOT/usr/share/doc/oem-macos/installed.sha256"
+}
+
+# --- boot ---------------------------------------------------------------------
+
+install_bootloader() {
+    log "installing the bootloader"
+    arch-chroot "$OEM_ROOT" bootctl --esp-path=/boot install
+    cat > "$OEM_ROOT/boot/loader/entries/oem-macos.conf" <<'ENTRY'
+title   OEM-macOS
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=LABEL=OEMROOT rw quiet loglevel=3 systemd.show_status=no
+ENTRY
+    cat > "$OEM_ROOT/boot/loader/loader.conf" <<'LOADER'
+default  oem-macos
+timeout  0
+editor   no
+LOADER
+}
+
+finish() {
+    log "unmounting"
+    umount -R "$OEM_ROOT" || true
+    log "done. Remove the installer medium and power on: the machine boots into macOS."
+}
+
+main() {
+    local macos="" disk=""
+    while [ $# -gt 0 ]; do
+        case "$1" in
+            --disk)  disk=${2:?--disk needs a value}; shift 2 ;;
+            --macos) macos=${2:?--macos needs a value}; shift 2 ;;
+            --yes)   ASSUME_YES=1; shift ;;
+            --help|-h) usage; exit 0 ;;
+            *) die "unknown argument: $1 (try --help)" ;;
+        esac
+    done
+    [ "$(id -u)" -eq 0 ] || die "run this as root"
+
+    check_uefi
+    check_cpu
+    check_gpu
+    check_network || warn "continuing without a network: supply an installer image yourself"
+
+    [ -n "$disk" ] || disk=$(DISK=$disk choose_disk)
+    [ -n "$disk" ] || die "no disk chosen"
+    confirm_disk "$disk" >/dev/null
+    [ -n "$macos" ] || read -rp "Which macOS (tahoe, 26, latest)? " macos
+
+    log "installing to $disk, macOS $macos"
+    if [ "${ASSUME_YES:-0}" != 1 ]; then
+        read -rp "Proceed? [y/N] " ok
+        [ "$ok" = y ] || die "cancelled"
+    fi
+
+    partition_disk "$disk"
+    mount_target
+    install_base
+    write_fstab
+    install_engine
+    install_ctl
+    write_guest_config "$macos"
+    write_oem_config
+    record_provenance
+    install_bootloader
+    finish
+}
+
+main "$@"

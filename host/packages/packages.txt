@@ -1,0 +1,90 @@
+# OEM-macOS host package manifest.
+#
+# Every name here was checked against the live Arch repositories by
+# `tools/check-manifest.py`, which is run in CI. A name that does not exist is a build failure,
+# not a comment: a manifest that only looks right is worse than none.
+#
+# Format: one package per line, `#` starts a comment. Group headers are comments, not syntax,
+# so the file stays a plain list that `pacman -S --needed` can read directly.
+
+# --- base system ---------------------------------------------------------------
+# `base` pulls the toolchain a bootable system needs; the rest is what `base` omits on a
+# systemd-boot host.
+base
+linux
+linux-firmware
+mkinitcpio
+systemd
+systemd-sysvcompat
+pacman
+archlinux-keyring
+
+# --- the VM engine -------------------------------------------------------------
+# QEMU's own build cannot host the guest: reims-vgpu's QEMU carries the reims-graphics-pci
+# device. The stock packages are still installed for qemu-img and the firmware, which the
+# upstream QEMU build also uses, and they are what the installer runs before the custom build
+# is ready.
+qemu-base
+qemu-img
+qemu-audio-pa
+qemu-audio-alsa
+qemu-ui-sdl
+qemu-hw-usb-host
+edk2-ovmf
+dnsmasq
+
+# --- graphics ------------------------------------------------------------------
+# mesa provides libva-mesa-driver, so that name is not listed: listing a provided name makes
+# `pacman -S` fail with "target not found".
+mesa
+vulkan-icd-loader
+libdrm
+# One of these is present depending on the GPU; the installer selects, and a missing driver is
+# reported by `oem-core gpu` rather than silently producing no acceleration.
+vulkan-intel
+vulkan-radeon
+vulkan-swrast
+
+# --- audio ---------------------------------------------------------------------
+pipewire
+pipewire-pulse
+wireplumber
+alsa-utils
+
+# --- display seat --------------------------------------------------------------
+# No desktop, no display manager, no compositor. The library draws its own window onto a
+# KMS/DRM seat, and seatd hands the session the device nodes it needs.
+seatd
+
+# --- filesystem, storage -------------------------------------------------------
+util-linux
+kmod
+e2fsprogs
+dosfstools
+squashfs-tools
+libarchive
+
+# --- network -------------------------------------------------------------------
+# iptables is the package; `iptables-nft` is a virtual name it provides and cannot be installed
+# directly.
+iptables
+iproute2
+curl
+ca-certificates
+
+# --- diagnostics ---------------------------------------------------------------
+# What the recovery console needs to be usable without a second machine.
+pciutils
+usbutils
+hwdata
+jq
+logrotate
+less
+nano
+bash
+coreutils
+grep
+sed
+gawk
+findutils
+which

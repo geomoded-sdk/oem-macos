@@ -1,0 +1,43 @@
+name: check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the Vulkan loader and a CPU Vulkan driver
+        # The probe links against the loader at runtime, so the tests exercise it for real.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libvulkan1 mesa-vulkan-drivers
+      - uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt, clippy
+      - name: Format
+        run: cargo fmt --check
+        working-directory: oem
+      - name: Lint
+        run: cargo clippy --all-targets -- -D warnings
+        working-directory: oem
+      - name: Test
+        run: cargo test --all-targets
+        working-directory: oem
+
+  manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate the package manifest against the Arch repositories
+        run: ./tools/check-manifest.py host/packages/packages.txt
+
+  shell:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint the installer
+        run: shellcheck -S warning host/installer/oem-install tools/measure-footprint.sh

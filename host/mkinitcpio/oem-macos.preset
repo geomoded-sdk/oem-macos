@@ -1,0 +1,11 @@
+# mkinitcpio preset for OEM-macOS.
+#
+# The initramfs carries only what the root filesystem needs to mount. The guest's disk,
+# OpenCore image and firmware are ordinary files on that root, so nothing about them belongs
+# here: putting them in the initramfs would add hundreds of megabytes to every boot.
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-linux"
+
+PRESETS=('default')
+
+default_image="/boot/initramfs-linux.img"

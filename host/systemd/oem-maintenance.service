@@ -1,0 +1,21 @@
+[Unit]
+Description=OEM-macOS maintenance console
+Documentation=file:/usr/share/doc/oem-macos/recovery.md
+# The path taken when the guest has failed to start too many times: a text console with a
+# shell, so the machine can be repaired without a second computer.
+After=oem-core.service
+# Only runs where oem-core asked for it, which is exit status 3.
+ConditionPathExists=/var/lib/oem/attempts
+
+[Service]
+Type=idle
+# A console on the physical display, not a virtual terminal the user cannot reach.
+ExecStart=/usr/bin/agetty --autologin root --noclear tty1 linux
+Restart=always
+RestartSec=2
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+
+[Install]
+WantedBy=multi-user.target

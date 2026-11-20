@@ -1,0 +1,5 @@
+# Rust build output
+/oem/target/
+# Editor and OS noise
+*.swp
+.DS_Store

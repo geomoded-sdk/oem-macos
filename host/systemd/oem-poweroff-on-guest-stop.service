@@ -1,0 +1,12 @@
+[Unit]
+Description=OEM-macOS: the guest has ended
+# Started by the path unit when the guest's pid file disappears. The distinction between a
+# clean shutdown and a crash is made by OEM Core, which owns the journal and the policy.
+After=oem-core.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/oem-core guest-exited
+TimeoutStartSec=2min
+StandardOutput=journal
+StandardError=journal

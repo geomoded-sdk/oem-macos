@@ -1,0 +1,25 @@
+[Unit]
+Description=OEM Core: start the macOS guest
+Documentation=file:/usr/share/doc/oem-macos/architecture.md
+# After the kernel's device management and the display seat, before a getty would appear.
+# The guest needs /dev/kvm, /dev/udmabuf and the GPU's nodes to exist before it starts.
+After=systemd-modules-load.service systemd-udev-settle.service seatd.service
+Wants=seatd.service
+# Nothing here is wanted by the user: the whole point is that the guest starts by itself.
+Before=getty@tty1.service
+Conflicts=getty@tty1.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# The unit's own exit status decides the boot's: 0 the guest is up, 3 maintenance, other failed.
+ExecStart=/usr/bin/oem-core boot
+# A guest that fails to start is counted by oem-core; the unit does not restart it in a tight
+# loop. `RestartSec` would hide the failure from the recovery counter.
+TimeoutStartSec=10min
+# The journal is the only diagnostic channel on a machine with no desktop.
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

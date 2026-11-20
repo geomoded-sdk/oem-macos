@@ -1,0 +1,14 @@
+[Unit]
+Description=OEM-macOS: power the host off when the guest exits
+# macOS's own shutdown ends QEMU. On a dedicated appliance that means the computer shuts down,
+# so the user is not left at a black screen with a running host.
+After=oem-core.service
+
+[Path]
+# `reims-ctl` writes the VM's pid file while QEMU runs; its removal is the guest having ended.
+# A host whose guest has never started has no file, so this unit is inert until then.
+PathExistsGlob=/var/lib/oem/vm/qemu.pid
+Unit=oem-poweroff-on-guest-stop.service
+
+[Install]
+WantedBy=multi-user.target

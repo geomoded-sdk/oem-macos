@@ -1,0 +1,22 @@
+[package]
+name = "oem-core"
+description = "OEM Core: the host coordinator for OEM-macOS"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "oem-core"
+path = "src/main.rs"
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+
+ash = { version = "0.38", optional = true }
+
+[features]
+default = ["vulkan"]
+vulkan = ["dep:ash"]
