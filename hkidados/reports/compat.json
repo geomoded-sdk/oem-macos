@@ -1,0 +1,1201 @@
+{
+  "project": "HkiPadOS",
+  "source": "cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw",
+  "size": 11655546609,
+  "zip": {
+    "members": 185,
+    "zip64": true,
+    "central_directory_bytes": 17513
+  },
+  "manifest": {
+    "product_version": "27.2.1",
+    "product_build": "24B156",
+    "supported_products": [
+      "iPad13,10",
+      "iPad13,11",
+      "iPad13,4",
+      "iPad13,5",
+      "iPad13,6",
+      "iPad13,7",
+      "iPad13,8",
+      "iPad13,9"
+    ],
+    "identities": 24
+  },
+  "target": {
+    "device": "iPad13,4",
+    "version": "27.2.1",
+    "build": "24B156",
+    "size": 11655546609,
+    "sha256": null,
+    "board": "j517ap",
+    "variant": "Customer Erase Install (IPSW)",
+    "restore_behavior": "Erase",
+    "platform": "t8103 (Apple M1)"
+  },
+  "upstream": {
+    "repo": "oosexgang/hakios-xnu-kernel",
+    "pin": "63fc2b4633bac3af8e57dadab9f5a8d4cb940438",
+    "kernel": "xnu-8796.121.2",
+    "arch": "arm64",
+    "boot": "loader EFI + fastboot/UEFI (Qualcomm/MediaTek)",
+    "identity": "iPhone10,3/10,6 (d22ap)",
+    "userland": "iOS 16.5 20F66"
+  },
+  "components": [
+    {
+      "name": "ANE",
+      "path": "Firmware/ane/h13_ane_fw_styx_j5x.im4p",
+      "in_ipsw": true,
+      "size": 5079065,
+      "compressed": 356840,
+      "digest": "944e0bf003fdc18005e98f95b1d9ea876ef8f35d439bdfaa2ada8a3e25b8c7f77a2d86ef4bbca99e884d8f7f9d2b671d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "ANS",
+      "path": "Firmware/ansf.t8103.release.im4p",
+      "in_ipsw": true,
+      "size": 971679,
+      "compressed": 969082,
+      "digest": "5c944f67671ffa6741b07e064c8adf1d552c7d9f5e887d4c6c1bf245828a924d7f226e1ae11c166c22321ca512f22de2",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "AOP",
+      "path": "Firmware/AOP/aopfw-ipad13aop.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 2252825,
+      "compressed": 585522,
+      "digest": "4bbbcfb80b92a320ca7c713f78137f6c54aa3e94e66e1d586bfe1275be42dab65bc09ee5e4cf58597597e7324565d296",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "AVE",
+      "path": "Firmware/ave/AppleAVE2FW_H13G.im4p",
+      "in_ipsw": true,
+      "size": 2438337,
+      "compressed": 548483,
+      "digest": "d10cca4f05f4588a2936f7bbc44de66581eac935b142343bc2547eb82ce2aca60237a40eedbffbe6368fb801b6f5b0b6",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,CIO",
+      "path": "Firmware/t8103ciofw.im4p",
+      "in_ipsw": true,
+      "size": 169505,
+      "compressed": 120464,
+      "digest": "b289d9d8654a216e71953c2e321f8a40068d7f94f22a4b7ed8aeea71796c241b0c5705f6ece701ee11b126940b623581",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,RestoreCIO",
+      "path": "Firmware/t8103ciofw.im4p",
+      "in_ipsw": true,
+      "size": 169505,
+      "compressed": 120464,
+      "digest": "2c074640102d60d15d21da873ddf5520aed0771f3bd7e55a54a57084eb49e3edcd8d8432152f41e0ae6cc098f733822d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,RestoreSecurePageTableMonitor",
+      "path": "Firmware/sptm.t8103.release.im4p",
+      "in_ipsw": true,
+      "size": 190166,
+      "compressed": 189385,
+      "digest": "7edab6bce786fd3c71bcd51b7a1972dee8661df2585970e162af3f2debcdec5368682f28539e5fabc84d9c58df382579",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,RestoreTMU",
+      "path": "Firmware/t8103tmufw.im4p",
+      "in_ipsw": true,
+      "size": 11031,
+      "compressed": 7430,
+      "digest": "e33efea12c00af8cfb3f2da13f0e867b341f8137070d14c670a83e0f230693ae6ffeb0c8882a56da1be7f1228544a89d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,RestoreTrustedExecutionMonitor",
+      "path": "Firmware/txm.iphoneos.release.im4p",
+      "in_ipsw": true,
+      "size": 224174,
+      "compressed": 224130,
+      "digest": "67646890f1d2f372250d43cfd5b0508e063056b6edf13e8b1ebf5b47aa2ff3cc8ae570520798141750f77c22a853bf52",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,Scorpius",
+      "path": "Firmware/mconnector/mconnector_rev13.im4p",
+      "in_ipsw": true,
+      "size": 100733,
+      "compressed": 63107,
+      "digest": "b6950d5bb368c8c3d327ec8d5779314759a5c68c27a7954a9ed877366d0c8fb5e2e64d3f5be9af20754cf970879f4446",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,SecurePageTableMonitor",
+      "path": "Firmware/sptm.t8103.release.im4p",
+      "in_ipsw": true,
+      "size": 190166,
+      "compressed": 189385,
+      "digest": "cea5994313392af3264e8771b80dc971cbde094eca2636447221c1285da720160e5ec42857a743f588e442cb3fc90aaa",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,SystemVolumeCanonicalMetadata",
+      "path": "Firmware/141-10293-225.dmg.aea.mtree",
+      "in_ipsw": true,
+      "size": 37525144,
+      "compressed": 36997617,
+      "digest": "00983afdc49e259ab5bed9c5faf84e033ee88c1c8c57d3b62de979893dc2f88653e1d393bba3ad21602468fe7a85aa17",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,TMU",
+      "path": "Firmware/t8103tmufw.im4p",
+      "in_ipsw": true,
+      "size": 11031,
+      "compressed": 7430,
+      "digest": "91f3729ca6428914307cc11911b74bf49b5711a208bbd5f1c69b448ddd9ccabb9fe0a61b72587ca68a5f6cac944ad737",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Ap,TrustedExecutionMonitor",
+      "path": "Firmware/txm.iphoneos.release.im4p",
+      "in_ipsw": true,
+      "size": 224174,
+      "compressed": 224130,
+      "digest": "d1f47d55fd17c64cc83b06458acc1d06b1a1897174332c61e63b92fee0083a119b59d366676ab973a73b610168360f3b",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "AppleLogo",
+      "path": "Firmware/all_flash/applelogo@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 26839,
+      "compressed": 20104,
+      "digest": "b0cd8186c975cffccc2885d438658932f600408faa1c7de4632581cd3f68da830fc1d4cc02aa73d2e827d6ccec6965fd",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryCharging0",
+      "path": "Firmware/all_flash/batterycharging0@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 9449,
+      "compressed": 7607,
+      "digest": "ce485641301d9205ef89717de98bf1995e2ab67b977951fcfbd81b5a2e70657ae3ba4d771b235a387839b0ebcbda44d3",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryCharging1",
+      "path": "Firmware/all_flash/batterycharging1@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 34593,
+      "compressed": 30331,
+      "digest": "4d64f2cae2b1ba6565b2df537c26b3870115df4b044dd52cc7423672d70a6379a21a45aa1d29b7fb6750bfae7083a757",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryFull",
+      "path": "Firmware/all_flash/batteryfull@2388~ipad.im4p",
+      "in_ipsw": true,
+      "size": 98965,
+      "compressed": 19406,
+      "digest": "e3520c46f1e74dce5745389bd7e99cac4bf3131d4ad842039f85fee86269de223fdd7346ac4e71d38cdb1bee55ff0587",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryLow0",
+      "path": "Firmware/all_flash/batterylow0@2388~ipad.im4p",
+      "in_ipsw": true,
+      "size": 119707,
+      "compressed": 21034,
+      "digest": "0bac52f13408c877ac1959049161ec7e5b087ee0665e66e8db97ec236e0d8b8f992281a8ea8f0e757856434f1938c65d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryLow1",
+      "path": "Firmware/all_flash/batterylow1@2388~ipad.im4p",
+      "in_ipsw": true,
+      "size": 3826,
+      "compressed": 2918,
+      "digest": "46d95bce5a0a68ea140406ee5c571bb7cd0dc0df5c285df07ebe8cce6f6c185ea6f4f1028a101a79f8535301ba82cb49",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "BatteryPlugin",
+      "path": "Firmware/all_flash/glyphplugin@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 34323,
+      "compressed": 21937,
+      "digest": "cb5cae9e29bad506b1930100abeb1e0210dea11d4f8cdc74de1ed8648e7edf02352cb0946ce7a881791f91927e97c751",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Cryptex1,AppOS",
+      "path": "141-08824-252.dmg",
+      "in_ipsw": true,
+      "size": 16777216,
+      "compressed": 8965061,
+      "digest": "416da47d3bb031f63c72702a038fb66eaf32aaad825687662709b77306f9e1ebe3c4523de70b271c2a8b659b02842599",
+      "digest_algorithm": "sha384",
+      "personalized": false
+    },
+    {
+      "name": "Cryptex1,AppTrustCache",
+      "path": "Firmware/141-08824-252.dmg.trustcache",
+      "in_ipsw": true,
+      "size": 863,
+      "compressed": 833,
+      "digest": "bc4cf4f8657bbabf8f368a71e9198b5cf2ae14cd77eb04a9dfc562041c4bc1bad553d6264609305758db14f0b241f9a8",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Cryptex1,AppVolume",
+      "path": "Firmware/141-08824-252.dmg.root_hash",
+      "in_ipsw": true,
+      "size": 229,
+      "compressed": 68,
+      "digest": "f4569b60c98bbf344847d81aa7f2d38a7e46e09196889f18d0abaa1e4b3d2bb9a9a6d0229e1341a27d528e37029272a4",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Cryptex1,SystemOS",
+      "path": "141-09054-235.dmg.aea",
+      "in_ipsw": true,
+      "size": 2415919104,
+      "compressed": 2415919104,
+      "digest": "4eb68c77c91c7097492a0976aeab3fcfacba8a19409665ceb195af3909592dc2d992307148ab499dee69f004786a254f",
+      "digest_algorithm": "sha384",
+      "personalized": false
+    },
+    {
+      "name": "Cryptex1,SystemTrustCache",
+      "path": "Firmware/141-09054-235.dmg.aea.trustcache",
+      "in_ipsw": true,
+      "size": 3191,
+      "compressed": 2917,
+      "digest": "23408bc5466f4118abd8a0283690cda1710b4e81c4816d4e1b3c5cb86eb1a2db04dee96c9c925dab93143b17408440f8",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Cryptex1,SystemVolume",
+      "path": "Firmware/141-09054-235.dmg.aea.root_hash",
+      "in_ipsw": true,
+      "size": 229,
+      "compressed": 68,
+      "digest": "a3e492de0d81c50063b4e6705244567f5e89eaedf9dcb7b9dee5c23a729f6ed51a2d0934875cc8ada984999e4cf648dc",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "DCP",
+      "path": "Firmware/dcp/ipad13dcp.im4p",
+      "in_ipsw": true,
+      "size": 3973184,
+      "compressed": 3972862,
+      "digest": "3220c0cfc1035a8834b56d8ef0b415895e71c0537fd4cbb14e2920ba5609c0bdd5f87313bda3acad7fbe2c94a3716b67",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "DeviceTree",
+      "path": "Firmware/all_flash/DeviceTree.j517ap.im4p",
+      "in_ipsw": true,
+      "size": 47255,
+      "compressed": 47181,
+      "digest": "f1219312a754391094edc119fae4357d76379a0aaf0df0a67d3962b0e3993bd204e962c867c363df3c30664d06594679",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "GFX",
+      "path": "Firmware/agx/armfw_g13g.im4p",
+      "in_ipsw": true,
+      "size": 3069841,
+      "compressed": 495689,
+      "digest": "7329420fc9c6ccb63faba65b663ba5b9a171bc48c86e0a0890a8c46a3a716256c6963a1dfc303cfee613bf484bc8474c",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "ISP",
+      "path": "Firmware/isp_bni/adc-pallas-j5x.im4p",
+      "in_ipsw": true,
+      "size": 20119579,
+      "compressed": 5465969,
+      "digest": "44f6009aa72a4227b562618f348268143ce614980899b6fcab8ab1e4d3f2df1660bf79850304f6264ee9fe810793fcc4",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "KernelCache",
+      "path": "kernelcache.release.ipad13",
+      "in_ipsw": true,
+      "size": 23257193,
+      "compressed": 23234313,
+      "digest": "c5b83708a5d115d9066a709ea322b305b9552ad7016e636607944f0e80480da35e97eee63ee04928074011d388341ade",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "LLB",
+      "path": "Firmware/all_flash/LLB.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 1126220,
+      "compressed": 1123490,
+      "digest": "87ac64e0444b5c7f59484f90af8920ebf4f23d0116026ee95b51f37f3d261489fdabd650d24aa24b52f0d4a99f760f32",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Multitouch",
+      "path": "Firmware/J517_Multitouch.im4p",
+      "in_ipsw": true,
+      "size": 2098265,
+      "compressed": 763119,
+      "digest": "4525c6c81622ba663994d955d601ccc9a3b2ee0387c6703f012a408ad3412f588df586cf60f45f36b3f63f347d8d289e",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "OS",
+      "path": "141-10293-225.dmg.aea",
+      "in_ipsw": true,
+      "size": 8321499136,
+      "compressed": 8321499136,
+      "digest": "fdfcacb1d191d52c4f7dbb6e067948427ae2f65d0099fd09fdc24fce83aa33b61de43eeaea871dcb58efff4814c732c3",
+      "digest_algorithm": "sha384",
+      "personalized": false
+    },
+    {
+      "name": "PMP",
+      "path": "Firmware/pmp/t8103pmp.im4p",
+      "in_ipsw": true,
+      "size": 409625,
+      "compressed": 113620,
+      "digest": "700c5ffd03e63fdcbae6127015cc1f0e9c62dbd38ea6ed107efeaea3863cacca90d69a88518ab20fa04ec195eac2592f",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RecoveryMode",
+      "path": "Firmware/all_flash/recoverymode@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 3187269,
+      "compressed": 919819,
+      "digest": "66e4f2f0a351bd3fbc0cde8ff331d628ce0ee6f756b4de332cf264dc8832df147bef3eaf25a588604f67896c36e23f47",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreANS",
+      "path": "Firmware/rans.t8103.release.im4p",
+      "in_ipsw": true,
+      "size": 971694,
+      "compressed": 969096,
+      "digest": "15070ee848741b1c329cad96255d6e7f98bbd2c500c11913b2e7d54dd266827f7b86b7105081bb469207099846c40066",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreDCP",
+      "path": "Firmware/dcp/ipad13dcp_restore.im4p",
+      "in_ipsw": true,
+      "size": 3974733,
+      "compressed": 3974497,
+      "digest": "c42a377199ddb17435ae7b4eb4c2a5417702d561c50526c0fef85bc00d3fcf65d6258ba8a678f5565c4fd0f61290f71c",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreDeviceTree",
+      "path": "Firmware/all_flash/DeviceTree.j517ap.im4p",
+      "in_ipsw": true,
+      "size": 47255,
+      "compressed": 47181,
+      "digest": "c68fa3897eb9540fcdfecb02eabf6cf11140172aaaa41f4ddc4605d4402710df9e8d423cc9204e210ed31115ea04284d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreKernelCache",
+      "path": "kernelcache.release.ipad13",
+      "in_ipsw": true,
+      "size": 23257193,
+      "compressed": 23234313,
+      "digest": "c5bed4c9c377b20a0ee84fe156575c09c7bca3e34d0a8815343ff5ecc40b3d3adbeee424b98f77b70e9d57199403d938",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreLogo",
+      "path": "Firmware/all_flash/applelogo@2388~ipad-USBc.im4p",
+      "in_ipsw": true,
+      "size": 26839,
+      "compressed": 20104,
+      "digest": "5b0e27154b753aa913b20937e90e3f4d22c190127ab8cc26e29db6d86eb3a1c4cd33113fcdb207dd0f0337487aacd787",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreRamDisk",
+      "path": "141-10399-248.dmg",
+      "in_ipsw": true,
+      "size": 245366811,
+      "compressed": 187654923,
+      "digest": "15eadfe16aa19cb1a032cffeab8c2b498af664b293cc16d5173b745117af96f9856427f599161ccde1fa94f37b28597e",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreSEP",
+      "path": "Firmware/all_flash/sep-firmware.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 5949720,
+      "compressed": 5950639,
+      "digest": "6f5cfc887c52458719b0fc3f872657a5c3c2eed32bb67abf7ac5ac2b96d6af4f91dd201bcc0510ca62f914ac7b655f70",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "RestoreTrustCache",
+      "path": "Firmware/141-10399-248.dmg.trustcache",
+      "in_ipsw": true,
+      "size": 8209,
+      "compressed": 7940,
+      "digest": "1d4292f715488d08e36d23f0e8889484f72626af26496145555757808fc583ce7df22619de380c4c55d7c0a7897bb71d",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "SE,UpdatePayload",
+      "path": "Firmware/SE/Stockholm7.RELEASE.sefw",
+      "in_ipsw": true,
+      "size": 21641968,
+      "compressed": 21627055,
+      "digest": "",
+      "digest_algorithm": null,
+      "personalized": true
+    },
+    {
+      "name": "SEP",
+      "path": "Firmware/all_flash/sep-firmware.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 5949720,
+      "compressed": 5950639,
+      "digest": "1d8b68e1935e52e86a22deada0283fa5ca75044817b78dc13cc2bcd4b941ef12da7a47c90ca1651dec054c27084ac18f",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "SIO",
+      "path": "Firmware/SmartIOFirmware_ASCv4.im4p",
+      "in_ipsw": true,
+      "size": 1136421,
+      "compressed": 70178,
+      "digest": "d9d705e44d02589dd1b3a8a3d6b9d6282b91e7e3c140eda8685ba3ee26eb5c297e8f93560c15fa751406b3adf2695682",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B0-Dev-Patch",
+      "path": "Firmware/Savage/Savage.B0-Dev.fw",
+      "in_ipsw": true,
+      "size": 1666,
+      "compressed": 1671,
+      "digest": "713b43614d590e60c1ba27947c935d289969019f2b39b812a1078819c5918949",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B0-Dev-PatchVT",
+      "path": "Firmware/Savage/Savage.B0-Dev.vt.fw",
+      "in_ipsw": true,
+      "size": 0,
+      "compressed": 2,
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B0-Prod-Patch",
+      "path": "Firmware/Savage/Savage.B0-Prod.fw",
+      "in_ipsw": true,
+      "size": 1666,
+      "compressed": 1671,
+      "digest": "2e2ad96d2a66a1adf3b458be41a1d364f11c8643adb4543b59a3a1ea5d7992c1",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B0-Prod-PatchVT",
+      "path": "Firmware/Savage/Savage.B0-Prod.vt.fw",
+      "in_ipsw": true,
+      "size": 0,
+      "compressed": 2,
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B2-Dev-Patch",
+      "path": "Firmware/Savage/Savage.B2-Dev.fw",
+      "in_ipsw": true,
+      "size": 1330,
+      "compressed": 1335,
+      "digest": "458d2c1a2bc1f92e7a674d4fdd12af2d2aac61b6573f459a8d81c8e5654b930e",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B2-Dev-PatchVT",
+      "path": "Firmware/Savage/Savage.B2-Dev.vt.fw",
+      "in_ipsw": true,
+      "size": 0,
+      "compressed": 2,
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B2-Prod-Patch",
+      "path": "Firmware/Savage/Savage.B2-Prod.fw",
+      "in_ipsw": true,
+      "size": 1330,
+      "compressed": 1335,
+      "digest": "9f9391c4bd89452514cca9945778a259179323de89435b71d53f9dbe58b19895",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,B2-Prod-PatchVT",
+      "path": "Firmware/Savage/Savage.B2-Prod.vt.fw",
+      "in_ipsw": true,
+      "size": 0,
+      "compressed": 2,
+      "digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BA-Dev-Patch",
+      "path": "Firmware/Savage/Savage.BA-Dev.fw",
+      "in_ipsw": true,
+      "size": 114,
+      "compressed": 119,
+      "digest": "f167e1fbe0c5815817728b756d66db1ab5ab1d5bdfaaa13c5217f15ddc8b25ce",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BA-Prod-Patch",
+      "path": "Firmware/Savage/Savage.BA-Prod.fw",
+      "in_ipsw": true,
+      "size": 114,
+      "compressed": 119,
+      "digest": "2547618a4b9b15b7a87a36c6b88e8da2a186930cc9b5963a3a19dfaae0ea9edf",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BE-Dev-Patch",
+      "path": "Firmware/Savage/Savage.BE-Dev.fw",
+      "in_ipsw": true,
+      "size": 514,
+      "compressed": 519,
+      "digest": "9793263f8c057dcebd02fc3b0d4388cd7a60cdaf8ace9914595cc11f321d0139",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BE-Prod-Patch",
+      "path": "Firmware/Savage/Savage.BE-Prod.fw",
+      "in_ipsw": true,
+      "size": 514,
+      "compressed": 519,
+      "digest": "253599546a3096371c7158441c9498f04e26e11d1bca81a465e3e4262e238601",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BF-Dev-Patch",
+      "path": "Firmware/Savage/Savage.BF-Dev.fw",
+      "in_ipsw": true,
+      "size": 1730,
+      "compressed": 1735,
+      "digest": "9d45d8b815a95a4998623e7757ecf230b1706c988fc0a04f82d0580375323c7c",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Savage,BF-Prod-Patch",
+      "path": "Firmware/Savage/Savage.BF-Prod.fw",
+      "in_ipsw": true,
+      "size": 1730,
+      "compressed": 1735,
+      "digest": "6b41aa240eada2c31df66ba5aff0ea54b21c01ac108027bbe9483cd0ee12462a",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "StaticTrustCache",
+      "path": "Firmware/141-10293-225.dmg.aea.trustcache",
+      "in_ipsw": true,
+      "size": 86209,
+      "compressed": 78107,
+      "digest": "aa607166dc85aadf45a5d6cfeaabced840be0263636849bce144eb46c97203834c962ce923fb30531154a6ead1a9b94e",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "SystemVolume",
+      "path": "Firmware/141-10293-225.dmg.aea.root_hash",
+      "in_ipsw": true,
+      "size": 229,
+      "compressed": 139,
+      "digest": "e94432fa4788e74129739d11ee733a9a4ad2bf53848ac15c3d2367217c0321a1801df9c86aa5e62a9302e0a584fc6fff",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch0",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch0",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "6bc07cf6ba56b90215ec97cef53c7ae159301e6f19d77bb74cda5ef25d7f3719",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch1",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch1",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "5823b1be31f5059dae572d72942fb4d8a7aecfd45cecce8727d0cfeb3177534c",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch2",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch0",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "6bc07cf6ba56b90215ec97cef53c7ae159301e6f19d77bb74cda5ef25d7f3719",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch3",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch1",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "5823b1be31f5059dae572d72942fb4d8a7aecfd45cecce8727d0cfeb3177534c",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch4",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch0",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "6bc07cf6ba56b90215ec97cef53c7ae159301e6f19d77bb74cda5ef25d7f3719",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch5",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch1",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "5823b1be31f5059dae572d72942fb4d8a7aecfd45cecce8727d0cfeb3177534c",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch6",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch0",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "6bc07cf6ba56b90215ec97cef53c7ae159301e6f19d77bb74cda5ef25d7f3719",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch7",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch1",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "5823b1be31f5059dae572d72942fb4d8a7aecfd45cecce8727d0cfeb3177534c",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch8",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch8",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "10b0bd99e2df51beeafba9663e4cafb3a3a5773bd7c09390cb8fdb757e171625",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatch9",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch9",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "1faf75487445de338595336da43e134ba4e077b9698b300a00cb6be96506360e",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatchA",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch8",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "10b0bd99e2df51beeafba9663e4cafb3a3a5773bd7c09390cb8fdb757e171625",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "Yonkers,SysTopPatchB",
+      "path": "Firmware/Yonkers/Yonkers,SysTopPatch9",
+      "in_ipsw": true,
+      "size": 712,
+      "compressed": 717,
+      "digest": "1faf75487445de338595336da43e134ba4e077b9698b300a00cb6be96506360e",
+      "digest_algorithm": "sha256",
+      "personalized": true
+    },
+    {
+      "name": "ftap",
+      "path": null,
+      "in_ipsw": false,
+      "size": null,
+      "compressed": null,
+      "digest": "",
+      "digest_algorithm": null,
+      "personalized": false
+    },
+    {
+      "name": "ftsp",
+      "path": null,
+      "in_ipsw": false,
+      "size": null,
+      "compressed": null,
+      "digest": "",
+      "digest_algorithm": null,
+      "personalized": false
+    },
+    {
+      "name": "iBEC",
+      "path": "Firmware/dfu/iBEC.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 1126229,
+      "compressed": 1123500,
+      "digest": "2a1880511a752bb1bf38e240c81700992239bc7ac63fe1effbee0696dba74b8fa262e5add612c51c5738f77ea7481fde",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "iBSS",
+      "path": "Firmware/dfu/iBSS.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 1126220,
+      "compressed": 1123490,
+      "digest": "7b88a1ec28c2f15fa88668bd9a8d09986178b6b4e0303124da1bfef84316bb9a4350ad7be210912a1c20fba0d44493ee",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "iBoot",
+      "path": "Firmware/all_flash/iBoot.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 1126220,
+      "compressed": 1123490,
+      "digest": "428b44039174171b33bab3da45f868510eb025cbbf96bc09a584f4155c51d565853293677244fc8dddfa4c85f414e9ea",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "iBootData",
+      "path": "Firmware/all_flash/iBootData.j517.RELEASE.im4p",
+      "in_ipsw": true,
+      "size": 9760,
+      "compressed": 9564,
+      "digest": "0bf69cec1fabb27273d0dfe6ab27395eadf10dc3f1d1ae06ab50ddb485db235634d7ab93edd685330df1e98db55a597f",
+      "digest_algorithm": "sha384",
+      "personalized": true
+    },
+    {
+      "name": "rfta",
+      "path": null,
+      "in_ipsw": false,
+      "size": null,
+      "compressed": null,
+      "digest": "",
+      "digest_algorithm": null,
+      "personalized": false
+    },
+    {
+      "name": "rfts",
+      "path": null,
+      "in_ipsw": false,
+      "size": null,
+      "compressed": null,
+      "digest": "",
+      "digest_algorithm": null,
+      "personalized": false
+    }
+  ],
+  "component_count": 84,
+  "kernel": {
+    "path": "kernelcache.release.ipad13",
+    "type": "krnl",
+    "description": "KernelManagement_host-514.40.8",
+    "payload_bytes": 23256790,
+    "compression": "lzfse",
+    "decompressed_bytes": 76775424,
+    "darwin_version": "Darwin Kernel Version 27.2.0: Tue Oct 13 21:25:46 PDT 2026; root:xnu-13432.42.3~28/RELEASE_ARM64_T8103",
+    "darwin_major": 27,
+    "xnu": "13432.42.3",
+    "xnu_build": "28",
+    "release": "ARM64_T8103",
+    "release_tag": "RELEASE_ARM64_T8103",
+    "arch": "arm64e",
+    "cpusubtype": "0xc0000002",
+    "platform": null,
+    "minos": null,
+    "chained_fixups": true
+  },
+  "kernel_raw": {
+    "path": "kernelcache.release.ipad13",
+    "bytes": 23257193,
+    "manifest_digest": "c5b83708a5d115d9066a709ea322b305b9552ad7016e636607944f0e80480da35e97eee63ee04928074011d388341ade",
+    "manifest_digest_algorithm": "sha384",
+    "manifest_digest_ok": true,
+    "prefix": 8,
+    "type": "krnl",
+    "description": "KernelManagement_host-514.40.8",
+    "payload_bytes": 23256790,
+    "payload_magic": "bvx2",
+    "compression": "lzfse",
+    "trailer_bytes": 347,
+    "decompressed_bytes": 76775424,
+    "sha256_decompressed": "5b4570a8cafda7435af688c0ff958327b252a3708428d00cebc5fec60762d65e",
+    "macho": {
+      "arch": "arm64e",
+      "cputype": "0x0100000c",
+      "cpusubtype": "0xc0000002",
+      "ptrauth_abi": true,
+      "filetype": "fileset",
+      "platform": null,
+      "minos": null,
+      "sdk": null,
+      "chained_fixups": true,
+      "encrypted": false,
+      "entitlements": []
+    },
+    "darwin_version": "Darwin Kernel Version 27.2.0: Tue Oct 13 21:25:46 PDT 2026; root:xnu-13432.42.3~28/RELEASE_ARM64_T8103",
+    "xnu": "13432.42.3",
+    "xnu_build": "28",
+    "release": "ARM64_T8103",
+    "darwin_major": 27,
+    "release_tag": "RELEASE_ARM64_T8103"
+  },
+  "devicetree": {
+    "path": "Firmware/all_flash/DeviceTree.j517ap.im4p",
+    "bytes": 47255,
+    "manifest_digest": "f1219312a754391094edc119fae4357d76379a0aaf0df0a67d3962b0e3993bd204e962c867c363df3c30664d06594679",
+    "manifest_digest_algorithm": "sha384",
+    "manifest_digest_ok": true,
+    "prefix": 6,
+    "type": "dtre",
+    "description": "EmbeddedDeviceTrees-12661.42.3",
+    "payload_bytes": 47193,
+    "payload_magic": "bvx2",
+    "compression": "lzfse",
+    "trailer_bytes": 10
+  },
+  "images": [
+    {
+      "component": "OS",
+      "path": "141-10293-225.dmg.aea",
+      "size": 8321499136,
+      "compressed": 8321499136,
+      "kind": "aea",
+      "format": "AEA",
+      "version": 1,
+      "header_size": 2240,
+      "fields": {
+        "com.apple.wkms.url": "https://wkms.sd.apple.com",
+        "com.apple.wkms.auth-data": "CqkDVCD8JrVpJV+hxzrXFch4YoNXyKDmjlhy04K0ZnsJTG602/+GXD2oPWwjTm3b…",
+        "com.apple.wkms.fcs-response": "{\"enc-request\": \"BEF06XCloOR5DmamWoMg9buw1qTGZcLEO4vx42LVYWvUWmD…",
+        "com.apple.wkms.fcs-key-url": "https://wkms-public.apple.com/fcs-keys/11tfUMoAYkPM6-FAiRbw2npBz…"
+      },
+      "key_service": "https://wkms.sd.apple.com",
+      "has_auth_data": true,
+      "decryptable_here": false,
+      "reason": "chave entregue pelo wkms da Apple, autenticada pelo dispositivo"
+    },
+    {
+      "component": "Cryptex1,SystemOS",
+      "path": "141-09054-235.dmg.aea",
+      "size": 2415919104,
+      "compressed": 2415919104,
+      "kind": "aea",
+      "format": "AEA",
+      "version": 1,
+      "header_size": 2248,
+      "fields": {
+        "com.apple.wkms.url": "https://wkms.sd.apple.com",
+        "com.apple.wkms.auth-data": "Cq0DB2y3dz02birqqAtE0++m4CJ3sbUAl/+ep/mjIrVMHhG9l8qPnQe5ZKDKsfSv…",
+        "com.apple.wkms.fcs-response": "{\"enc-request\": \"BE9u+RDSKSQ/x7IBw8GGXIY+C5RV8KfnCAqoSXSrN/X62N4…",
+        "com.apple.wkms.fcs-key-url": "https://wkms-public.apple.com/fcs-keys/11tfUMoAYkPM6-FAiRbw2npBz…"
+      },
+      "key_service": "https://wkms.sd.apple.com",
+      "has_auth_data": true,
+      "decryptable_here": false,
+      "reason": "chave entregue pelo wkms da Apple, autenticada pelo dispositivo"
+    },
+    {
+      "component": "Cryptex1,AppOS",
+      "path": "141-08824-252.dmg",
+      "size": 16777216,
+      "compressed": 8965061,
+      "kind": "apfs",
+      "apfs_offset": 0,
+      "block_size": 4096,
+      "block_count": 4096
+    },
+    {
+      "component": "RestoreRamDisk",
+      "path": "141-10399-248.dmg",
+      "size": 245366811,
+      "compressed": 187654923,
+      "kind": "apfs",
+      "apfs_offset": 27,
+      "block_size": 4096,
+      "block_count": 59904
+    }
+  ],
+  "findings": [],
+  "userland": {
+    "root": "build/userland/app-cryptex",
+    "files": 2893,
+    "directories": 153,
+    "bytes": 9553474,
+    "binaries_scanned": 0,
+    "architectures": {},
+    "platforms": {},
+    "minos": {},
+    "chained_fixups": 0,
+    "launchd": [],
+    "decmpfs": {
+      "streams": 869,
+      "types": {
+        "LZBITMAP": 869
+      },
+      "containers": {
+        "ZBM": 867
+      },
+      "fat_headers_in_literal_prefix": 17
+    }
+  },
+  "compat": [
+    {
+      "area": "IPSW",
+      "requirement": "Baixar o firmware indicado",
+      "status": "OK",
+      "evidence": "iPad13,4 27.2.1 (24B156), 11,655,546,609 bytes",
+      "reason": "baixado por HTTP da CDN da Apple e conferido contra o ipsw.me",
+      "next_step": ""
+    },
+    {
+      "area": "IPSW",
+      "requirement": "Verificar a integridade do arquivo",
+      "status": "OK",
+      "evidence": "sha256 None",
+      "reason": "tamanho e SHA-256 conferem com o ipsw.me; o ZIP tem 185 membros",
+      "next_step": ""
+    },
+    {
+      "area": "IPSW",
+      "requirement": "Ler o BuildManifest e identificar os componentes",
+      "status": "OK",
+      "evidence": "BuildManifest.plist (3.092.175 bytes), 24 identidades de build",
+      "reason": "lido por HTTP Range antes de baixar o IPSW inteiro",
+      "next_step": ""
+    },
+    {
+      "area": "Kernel",
+      "requirement": "Reutilizar o XNU do HakiOS sem reescrevê-lo",
+      "status": "OK",
+      "evidence": "oosexgang/hakios-xnu-kernel @ 63fc2b4633bac3af8e57dadab9f5a8d4cb940438, kernel xnu-8796.121.2",
+      "reason": "patch e arquivos preservados; o HkiPadOS só acrescenta ferramentas",
+      "next_step": ""
+    },
+    {
+      "area": "Kernel",
+      "requirement": "O kernel do alvo e o kernel comunitário são a mesma geração",
+      "status": "BLOQUEADO",
+      "evidence": "alvo: xnu-13432.42.3 (Darwin 27), MH_FILESET com chained fixups; HakiOS: xnu-8796.121.2 (Darwin 22.5); último código aberto da Apple: xnu-12377.121.6",
+      "reason": "a userland de 2026 usa traps e syscalls que o XNU de 2022 não tem; nem o código aberto mais recente (12377) alcança o kernel 13432 do 24B156",
+      "next_step": "esperar a Apple publicar o xnu-13432 e então portar; não há atalho"
+    },
+    {
+      "area": "Kernel",
+      "requirement": "A arquitetura do binário bate com a do kernel",
+      "status": "BLOQUEADO",
+      "evidence": "alvo: arm64e (cpusubtype 0xc0000002); HakiOS: arm64",
+      "reason": "a userland do M1 é arm64e (PAC); o port comunitário compila ARM64 sem arm64e",
+      "next_step": "portar o XNU para ARM64E e validar a ABI de ptrauth"
+    },
+    {
+      "area": "Kernel",
+      "requirement": "Os drivers de plataforma existem para o SoC do alvo",
+      "status": "BLOQUEADO",
+      "evidence": "alvo: t8103 (Apple M1) (Apple M1); HakiOS: SM7325 / MT6768",
+      "reason": "GICv3, timer, UART, interrupções e o platform expert do HakiOS são dos SoCs Qualcomm/MediaTek; o M1 não tem Device Tree no formato que o loader lê",
+      "next_step": ""
+    },
+    {
+      "area": "Boot",
+      "requirement": "Existe um caminho de boot utilizável no alvo",
+      "status": "BLOQUEADO",
+      "evidence": "iBoot/LLB + SEP assinados; HakiOS: loader EFI + fastboot/U-Boot",
+      "reason": "o iPad13,4 só executa código assinado pela Apple; instalar outro loader exige quebrar o secure boot, o que este projeto não faz",
+      "next_step": "usar QEMU (caminho aberto do HakiOS) para validar o kernel, não o iPad"
+    },
+    {
+      "area": "Boot",
+      "requirement": "A identidade de placa que o loader apresenta é a do alvo",
+      "status": "BLOQUEADO",
+      "evidence": "HakiOS: iPhone10,3/10,6 (d22ap); alvo: j517ap (iPad13,4)",
+      "reason": "o loader do HakiOS se apresenta como iPhone X para o dyld e o launchd; o DeviceTree do alvo (DeviceTree.j517ap.im4p) é outro",
+      "next_step": ""
+    },
+    {
+      "area": "Sistema de arquivos",
+      "requirement": "Montar o volume do sistema do IPSW",
+      "status": "BLOQUEADO",
+      "evidence": "141-10293-225.dmg.aea — aea, 8,321,499,136 bytes",
+      "reason": "AEA com chave entregue pelo wkms da Apple, autenticada pelo dispositivo; decifrar exigiria contornar a proteção",
+      "next_step": "nenhum; é uma barreira criptográfica, não um bug"
+    },
+    {
+      "area": "Sistema de arquivos",
+      "requirement": "Ler o cryptex de App (não cifrado)",
+      "status": "PARCIAL",
+      "evidence": "141-08824-252.dmg — APFS selado, ? arquivos",
+      "reason": "o 7-Zip lê; o leitor APFS do HakiOS para no nó raiz selado (BTNODE_NOHEADER, cabeçalho zerado, filhos com hash de 32 bytes)",
+      "next_step": "implementar árvore selada no leitor do HakiOS"
+    },
+    {
+      "area": "Userland",
+      "requirement": "Iniciar o launchd original do sistema",
+      "status": "BLOQUEADO",
+      "evidence": "launchd encontrado em nenhum",
+      "reason": "o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. Além disso ele é arm64e e exige AMFI/SEP e um kernel da mesma geração",
+      "next_step": "só depois de resolver kernel, AEA e AMFI"
+    },
+    {
+      "area": "Userland",
+      "requirement": "Iniciar BackBoard/SpringBoard e a interface",
+      "status": "BLOQUEADO",
+      "evidence": "não há binário acessível: BackBoard e SpringBoard estão no volume AEA",
+      "reason": "sem o volume do sistema não há o que iniciar; e sem os drivers de tela/touch do M1 não haveria saída",
+      "next_step": ""
+    },
+    {
+      "area": "Userland",
+      "requirement": "Bibliotecas e frameworks oficiais disponíveis",
+      "status": "PARCIAL",
+      "evidence": "2893 arquivos extraídos do cryptex de App e do ramdisk",
+      "reason": "são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA",
+      "next_step": ""
+    },
+    {
+      "area": "Hardware",
+      "requirement": "GPU: o Metal do HakiOS no hardware do alvo",
+      "status": "BLOQUEADO",
+      "evidence": "HakiOS: Adreno 642L via hakios-metal; alvo: AGX G13G (Firmware/agx/armfw_g13g.im4p)",
+      "reason": "o driver Metal do HakiOS fala com a GPU da Qualcomm; a AGX da Apple tem comando, memória e firmware próprios",
+      "next_step": ""
+    },
+    {
+      "area": "Hardware",
+      "requirement": "Entrada: toque e botões",
+      "status": "BLOQUEADO",
+      "evidence": "HakiOS: Goodix GT9916; alvo: Firmware/J517_Multitouch.im4p",
+      "reason": "o controlador de toque da Apple é outro, com firmware assinado",
+      "next_step": ""
+    },
+    {
+      "area": "Hardware",
+      "requirement": "SEP: serviços de segurança e chaves",
+      "status": "BLOQUEADO",
+      "evidence": "Firmware/all_flash/sep-firmware.j517.RELEASE.im4p",
+      "reason": "o HakiOS substitui o SEP por stubs (MiniAppleKeyStore, AMFI mínimo); a userland do iPadOS espera serviços reais do SEP",
+      "next_step": ""
+    },
+    {
+      "area": "Kernel",
+      "requirement": "Compilar o kernel do HakiOS neste ambiente",
+      "status": "NÃO TESTADO",
+      "evidence": "não recompilado: usei prebuilt/hakios-kernel (kernel.ver=2.3.4-hakios-darwin22.5-g63fc2b46, DEVELOPMENT_ARM64_BCM2837)",
+      "reason": "o build exige a toolchain do theos; o binário pré-compilado já prova o boot",
+      "next_step": ""
+    },
+    {
+      "area": "Boot",
+      "requirement": "Iniciar o kernel comunitário em QEMU",
+      "status": "OK",
+      "evidence": "XNULOADER v3 → Darwin 22.5.0 (xnu-8796.121.2) → bsd_init: done → process 1: 'Hello from user space on Darwin!'; log em reports/qemu-open.log",
+      "reason": "o kernel comunitário inicia e executa userland em QEMU (virt + AAVMF); o que falta não é o kernel, é a userland do iPadOS e o hardware",
+      "next_step": ""
+    }
+  ],
+  "compat_summary": {
+    "OK": 5,
+    "BLOQUEADO": 11,
+    "PARCIAL": 2,
+    "NÃO TESTADO": 1
+  }
+}

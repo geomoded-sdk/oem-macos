@@ -1,0 +1,30 @@
+test_every_row_has_a_reason (test_compat.CompatTest.test_every_row_has_a_reason) ... ok
+test_markdown (test_compat.CompatTest.test_markdown) ... ok
+test_minimal_report_still_finds_the_blockers (test_compat.CompatTest.test_minimal_report_still_finds_the_blockers) ... ok
+test_header_fields (test_formats.AeaTest.test_header_fields) ... ok
+test_apfs_after_a_prefix (test_formats.ApfsDetectionTest.test_apfs_after_a_prefix) ... ok
+test_raw_apfs_signature (test_formats.ApfsDetectionTest.test_raw_apfs_signature) ... ok
+test_sealed_node_is_recognised (test_formats.ApfsDetectionTest.test_sealed_node_is_recognised) ... ok
+test_bad_magic_is_rejected (test_formats.DecmpfsTest.test_bad_magic_is_rejected) ... ok
+test_header_names_the_compression (test_formats.DecmpfsTest.test_header_names_the_compression) ... ok
+test_resource_fork_container_and_fat_prefix (test_formats.DecmpfsTest.test_resource_fork_container_and_fat_prefix) ... ok
+test_classic_form (test_formats.Im4pTest.test_classic_form) ... ok
+test_lzfse_without_module_is_explained (test_formats.Im4pTest.test_lzfse_without_module_is_explained) ... ok
+test_wrapped_form (test_formats.Im4pTest.test_wrapped_form) ... ok
+test_arm64e_build_version_and_entitlements (test_formats.MachOTest.test_arm64e_build_version_and_entitlements) ... ok
+test_rejects_garbage (test_formats.MachOTest.test_rejects_garbage) ... ok
+test_identity_and_digest (test_formats.ManifestTest.test_identity_and_digest) ... ok
+test_analyze_real_ipsw (test_integration.RealIpswTest.test_analyze_real_ipsw) ... ok
+test_read_manifest_over_http_without_downloading_the_ipsw (test_integration.RealIpswTest.test_read_manifest_over_http_without_downloading_the_ipsw) ... skipped 'defina HKIPADOS_URL'
+test_reads_exact_ranges_across_block_boundaries (test_io.HttpSourceTest.test_reads_exact_ranges_across_block_boundaries) ... ok
+test_refuses_a_server_that_ignores_range (test_io.HttpSourceTest.test_refuses_a_server_that_ignores_range) ... ok
+test_read_and_size (test_io.LocalSourceTest.test_read_and_size) ... ok
+test_crc_check_passes (test_io.ZipTest.test_crc_check_passes) ... ok
+test_members_and_extract (test_io.ZipTest.test_members_and_extract) ... ok
+test_truncated_member_raises (test_io.ZipTest.test_truncated_member_raises) ... ok
+test_zip64_extra (test_io.ZipTest.test_zip64_extra) ... ok
+
+----------------------------------------------------------------------
+Ran 25 tests in 3.084s
+
+OK (skipped=1)
