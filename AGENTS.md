@@ -206,3 +206,17 @@ Facts that cost time, so they are not re-derived:
   `qemu-system-arm` and `qemu-efi-aarch64`; `make qemu-open` would rebuild and is not needed.
 - The DeviceTree decompresses with `lzfse` to 260 KB and names the hardware: `aic,1`,
   `dart,t8020`, `ans`, `gpu,t8103`, `dcp`, `sep`, `ane,t8020`, `wlan-pcie,bcm4387`.
+- The iPadOS init in that kernel, measured one boot per case by
+  `scripts/try-ipados-init.sh` (logs in `reports/init-attempts/`):
+  - `hello` (arm64, static) runs; the **same** binary with only the cpusubtype flipped to
+    arm64e gets `errno 86` — so 86 is `EBADARCH` and it is the ABI the kernel refuses, not
+    the binary. `sbin/launchd` from the ramdisk gets the same 86.
+  - An arm64 slice with the cpusubtype zeroed passes that check and dies in
+    `namespace 9 code 0x1`, which is `OS_REASON_EXEC` / `EXEC_EXIT_REASON_BAD_MACHO` in
+    `bsd/sys/reason.h` of xnu-8796 (read from the Apple repo through the GitHub API;
+    `raw.githubusercontent.com` returns empty here). Namespace 9 is **not** DYLD.
+- `qemu/run.sh` uses `-serial stdio`; when `timeout` kills QEMU the 4 KiB stdio buffer is
+  lost and the log comes out **empty** although the kernel printed everything. Use
+  `-serial file:...` in anything time-limited. `run.sh` also defaults to `-m 6G`; 3G fits.
+- The firmware roms matter: `qemu-system-arm` alone boots to `BdsDxe: no mapping found`
+  until `ipxe-qemu` is installed (`/usr/share/qemu/efi-virtio.rom`).

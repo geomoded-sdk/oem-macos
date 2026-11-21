@@ -3,7 +3,7 @@ IPSW ?= cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw
 IMAGE ?=
 JSON ?= reports/ipad13,4-24B156.json
 
-.PHONY: help doctor test analyze userland deps apfs unzbm compat boot-open check clean
+.PHONY: help doctor test analyze userland deps apfs unzbm compat boot-open init-attempts check clean
 
 help:
 	@sed -n 's/^#  /  /p' Makefile
@@ -46,6 +46,10 @@ compat:
 #  o kernel aberto do HakiOS no QEMU (não usa o IPSW)
 boot-open:
 	scripts/hakios-boot-open.sh
+
+#  o init do iPadOS nesse kernel: 4 casos, um boot cada (precisa de `make userland`)
+init-attempts:
+	scripts/try-ipados-init.sh
 
 clean:
 	rm -rf build reports/*.raw

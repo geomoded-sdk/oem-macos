@@ -63,14 +63,21 @@ Três entregas, todas verificáveis:
 - o kernel comunitário **iniciou em QEMU**: `XNULOADER v3` → Darwin 22.5.0 →
   `bsd_init: done` → processo 1 imprimindo `Hello from user space on Darwin!`
   (`reports/qemu-open.log`);
+- um binário **do iPadOS** foi posto como processo 1 desse kernel e o ponto exato
+  da recusa foi medido: `launchd` (arm64e) recebe `errno 86` (`EBADARCH`), e a
+  mesma recusa acontece com o `hello` do HakiOS depois de trocar 4 bytes do
+  cpusubtype para arm64e — é o ABI, não o binário. Com o cpusubtype zerado o
+  kernel aceita e o `exec` morre em `OS_REASON_EXEC` / `BAD_MACHO`
+  (`reports/init-attempts/`, `docs/06` §6.5);
 - os 35 testes passam (4 pulados sem o IPSW).
 
 **O que não funcionou, e por quê:**
 
 - a interface do iPadOS não inicia. O volume `OS` (8,3 GB) é AEA e a chave vem do
   `wkms` da Apple para um aparelho autenticado; o `launchd` do alvo é arm64e de
-  2026 e o kernel comunitário é arm64 de 2022; e o iPad M1 não tem o caminho de
-  boot (nem os drivers AIC/DART/ANS/DCP/AGX/touch) que o HakiOS usa.
+  2026 e o kernel comunitário é arm64 de 2022 — o `exec` do processo 1 para em
+  `EBADARCH` antes de qualquer `dyld`; e o iPad M1 não tem o caminho de boot (nem
+  os drivers AIC/DART/ANS/DCP/AGX/touch) que o HakiOS usa.
 
 O detalhamento, requisito por requisito, está em
 [`docs/04-compatibilidade.md`](docs/04-compatibilidade.md). As limitações e o que
@@ -99,6 +106,9 @@ make doctor                   # o que falta nesta máquina
 
 # o kernel do HakiOS no QEMU (não usa o IPSW)
 make boot-open
+
+# e o init do iPadOS nesse kernel, um caso por boot (precisa de `make userland`)
+./scripts/try-ipados-init.sh
 
 # testes
 make test

@@ -108,3 +108,37 @@ este projeto não faz. Mesmo quebrasse, o kernel comunitário não tem drivers p
 AIC, DART, ANS, DCP, AGX ou o controlador de toque (ver `docs/04`), e a userland
 está em um volume AEA. Não existe caminho técnico legítimo daqui até a tela do
 iPadOS.
+
+## 6.5 O init do iPadOS no kernel do HakiOS: o que acontece
+
+O kernel do HakiOS aceita um Mach-O qualquer em `md0` como processo 1 — é o que
+`prebuilt/userland/hello` faz. Então dá para trocar o `hello` por um binário real
+do iPadOS e medir onde o `exec` para. `scripts/try-ipados-init.sh` faz os quatro
+casos, um boot cada, e guarda o log em `reports/init-attempts/`.
+
+| # | init em `md0` | o que o kernel disse |
+|---|---|---|
+| 1 | `hello` do HakiOS (arm64, estático) | `Hello from user space on Darwin!` |
+| 2 | o mesmo `hello`, cpusubtype trocado para arm64e | `Process 1 exec of /sbin/launchd failed, errno 86` |
+| 3 | `sbin/launchd` do RestoreRamDisk (arm64e, 10 dylibs) | idem, `errno 86` |
+| 4 | fatia arm64 de `webpushd` do cryptex, cpusubtype zerado | `unexpected SIGKILL of init with reason -- namespace 9 code 0x1` |
+
+O caso 2 é o controle do 3: é o mesmo binário que roda no caso 1, com 4 bytes
+trocados. O `errno 86` é, portanto, do **subtipo de CPU**, não do conteúdo do
+`launchd`. Em `bsd/sys/errno.h` do XNU, 86 é `EBADARCH`; o kernel do HakiOS é
+arm64 (`DEVELOPMENT_ARM64_BCM2837`) e não tem ABI arm64e para userland, que
+exigiria `ptrauth` no kernel. Toda a userland do iPadOS 27 é arm64e: 387 de 387
+Mach-O no ramdisk, 15 de 15 no cryptex.
+
+O caso 4 tira o `EBADARCH` do caminho: o kernel aceita o cabeçalho e o `exec`
+morre logo depois. `namespace 9` é `OS_REASON_EXEC` e o código 1 é
+`EXEC_EXIT_REASON_BAD_MACHO` — os dois de `bsd/sys/reason.h` do XNU. O kernel
+recusa o Mach-O; o motivo exato dentro do carregador não foi determinado neste
+experimento, e fica registrado como não determinado.
+
+Nenhum dos dois é o obstáculo principal — o principal é o volume `OS` ser AEA —
+mas os dois são medidos, não supostos, e é neles que uma tentativa de boot da
+userland do iPadOS tropeça primeiro. O caminho que o HakiOS percorreu no
+telefone, e que serve de modelo: uma imagem APFS de sistema (`rd=md0`) com
+`/sbin/launchd` de verdade, montada a partir de um IPSW da **mesma geração** do
+kernel. Para o iPadOS 27 isso exigiria um kernel xnu-13432 e a chave do AEA.
