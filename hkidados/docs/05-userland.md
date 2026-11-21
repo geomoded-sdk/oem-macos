@@ -8,12 +8,13 @@ produzido por `./bin/hkidados userland` e guardado em `reports/userland.json`.
 
 | | |
 |---|---|
-| entradas extraídas | 2.893 (1.155 arquivos + 869 `decmpfs` + 869 resource forks) |
-| bytes | 9,1 MB |
-| bundles | 5, todos de Safari |
-| `decmpfs` | **869 fluxos, todos tipo 14 (LZBITMAP)** |
-| contêiner `ZBM` no resource fork | 867 |
-| Mach-O universal no prefixo literal | 17 |
+| arquivos extraídos | **1.155** (mais 153 diretórios) |
+| bytes | **18.422.104** (17,6 MB) — o mesmo total que o 7-Zip, conferido por SHA-256 |
+| `decmpfs` | **869 fluxos, todos tipo 14 (LZBITMAP), 869 descomprimidos** |
+| Mach-O universal | **15** (arm64 + arm64e), iOS 27.2.0, chained fixups |
+| nós da árvore selada | 5.023, cada um conferido contra o SHA-256 que o pai nomeia |
+| árvore de extents (`fext`) | bloco 7, 1.106 nós |
+| tempo | 0,6 s para ler, descomprimir e escrever tudo |
 
 Os cinco bundles:
 
@@ -29,43 +30,81 @@ São componentes reais do iPadOS 27.2.1, mas **não** são a interface: não há
 `SpringBoard`, `BackBoard`, `UIKitCore` nem `WindowServer` aqui. O cryptex de App
 é o conteúdo de apps que fica fora do volume do sistema; a interface está no AEA.
 
-### Por que os arquivos saem com 0 byte
+### O volume selado, lido sem o 7-Zip
+
+O cryptex é um volume APFS **selado**: a árvore do sistema de arquivos é gravada
+com `APFS_BTREE_NOHEADER` (sem `obj_phys`, portanto sem Fletcher-64) e
+`APFS_BTREE_HASHED` (cada entrada de filho traz 8 bytes de oid — um deslocamento
+a partir do oid da raiz — e 32 bytes do SHA-256 do nó). Os extents não estão nos
+registros `FILE_EXTENT` da árvore do sistema: ficam numa árvore separada, física,
+apontada por `apfs_fext_tree_oid` (offset 0x408 do superbloco), com chave de 16
+bytes `(id do fluxo, deslocamento lógico)`.
+
+`hkipados/apfs_sealed.py` implementa exatamente esses dois pontos, seguindo
+`apfs_lib.c` do APFS que a Apple publicou (APSL 2.0, em
+`xnu/files/bsd/miscfs/apfs/` no clone do HakiOS): `btree_open`, `node_at_h`,
+`node_child_addr`, `node_parse`, `node_entry`. O resto — inodes, nomes,
+atributos, extents, decmpfs — continua sendo o leitor do HakiOS
+(`vendor/hakios/apfs.py`), que não foi alterado.
+
+A prova de que a leitura está certa não é "abriu": são os **5.023 hashes** que o
+volume guarda e que o leitor confere nó a nó, mais a comparação byte a byte com
+o 7-Zip 25.01 — 1.155 nomes, 18.422.104 bytes, **0 diferenças de SHA-256**.
+
+### O `decmpfs` tipo 14 (LZBITMAP), decodificado
 
 Todo arquivo do cryptex é comprimido com `decmpfs`. O atributo tem 16 bytes:
 
 ```
-66 70 6d 63   "cmpf"
-0e 00 00 00   tipo 14
+66 70 6d 63   "fpmc" (lido como u32 little-endian: 0x636d7066, "cmpf")
+0e 00 00 00   tipo 14 (LZBITMAP)
 a0 92 02 00 00 00 00 00   tamanho descomprimido (168.864)
 ```
 
-e o conteúdo vai para `com.apple.ResourceFork`, que começa com `ZBM\x09` — o
-contêiner do **LZBITMAP**. O 7-Zip 25.01 extrai o atributo como
-`nome:com.apple.decmpfs` e deixa `nome` com 0 byte; ele não remonta o arquivo.
+O conteúdo vai para `com.apple.ResourceFork` — um fluxo de atributo, não um
+arquivo — e começa com uma tabela de deslocamentos, um por bloco de 64 KB
+(`[16, 3925, 8704, 10625]` para um arquivo de 168.864 bytes, que são 3 blocos),
+seguida dos blocos, o primeiro começando com `ZBM\x09`. Um bloco que não
+encolheu vem como `0xff` seguido dos bytes.
 
-Para provar que o conteúdo é real, o prefixo literal do fluxo contém um Mach-O
-universal:
+O decodificador não é nosso: o HakiOS traz `libzbitmap.c` (Ernesto A. Fernández,
+Corellium, MIT/GPL-2.0+) e `unzbm.c`. Os dois foram copiados **verbatim** para
+`hkipados/vendor/hakios/lzbitmap/`, com o SHA-256 em `PROVENANCE.md`. O
+HkiPadOS os usa de duas formas:
 
-```
-ca fe ba be 00 00 00 02 01 00 00 0c 80
-```
+- `unzbm`, compilado (`make unzbm`), para uma árvore que o 7-Zip já extraiu;
+- `libzbitmap.so` + `ctypes` (`decmpfs.decompress`), para descomprimir na
+  memória enquanto lê o APFS — é o caminho do leitor próprio.
 
-duas fatias, `cputype 0x0100000c` (arm64), `cpusubtype 0x80000002` (arm64e).
-
-O `hkipados/decmpfs.py` lê o cabeçalho, classifica o tipo e procura esse
-cabeçalho; **não** descomprime. Reconstruir exigiria o decodificador LZBITMAP
-(bitmap + LZVN), que não existe no 7-Zip nem no leitor do HakiOS. Fingir que
-descomprimiu seria pior do que dizer que não.
+Resultado medido: **869 de 869 fluxos**, 0 falhas, 18.422.104 bytes
+recuperados. Cada bloco tem o tamanho conferido contra o cabeçalho; um bloco que
+não bata de tamanho é recusado, não escrito.
 
 ## 5.2 RestoreRamDisk — 245 MB, APFS
 
 | | |
 |---|---|
-| entradas | 1.564 (1.269 arquivos + 295 symlinks) |
-| Mach-O | **383, todos arm64e, todos com chained fixups** |
-| plataforma | `iOS` 351, `driverKit` 32 |
-| `minos` | 27.2.0 em 382, 18.0.0 em 1 |
+| entradas | **2.025** (1.260 arquivos + 459 diretórios + 306 symlinks) |
+| bytes | **1.236.840.790** (1,2 GB) |
+| Mach-O | **387, todos arm64e, todos com chained fixups** |
+| plataforma | `iOS` 355, `driverKit` 32 |
+| `minos` | 27.2.0 em 386, 18.0.0 em 1 |
 | `decmpfs` | 0 (o ramdisk não usa) |
+| leitura | APFS não selado, 263 nós, 6,3 s sem 7-Zip |
+
+O ramdisk chega do IPSW embrulhado num **IM4P** (`type rdsk`): 27 bytes de
+cabeçalho DER e o container APFS de 245.366.784 bytes logo depois. O
+`hkipados/apfsx.py` tira o embrulho; o `im4p.locate` só lê o cabeçalho, sem
+copiar os 234 MB para descobrir onde o payload começa.
+
+O 7-Zip 25.01 e o leitor próprio concordam no total de bytes de arquivos
+regulares (1.236.840.790) e nos nomes, mas **não** nos symlinks: em 10 casos o
+7-Zip escreveu um arquivo de 0 byte onde o APFS tem um symlink
+(`usr/lib/libextension.dylib`, `sbin/mount_apfs`, `sbin/fsck_apfs`, …), e em 3
+casos escreveu um symlink com o caminho absoluto da extração em vez do alvo
+gravado no volume. O leitor próprio acerta os 306. É por isso que o número de
+Mach-O subiu de 383 para 387: quatro binários que o 7-Zip deixou vazios são, no
+volume, symlinks para binários reais.
 
 ### O `launchd`
 

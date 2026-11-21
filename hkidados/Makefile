@@ -1,8 +1,9 @@
 PYTHON ?= python3
 IPSW ?= cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw
+IMAGE ?=
 JSON ?= reports/ipad13,4-24B156.json
 
-.PHONY: help doctor test analyze userland compat boot-open check clean
+.PHONY: help doctor test analyze userland apfs unzbm compat boot-open check clean
 
 help:
 	@sed -n 's/^#  /  /p' Makefile
@@ -20,8 +21,18 @@ check: test
 analyze:
 	./bin/hkidados analyze $(IPSW) --json $(JSON) --quiet
 
-userland:
-	./bin/hkidados userland $(IPSW) --json reports/userland.json
+userland: unzbm
+	./bin/hkidados userland $(IPSW) --decompress --unzbm build/bin/unzbm \
+		--json reports/userland.json
+
+#  um volume APFS (cru, IM4P ou UDIF) lido e descomprimido sem o 7-Zip
+apfs:
+	@test -n "$(IMAGE)" || { echo "uso: make apfs IMAGE=imagem.dmg"; exit 2; }
+	./bin/hkidados apfs $(IMAGE) --out build/apfs --decompress
+
+#  o decodificador LZBITMAP do HakiOS, compilado do fonte
+unzbm:
+	$(PYTHON) -c 'from hkipados import decmpfs; p, why = decmpfs.build_unzbm("build/bin/unzbm"); print(p or why); raise SystemExit(1 if p is None else 0)'
 
 compat:
 	./bin/hkidados compat $(IPSW) --userland build/userland \

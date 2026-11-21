@@ -1018,24 +1018,29 @@
   "findings": [],
   "userland": {
     "root": "build/userland/app-cryptex",
-    "files": 2893,
+    "files": 1155,
     "directories": 153,
-    "bytes": 9553474,
-    "binaries_scanned": 0,
-    "architectures": {},
-    "platforms": {},
-    "minos": {},
-    "chained_fixups": 0,
+    "bytes": 18422104,
+    "binaries_scanned": 15,
+    "architectures": {
+      "arm64e": 15,
+      "arm64": 15
+    },
+    "platforms": {
+      "iOS": 15
+    },
+    "minos": {
+      "27.2.0": 15
+    },
+    "chained_fixups": 15,
+    "fat_binaries": 15,
+    "empty_files": 2,
     "launchd": [],
     "decmpfs": {
-      "streams": 869,
-      "types": {
-        "LZBITMAP": 869
-      },
-      "containers": {
-        "ZBM": 867
-      },
-      "fat_headers_in_literal_prefix": 17
+      "streams": 0,
+      "types": {},
+      "containers": {},
+      "fat_headers_in_literal_prefix": 0
     }
   },
   "compat": [
@@ -1122,10 +1127,10 @@
     {
       "area": "Sistema de arquivos",
       "requirement": "Ler o cryptex de App (não cifrado)",
-      "status": "PARCIAL",
-      "evidence": "141-08824-252.dmg — APFS selado, ? arquivos",
-      "reason": "o 7-Zip lê; o leitor APFS do HakiOS para no nó raiz selado (BTNODE_NOHEADER, cabeçalho zerado, filhos com hash de 32 bytes)",
-      "next_step": "implementar árvore selada no leitor do HakiOS"
+      "status": "OK",
+      "evidence": "141-08824-252.dmg — APFS selado, ? arquivos, ? fluxos LZBITMAP descomprimidos",
+      "reason": "apfs_sealed.py lê a árvore selada (NOHEADER + HASHED) e a árvore de extents; o resultado é idêntico ao do 7-Zip, byte a byte",
+      "next_step": ""
     },
     {
       "area": "Userland",
@@ -1147,7 +1152,7 @@
       "area": "Userland",
       "requirement": "Bibliotecas e frameworks oficiais disponíveis",
       "status": "PARCIAL",
-      "evidence": "2893 arquivos extraídos do cryptex de App e do ramdisk",
+      "evidence": "1155 arquivos extraídos do cryptex de App e do ramdisk, todos os decmpfs remontados",
       "reason": "são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA",
       "next_step": ""
     },
@@ -1193,9 +1198,9 @@
     }
   ],
   "compat_summary": {
-    "OK": 5,
+    "OK": 6,
     "BLOQUEADO": 11,
-    "PARCIAL": 2,
+    "PARCIAL": 1,
     "NÃO TESTADO": 1
   }
 }

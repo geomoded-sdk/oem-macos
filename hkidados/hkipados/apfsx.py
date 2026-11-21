@@ -146,6 +146,51 @@ def probe_container(path: str) -> dict:
     return result
 
 
+def is_apfs(path: str) -> bool:
+    """A imagem já é um container APFS cru (NXSB em 32)? Um .dmg é UDIF, não é."""
+    with open(path, "rb") as handle:
+        head = handle.read(4096)
+    return len(head) >= 36 and head[32:36] == b"NXSB"
+
+
+def to_raw(path: str, out: str | None = None) -> str:
+    """A imagem APFS crua, tirando o embrulho IM4P ou UDIF que houver."""
+    if is_apfs(path):
+        return path
+    if out is not None:
+        os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    from . import im4p
+    with open(path, "rb") as handle:
+        head = handle.read(4096)
+    if b"IM4P" in head[:64]:
+        kind, _desc, offset, length = im4p.locate(head)
+        if out is None:
+            out = path + ".raw"
+        if not (os.path.exists(out) and os.path.getsize(out) == length):
+            with open(path, "rb") as src, open(out, "wb") as dst:
+                src.seek(offset)
+                left = length
+                while left:
+                    chunk = src.read(min(1 << 24, left))
+                    if not chunk:
+                        raise ValueError("%s: IM4P %s truncado" % (path, kind))
+                    dst.write(chunk)
+                    left -= len(chunk)
+        with open(out, "rb") as check:
+            if check.read(4096)[32:36] != b"NXSB":
+                raise ValueError("%s: o payload IM4P %s não é APFS" % (path, kind))
+        return out
+    from .vendor.hakios import dmg
+    if out is None:
+        out = path + ".raw"
+    if os.path.exists(out) and os.path.getsize(out) > 0:
+        return out
+    image = dmg.Dmg(path)
+    os.makedirs(os.path.dirname(os.path.abspath(out)), exist_ok=True)
+    image.extract(out)
+    return out
+
+
 def seven_zip() -> str | None:
     for name in ("7z", "7zz", "7za"):
         path = shutil.which(name)

@@ -85,8 +85,8 @@ há `SpringBoard`, `BackBoard` nem frameworks.
 | digest sha384 do DeviceTree e do kernelcache | confere |
 | leitura do BuildManifest por HTTP Range | 185 KB em vez de 11,6 GB |
 | kernel: `MH_FILESET`, arm64e, chained fixups | confirmado |
-| APFS do cryptex de App | 7-Zip abre; leitor do HakiOS não |
-| userland do ramdisk | 383 Mach-O arm64e, `launchd` incluído |
+| APFS selado do cryptex de App | leitor próprio: 1.155 arquivos, 5.023 hashes, idêntico ao 7-Zip |
+| userland do ramdisk | 387 Mach-O arm64e, `launchd` incluído |
 | kernel do HakiOS em QEMU | inicia e executa o processo 1 |
 
 ## 4.5 A tabela gerada
@@ -106,7 +106,7 @@ há `SpringBoard`, `BackBoard` nem frameworks.
 | Sistema de arquivos | Montar o volume do sistema do IPSW | **BLOQUEADO** | AEA com chave entregue pelo wkms da Apple, autenticada pelo dispositivo; decifrar exigiria contornar a proteção |
 | Userland | Iniciar o launchd original do sistema | **BLOQUEADO** | o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. Além disso ele é arm64e e exige AMFI/SEP e um kernel da mesma geração |
 | Userland | Iniciar BackBoard/SpringBoard e a interface | **BLOQUEADO** | sem o volume do sistema não há o que iniciar; e sem os drivers de tela/touch do M1 não haveria saída |
-| Sistema de arquivos | Ler o cryptex de App (não cifrado) | **PARCIAL** | o 7-Zip lê; o leitor APFS do HakiOS para no nó raiz selado (BTNODE_NOHEADER, cabeçalho zerado, filhos com hash de 32 bytes) |
+| Sistema de arquivos | Ler o cryptex de App (não cifrado) | **OK** | `apfs_sealed.py` lê a árvore selada (NOHEADER + HASHED) e a árvore de extents; 1.155 arquivos, 869 fluxos LZBITMAP descomprimidos, byte a byte igual ao 7-Zip |
 | Userland | Bibliotecas e frameworks oficiais disponíveis | **PARCIAL** | são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA |
 | Kernel | Compilar o kernel do HakiOS neste ambiente | **NÃO TESTADO** | o build exige a toolchain do theos; o binário pré-compilado já prova o boot |
 | Boot | Iniciar o kernel comunitário em QEMU | **OK** | o kernel comunitário inicia e executa userland em QEMU (virt + AAVMF); o que falta não é o kernel, é a userland do iPadOS e o hardware |
@@ -124,7 +124,10 @@ há `SpringBoard`, `BackBoard` nem frameworks.
 | geração do kernel | a Apple publicar o `xnu-13432` e alguém portá-lo para arm64e + AIC + DART |
 | AEA | a Apple publicar a chave, ou o `wkms` aceitar outro aparelho |
 | GPU/touch/display | drivers para AGX, DCP e o controlador de toque, com firmware |
-| APFS selado | o leitor do HakiOS ganhar a árvore por hash (é o único item que é só software e não depende da Apple) |
+| APFS selado | **resolvido**: `apfs_sealed.py` lê a árvore por hash e a de extents |
+| `decmpfs` LZBITMAP | **resolvido**: `libzbitmap.c` do HakiOS, compilado e chamado por ctypes |
 
-O último é o único que este projeto poderia atacar sozinho. Os outros não são
-problemas de código nosso.
+Os dois primeiros itens dessa tabela eram os únicos que este projeto podia
+atacar sozinho, e foram atacados: hoje o cryptex selado é lido e descomprimido
+sem o 7-Zip. O que resta depende da Apple (assinatura, SEP, AEA) ou de drivers
+para hardware que não existe neste ambiente.

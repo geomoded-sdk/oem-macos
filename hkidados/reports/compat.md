@@ -11,7 +11,6 @@
 | Sistema de arquivos | Montar o volume do sistema do IPSW | **BLOQUEADO** | AEA com chave entregue pelo wkms da Apple, autenticada pelo dispositivo; decifrar exigiria contornar a proteção |
 | Userland | Iniciar o launchd original do sistema | **BLOQUEADO** | o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. Além disso ele é arm64e e exige AMFI/SEP e um kernel da mesma geração |
 | Userland | Iniciar BackBoard/SpringBoard e a interface | **BLOQUEADO** | sem o volume do sistema não há o que iniciar; e sem os drivers de tela/touch do M1 não haveria saída |
-| Sistema de arquivos | Ler o cryptex de App (não cifrado) | **PARCIAL** | o 7-Zip lê; o leitor APFS do HakiOS para no nó raiz selado (BTNODE_NOHEADER, cabeçalho zerado, filhos com hash de 32 bytes) |
 | Userland | Bibliotecas e frameworks oficiais disponíveis | **PARCIAL** | são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA |
 | Kernel | Compilar o kernel do HakiOS neste ambiente | **NÃO TESTADO** | o build exige a toolchain do theos; o binário pré-compilado já prova o boot |
 | Boot | Iniciar o kernel comunitário em QEMU | **OK** | o kernel comunitário inicia e executa userland em QEMU (virt + AAVMF); o que falta não é o kernel, é a userland do iPadOS e o hardware |
@@ -19,3 +18,4 @@
 | IPSW | Verificar a integridade do arquivo | **OK** | tamanho e SHA-256 conferem com o ipsw.me; o ZIP tem 185 membros |
 | IPSW | Ler o BuildManifest e identificar os componentes | **OK** | lido por HTTP Range antes de baixar o IPSW inteiro |
 | Kernel | Reutilizar o XNU do HakiOS sem reescrevê-lo | **OK** | patch e arquivos preservados; o HkiPadOS só acrescenta ferramentas |
+| Sistema de arquivos | Ler o cryptex de App (não cifrado) | **OK** | apfs_sealed.py lê a árvore selada (NOHEADER + HASHED) e a árvore de extents; o resultado é idêntico ao do 7-Zip, byte a byte |

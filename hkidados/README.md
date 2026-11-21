@@ -53,13 +53,17 @@ Três entregas, todas verificáveis:
   `xnu-13432.42.3`, Darwin 27.2.0, 76.775.424 bytes descomprimidos;
 - o DeviceTree do alvo foi descomprimido (260.176 bytes) e diz o hardware que
   existe: `aic,1`, `dart,t8020`, `ans`, `gpu,t8103`, `dcp`, `sep`, `ane,t8020`;
-- duas imagens não cifradas foram extraídas: **2.893** entradas do cryptex de App
-  e **1.564** do RestoreRamDisk, com **383 Mach-O arm64e** — inclusive o
-  `launchd` de iOS 27.2.0 e seus 32 entitlements;
+- duas imagens não cifradas foram extraídas **pelo leitor próprio**, sem 7-Zip:
+  **1.155 arquivos** do cryptex de App (volume APFS selado, 5.023 hashes de nó
+  conferidos) e **1.260** do RestoreRamDisk, com **387 Mach-O arm64e** —
+  inclusive o `launchd` de iOS 27.2.0 e seus 32 entitlements;
+- os **869** arquivos do cryptex, todos `decmpfs` tipo 14 (LZBITMAP), foram
+  **descomprimidos** com o `libzbitmap.c` do HakiOS: 18.422.104 bytes, 0 falhas,
+  idênticos ao que o 7-Zip mais o `unzbm` produzem;
 - o kernel comunitário **iniciou em QEMU**: `XNULOADER v3` → Darwin 22.5.0 →
   `bsd_init: done` → processo 1 imprimindo `Hello from user space on Darwin!`
   (`reports/qemu-open.log`);
-- os 25 testes passam.
+- os 33 testes passam (4 pulados sem o IPSW).
 
 **O que não funcionou, e por quê:**
 
@@ -112,8 +116,9 @@ hkidados/
 │   ├── im4p.py                IM4P/IM4M (img4), LZFSE
 │   ├── macho.py               arm64 vs arm64e, plataforma, entitlements
 │   ├── aea.py                 cabeçalho de Apple Encrypted Archive
-│   ├── apfsx.py               APFS: o que o leitor do HakiOS cobre
-│   ├── decmpfs.py             o que deixa o arquivo do cryptex com 0 byte
+│   ├── apfsx.py               APFS cru, IM4P e UDIF: tira o embrulho
+│   ├── apfs_sealed.py         árvore APFS selada (hash) e árvore de extents
+│   ├── decmpfs.py             LZBITMAP: compila o do HakiOS e descomprime
 │   ├── analyze.py             o relatório
 │   ├── compat.py              as regras de compatibilidade
 │   ├── cli.py
@@ -121,7 +126,7 @@ hkidados/
 ├── scripts/                   clone do HakiOS, boot em QEMU
 ├── docs/                      01..08 (ver abaixo)
 ├── reports/                   saídas reais: JSON e logs
-└── tests/                     unittest (25 testes)
+└── tests/                     unittest (33 testes)
 ```
 
 ### Documentação

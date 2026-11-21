@@ -100,8 +100,13 @@ bytes antes do `NXSB`, 4096 bytes por bloco, 59.904 blocos (245.366.784 bytes).
 
 O leitor do HakiOS (`hkipados/vendor/hakios/apfs.py`) verifica Fletcher-64 em todo
 bloco e ordena a árvore por object-id. A árvore do volume selado não tem checksum
-no nó (`BTNODE_NOHEADER`) e ordena por hash; por isso ele não abre o volume. O
-7-Zip 23+ abre. O `apfsx.py` detecta o caso e usa o 7-Zip, dizendo que usou.
+no nó (`BTNODE_NOHEADER`) e cada filho traz o SHA-256 do nó
+(`APFS_BTREE_HASHED`); por isso ele para no nó raiz.
+
+O `apfs_sealed.py` acrescenta o que falta, seguindo `apfs_lib.c` da Apple, e abre
+o volume: 6.382 chaves, 123 nós, 5.023 hashes conferidos, mais a árvore de
+extents no bloco 7. O RestoreRamDisk é APFS não selado e o leitor do HakiOS já o
+abre; ele só precisa que o embrulho IM4P de 27 bytes seja retirado antes.
 
 ## 3.5 O que mais está no IPSW
 

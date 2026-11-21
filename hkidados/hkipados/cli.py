@@ -5,10 +5,11 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import sys
 import urllib.request
 
-from . import __version__, aea, analyze, apfsx, compat, im4p, macho
+from . import __version__, aea, analyze, apfs_sealed, apfsx, compat, decmpfs, im4p, macho
 from .manifest import BuildManifest
 from .source import open_source
 from .zipx import ZipArchive, human_size
@@ -172,6 +173,25 @@ def cmd_analyze(args) -> int:
 
 # --------------------------------------------------------------------------- userland
 
+def extract_image(image: str, tree: str, reader: str = "auto", unzbm: str = "build/bin/unzbm") -> dict:
+    """Extrai uma imagem APFS com o leitor próprio; o 7-Zip é só o plano B."""
+    if reader in ("auto", "apfs"):
+        try:
+            container, volume = apfs_sealed.open_any(image)
+            stats = apfs_sealed.extract(volume, tree, decoder=decmpfs.decompress)
+            container.close()
+            stats["reader"] = "apfs"
+            stats["volume"] = volume.volname
+            stats["sealed"] = volume.sealed
+            return stats
+        except Exception as exc:            # noqa: BLE001 -- qualquer falha cai no 7-Zip
+            if reader == "apfs":
+                raise
+            print(f"  leitor APFS próprio falhou ({exc}); caindo para o 7-Zip", file=sys.stderr)
+    result = apfsx.extract_with_7z(image, tree)
+    result["reader"] = "7z"
+    return result
+
 def cmd_userland(args) -> int:
     source = open_source(args.path)
     archive = ZipArchive(source)
@@ -188,20 +208,43 @@ def cmd_userland(args) -> int:
         print(f"extraindo {member_path} ({human_size(archive.members[member_path].usize)})…")
         archive.extract(member_path, image)
         tree = os.path.join(args.out, folder)
-        print(f"abrindo com 7-Zip em {tree}…")
-        result = apfsx.extract_with_7z(image, tree)
+        shutil.rmtree(tree, ignore_errors=True)
+        print(f"abrindo {tree}…")
+        result = extract_image(image, tree, args.reader, args.unzbm)
+        if result.get("reader") == "apfs":
+            print(f"  leitor APFS próprio: volume {result.get('volume')!r}, "
+                  f"selado={result.get('sealed')}, "
+                  f"{result.get('decmpfs_streams', 0)} fluxos decmpfs decodificados")
         inventory = analyze.inventory_tree(tree)
         inventory.update(result)
         inventory["seven_zip"] = apfsx.seven_zip_info(image)
         inventory["image"] = image
+        streams_info = inventory.get("decmpfs", {})
+        if streams_info.get("streams"):
+            print(f"  decmpfs: {streams_info['streams']} fluxos, tipos {streams_info['types']}, "
+                  f"contêineres {streams_info['containers']}")
+        if result.get("reader") == "apfs":
+            inventory["lzbitmap"] = {"streams": result.get("decmpfs_streams", 0),
+                                     "decoded": result.get("decmpfs_streams", 0),
+                                     "failed": len(result.get("errors", [])),
+                                     "bytes": result.get("bytes", 0), "failures": []}
+        if args.decompress and result.get("reader") != "apfs" and streams_info.get("streams"):
+            unzbm, error = decmpfs.build_unzbm(args.unzbm)
+            if unzbm is None:
+                print(f"  LZBITMAP: não foi possível compilar o unzbm ({error})", file=sys.stderr)
+            else:
+                print(f"  LZBITMAP: descomprimindo {streams_info['streams']} fluxos com {unzbm}…")
+                stats = decmpfs.decode_tree(tree, unzbm)
+                inventory["lzbitmap"] = stats
+                print(f"  LZBITMAP: {stats['decoded']}/{stats['streams']} descomprimidos, "
+                      f"{human_size(stats['bytes'])} recuperados, {stats['failed']} falhas")
+                for failure in stats["failures"][:5]:
+                    print(f"    falhou: {failure['file']}: {failure['reason']}", file=sys.stderr)
+                inventory["after_lzbitmap"] = analyze.inventory_tree(tree)
         report["trees"][component] = inventory
-        print(f"  {inventory['files']} arquivos, {human_size(inventory['bytes'])}, "
-              f"arquiteturas {inventory['architectures']}")
-        decmpfs = inventory.get("decmpfs", {})
-        if decmpfs.get("streams"):
-            print(f"  decmpfs: {decmpfs['streams']} fluxos, tipos {decmpfs['types']}, "
-                  f"contêineres {decmpfs['containers']}, "
-                  f"{decmpfs['fat_headers_in_literal_prefix']} com Mach-O universal no prefixo")
+        shown = inventory.get("after_lzbitmap", inventory)
+        print(f"  {shown['files']} arquivos, {human_size(shown['bytes'])}, "
+              f"arquiteturas {shown['architectures']}")
         for launchd in inventory["launchd"][:5]:
             print(f"  launchd: {launchd}")
         if not args.keep:
@@ -223,6 +266,40 @@ def cmd_userland(args) -> int:
             handle.write("\n")
     source.close()
     return 0
+
+
+# --------------------------------------------------------------------------- apfs
+
+def cmd_apfs(args) -> int:
+    """Lê a árvore de um volume APFS (inclusive selado) sem depender do 7-Zip."""
+    container, volume = apfs_sealed.open_any(args.image, args.volume)
+    print(f"{args.image}: APFS, bloco {container.block_size}, "
+          f"{container.nx['block_count']} blocos, xid {container.xid}")
+    print(f"  volume [{volume.index}] {volume.volname!r} papel 0x{volume.role:04x} "
+          f"selado={volume.sealed}")
+    tree = volume.tree
+    flags = getattr(tree, "bt_flags", None)
+    if flags is not None:
+        print(f"  árvore: flags 0x{flags:x}, {tree.key_count} chaves, "
+              f"{tree.node_count} nós, hashed={getattr(tree, 'hashed', False)}")
+    stats = apfs_sealed.extract(volume, args.out,
+                               decoder=decmpfs.decompress if args.decompress else None)
+    report = {"image": args.image, "volume": volume.volname, "sealed": volume.sealed,
+              "block_size": container.block_size, "out": args.out, **stats}
+    print(f"  {stats['files']} arquivos, {stats['directories']} diretórios, "
+          f"{stats['symlinks']} symlinks, {human_size(stats['bytes'])}")
+    if "hash_checked" in stats:
+        print(f"  SHA-256 conferido em {stats['hash_checked']} nós da fs tree"
+              + (f", {stats['fext_hash_checked']} da fext" if "fext_hash_checked" in stats else ""))
+    for error in stats["errors"][:10]:
+        print(f"  erro: {error['path']}: {error['reason']}", file=sys.stderr)
+    if args.json:
+        os.makedirs(os.path.dirname(os.path.abspath(args.json)), exist_ok=True)
+        with open(args.json, "w", encoding="utf-8") as handle:
+            json.dump(report, handle, indent=2, ensure_ascii=False)
+            handle.write("\n")
+    container.close()
+    return 1 if stats["errors"] else 0
 
 
 # --------------------------------------------------------------------------- compat
@@ -317,7 +394,21 @@ def build_parser() -> argparse.ArgumentParser:
     userland.add_argument("--out", default="build/userland")
     userland.add_argument("--json")
     userland.add_argument("--keep", action="store_true", help="manter as imagens extraídas")
+    userland.add_argument("--reader", choices=("auto", "apfs", "7z"), default="auto",
+                          help="quem lê a imagem: o leitor APFS próprio, o 7-Zip, ou auto")
+    userland.add_argument("--decompress", action="store_true",
+                          help="descomprimir os arquivos decmpfs LZBITMAP (usa o unzbm do HakiOS)")
+    userland.add_argument("--unzbm", default="build/bin/unzbm", help="onde compilar o unzbm")
     userland.set_defaults(func=cmd_userland)
+
+    apfs_cmd = sub.add_parser("apfs", help="ler um volume APFS (inclusive selado) sem o 7-Zip")
+    apfs_cmd.add_argument("image")
+    apfs_cmd.add_argument("--out", default="build/apfs")
+    apfs_cmd.add_argument("--volume", type=int, default=0)
+    apfs_cmd.add_argument("--decompress", action="store_true",
+                          help="descomprimir os arquivos decmpfs LZBITMAP")
+    apfs_cmd.add_argument("--json", default=None)
+    apfs_cmd.set_defaults(func=cmd_apfs)
 
     compat_cmd = sub.add_parser("compat", help="o veredito, requisito por requisito")
     compat_cmd.add_argument("path")

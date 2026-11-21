@@ -1,3 +1,12 @@
+python3 -m unittest discover -s tests -v
+test_small_im4p (test_apfs_sealed.Im4pLocateTest.test_small_im4p) ... ok
+test_library_builds (test_apfs_sealed.LzbitmapTest.test_library_builds) ... ok
+test_literal_block_round_trip (test_apfs_sealed.LzbitmapTest.test_literal_block_round_trip) ... ok
+test_short_block_table_is_refused (test_apfs_sealed.LzbitmapTest.test_short_block_table_is_refused) ... ok
+test_wrong_type_is_refused (test_apfs_sealed.LzbitmapTest.test_wrong_type_is_refused) ... ok
+test_ramdisk_is_im4p_wrapped_apfs (test_apfs_sealed.RealCryptexTest.test_ramdisk_is_im4p_wrapped_apfs) ... skipped 'defina HKIPADOS_IPSW'
+test_sealed_cryptex_matches_known_totals (test_apfs_sealed.RealCryptexTest.test_sealed_cryptex_matches_known_totals) ... skipped 'defina HKIPADOS_IPSW'
+test_noheader_detection (test_apfs_sealed.SealedBlockTest.test_noheader_detection) ... ok
 test_every_row_has_a_reason (test_compat.CompatTest.test_every_row_has_a_reason) ... ok
 test_markdown (test_compat.CompatTest.test_markdown) ... ok
 test_minimal_report_still_finds_the_blockers (test_compat.CompatTest.test_minimal_report_still_finds_the_blockers) ... ok
@@ -14,7 +23,7 @@ test_wrapped_form (test_formats.Im4pTest.test_wrapped_form) ... ok
 test_arm64e_build_version_and_entitlements (test_formats.MachOTest.test_arm64e_build_version_and_entitlements) ... ok
 test_rejects_garbage (test_formats.MachOTest.test_rejects_garbage) ... ok
 test_identity_and_digest (test_formats.ManifestTest.test_identity_and_digest) ... ok
-test_analyze_real_ipsw (test_integration.RealIpswTest.test_analyze_real_ipsw) ... ok
+test_analyze_real_ipsw (test_integration.RealIpswTest.test_analyze_real_ipsw) ... skipped 'defina HKIPADOS_IPSW'
 test_read_manifest_over_http_without_downloading_the_ipsw (test_integration.RealIpswTest.test_read_manifest_over_http_without_downloading_the_ipsw) ... skipped 'defina HKIPADOS_URL'
 test_reads_exact_ranges_across_block_boundaries (test_io.HttpSourceTest.test_reads_exact_ranges_across_block_boundaries) ... ok
 test_refuses_a_server_that_ignores_range (test_io.HttpSourceTest.test_refuses_a_server_that_ignores_range) ... ok
@@ -25,6 +34,6 @@ test_truncated_member_raises (test_io.ZipTest.test_truncated_member_raises) ... 
 test_zip64_extra (test_io.ZipTest.test_zip64_extra) ... ok
 
 ----------------------------------------------------------------------
-Ran 25 tests in 3.084s
+Ran 33 tests in 1.700s
 
-OK (skipped=1)
+OK (skipped=4)

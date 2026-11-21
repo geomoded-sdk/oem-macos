@@ -3,32 +3,41 @@
   "trees": {
     "Cryptex1,AppOS": {
       "root": "build/userland/app-cryptex",
-      "files": 2893,
+      "files": 1155,
       "directories": 153,
-      "bytes": 9553474,
-      "binaries_scanned": 0,
-      "architectures": {},
-      "platforms": {},
-      "minos": {},
-      "chained_fixups": 0,
+      "bytes": 18422104,
+      "binaries_scanned": 15,
+      "architectures": {
+        "arm64e": 15,
+        "arm64": 15
+      },
+      "platforms": {
+        "iOS": 15
+      },
+      "minos": {
+        "27.2.0": 15
+      },
+      "chained_fixups": 15,
+      "fat_binaries": 15,
+      "empty_files": 2,
       "launchd": [],
       "decmpfs": {
-        "streams": 869,
-        "types": {
-          "LZBITMAP": 869
-        },
-        "containers": {
-          "ZBM": 867
-        },
-        "fat_headers_in_literal_prefix": 17
+        "streams": 0,
+        "types": {},
+        "containers": {},
+        "fat_headers_in_literal_prefix": 0
       },
-      "image": "build/userland/141-08824-252.dmg",
-      "returncode": 2,
-      "stderr_tail": [
-        "ERROR: Unsupported Method : usr/libexec/safarifetcherd",
-        "ERROR: Unsupported Method : usr/libexec/webinspectord",
-        "ERROR: Unsupported Method : usr/libexec/passwordbreachd"
-      ],
+      "symlinks": 0,
+      "errors": [],
+      "nodes": 5023,
+      "decmpfs_streams": 869,
+      "fext_tree_oid": 7,
+      "hash_checked": 5023,
+      "fext_nodes": 1106,
+      "fext_hash_checked": 0,
+      "reader": "apfs",
+      "volume": "AppCryptex",
+      "sealed": true,
       "seven_zip": {
         "available": true,
         "tool": "/usr/bin/7z",
@@ -43,26 +52,36 @@
         "block_size": "4096",
         "fs_alloc_count": "3038",
         "entries": 0
+      },
+      "image": "build/userland/141-08824-252.dmg",
+      "lzbitmap": {
+        "streams": 869,
+        "decoded": 869,
+        "failed": 0,
+        "bytes": 18422104,
+        "failures": []
       }
     },
     "RestoreRamDisk": {
       "root": "build/userland/restore-ramdisk",
-      "files": 1564,
-      "directories": 461,
-      "bytes": 2180116646,
-      "binaries_scanned": 383,
+      "files": 1260,
+      "directories": 459,
+      "bytes": 1236840790,
+      "binaries_scanned": 387,
       "architectures": {
-        "arm64e": 383
+        "arm64e": 387
       },
       "platforms": {
-        "iOS": 351,
+        "iOS": 355,
         "driverKit": 32
       },
       "minos": {
-        "27.2.0": 382,
+        "27.2.0": 386,
         "18.0.0": 1
       },
-      "chained_fixups": 383,
+      "chained_fixups": 387,
+      "fat_binaries": 0,
+      "empty_files": 0,
       "launchd": [
         "build/userland/restore-ramdisk/sbin/launchd"
       ],
@@ -72,13 +91,14 @@
         "containers": {},
         "fat_headers_in_literal_prefix": 0
       },
-      "image": "build/userland/141-10399-248.dmg",
-      "returncode": 2,
-      "stderr_tail": [
-        "ERROR: Dangerous link path was ignored : sbin/mount_tmpfs : ../System/Library/Filesystems/tmpfs.fs/mount_tmpfs",
-        "ERROR: Dangerous link path was ignored : usr/lib/libextension.dylib : ../../System/Library/Frameworks/Foundation.framework/Foundation",
-        "ERROR: Dangerous link path was ignored : usr/lib/libnetwork.dylib : ../../System/Library/Frameworks/Network.framework/Network"
-      ],
+      "symlinks": 306,
+      "errors": [],
+      "nodes": 8948,
+      "decmpfs_streams": 0,
+      "hash_checked": 0,
+      "reader": "apfs",
+      "volume": "ramdisk",
+      "sealed": false,
       "seven_zip": {
         "available": true,
         "tool": "/usr/bin/7z",
@@ -93,6 +113,14 @@
         "block_size": "4096",
         "fs_alloc_count": "47151",
         "entries": 0
+      },
+      "image": "build/userland/141-10399-248.dmg",
+      "lzbitmap": {
+        "streams": 0,
+        "decoded": 0,
+        "failed": 0,
+        "bytes": 1236840790,
+        "failures": []
       }
     }
   },

@@ -133,6 +133,34 @@ def parse(data: bytes) -> Im4p:
     )
 
 
+def locate(data: bytes) -> tuple[str, str, int, int]:
+    """(tipo, descrição, deslocamento, comprimento) do payload, sem copiá-lo.
+
+    Serve para um IM4P grande (o ramdisk de restauração tem 234 MB): só os
+    primeiros bytes são necessários para saber onde o payload começa e acaba.
+    """
+    prefix = data.find(b"IM4P")
+    if prefix < 0:
+        raise Im4pError("não achei a assinatura IM4P")
+    at = prefix + 4
+
+    def field(at: int, tag: int) -> tuple[int, int]:
+        if at >= len(data):
+            raise Im4pError("fim do arquivo lendo um campo")
+        if data[at] != tag:
+            raise Im4pError(f"esperava a tag 0x{tag:02x}, achei 0x{data[at]:02x} no byte {at}")
+        return _der_length(data, at + 1)
+
+    length, start = field(at, TAG_IA5)
+    raw_type = data[start:start + length].decode("latin-1", "replace")
+    at = start + length
+    length, start = field(at, TAG_IA5)
+    description = data[start:start + length].decode("latin-1", "replace")
+    at = start + length
+    length, start = field(at, TAG_OCTET)
+    return raw_type, description, start, length
+
+
 def is_im4p(data: bytes) -> bool:
     return b"IM4P" in data[:64]
 

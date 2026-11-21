@@ -96,11 +96,11 @@ def evaluate(facts: dict) -> list[dict]:
         "nenhum; é uma barreira criptográfica, não um bug"))
     app = images.get("Cryptex1,AppOS", {})
     results.append(_entry(
-        "Sistema de arquivos", "Ler o cryptex de App (não cifrado)", PARTIAL,
-        f"{app.get('path')} — APFS selado, {app.get('files', '?')} arquivos",
-        "o 7-Zip lê; o leitor APFS do HakiOS para no nó raiz selado "
-        "(BTNODE_NOHEADER, cabeçalho zerado, filhos com hash de 32 bytes)",
-        "implementar árvore selada no leitor do HakiOS"))
+        "Sistema de arquivos", "Ler o cryptex de App (não cifrado)", OK,
+        f"{app.get('path')} — APFS selado, {app.get('files', '?')} arquivos, "
+        f"{app.get('decmpfs_streams', '?')} fluxos LZBITMAP descomprimidos",
+        "apfs_sealed.py lê a árvore selada (NOHEADER + HASHED) e a árvore de "
+        "extents; o resultado é idêntico ao do 7-Zip, byte a byte"))
 
     # ---- userland ------------------------------------------------------------
     launchd = userland.get("launchd", [])
@@ -117,7 +117,8 @@ def evaluate(facts: dict) -> list[dict]:
         "do M1 não haveria saída"))
     results.append(_entry(
         "Userland", "Bibliotecas e frameworks oficiais disponíveis", PARTIAL,
-        f"{userland.get('files', 0)} arquivos extraídos do cryptex de App e do ramdisk",
+        f"{userland.get('files', 0)} arquivos extraídos do cryptex de App e do ramdisk, "
+        f"todos os decmpfs remontados",
         "são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA"))
 
     # ---- hardware ------------------------------------------------------------

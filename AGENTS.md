@@ -178,13 +178,26 @@ Facts that cost time, so they are not re-derived:
   comes from `wkms.sd.apple.com` for an attested device. Only `Cryptex1,AppOS` (16 MiB) and
   `RestoreRamDisk` (245 MB) are readable.
 - The HakiOS `tools/apfs/apfs.py` cannot open a **sealed** APFS tree (no checksum on the
-  node, `BTNODE_NOHEADER`, children ordered by hash). 7-Zip 23+ can, so `hkipados/apfsx.py`
-  uses it there and says so.
-- 7-Zip extracts every App-cryptex file as **0 bytes** plus `name:com.apple.decmpfs` and a
-  resource fork: all 869 are decmpfs type 14 = **LZBITMAP** (`ZBM\x09`). Nothing in 7-Zip or
-  HakiOS decodes it.
-- `RestoreRamDisk` is APFS at **offset 27**, not 0; 383 Mach-O, all arm64e, `launchd` is
-  iOS 27.2.0 with 32 entitlements (`pivot-root`, `graftdmg`, `load-trust-cache`).
+  node, `BTNODE_NOHEADER`, children ordered by hash). `hkipados/apfs_sealed.py` now does, so
+  the 7-Zip is only a fallback. Two facts that make it work: the sealed tree also has
+  `APFS_BTREE_HASHED` (child entry = 8-byte oid *offset* + 32-byte SHA-256 of the child,
+  compared as `digest()[:8]`), and the extents are **not** in the fs tree — they live in a
+  separate physical tree at `apfs_fext_tree_oid` (offset `0x408` of the superblock) with
+  16-byte keys `(stream id, logical offset)` and no `j_key` type field.
+- All 869 App-cryptex files are decmpfs type 14 = **LZBITMAP**. HakiOS already shipped
+  `libzbitmap.c`/`unzbm.c` (Corellium, MIT); `hkipados/decmpfs.py` compiles them and calls
+  the library through `ctypes`, so the files decode in memory during the APFS read.
+  Resource-fork block table: `[table_size, ..., fork_len]`, then the blocks; a block that
+  did not shrink is `0xff` + literal bytes.
+- `RestoreRamDisk` is not a `.dmg`: it is an **IM4P** (`type rdsk`, 27-byte DER header) with
+  the raw APFS payload behind it. `im4p.locate()` returns `(length, offset)` order from
+  `_der_length` — the tuple is easy to unpack backwards.
+- `RestoreRamDisk` extracts to 1,260 files + 306 symlinks + 459 dirs (1,236,840,790 bytes)
+  and 387 arm64e Mach-O; `launchd` is iOS 27.2.0 with 32 entitlements (`pivot-root`,
+  `graftdmg`, `load-trust-cache`). 7-Zip writes 0-byte files where the volume has symlinks
+  (10 cases), which is why its Mach-O count is 383 — do not trust it for symlink-heavy trees.
+- The App cryptex is 1,155 files / 18,422,104 bytes with 5,023 node hashes verified; the
+  reader's output is byte-identical to 7-Zip + `unzbm`, and both images extract in ~7 s.
 - Target kernel is `xnu-13432.42.3` (`MH_FILESET`, arm64e); HakiOS is `xnu-8796.121.2`
   arm64 (`DEVELOPMENT_ARM64_BCM2837`); the newest open-source XNU tag is `12377.121.6`.
 - The open kernel **does** boot under QEMU: AAVMF + `prebuilt/loader.efi` +

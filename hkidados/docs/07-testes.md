@@ -8,8 +8,8 @@ completos: `reports/tests.log`, `reports/userland.log`, `reports/qemu-open.log`.
 ```
 $ HKIPADOS_IPSW=cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw \
       python3 -m unittest discover -s tests -v
-Ran 25 tests in 3.084s
-OK (skipped=1)
+Ran 33 tests in 1.529s
+OK (skipped=4)
 ```
 
 O único pulado é o que lê o manifesto por HTTP (`HKIPADOS_URL`), para a suíte
@@ -22,12 +22,13 @@ rodar sem rede.
 | kernel | idem | `MH_FILESET`, arm64e, chained fixups, 76.775.424 bytes, xnu-13432.42.3 |
 | AEA | idem | versão 1, header 2240, `wkms.sd.apple.com`, 0 campos indecifráveis |
 | APFS | idem | App: offset 0, 4096/4096; RamDisk: offset 27, 4096/59.904 |
-| extração | `hkidados userland` | 2.893 + 1.564 entradas, 9,1 MB + 2,0 GB |
-| userland | idem | 383 Mach-O arm64e; `launchd` iOS 27.2.0 com 32 entitlements |
-| decmpfs | idem | 869 fluxos, todos LZBITMAP; 867 com `ZBM`; 17 com Mach-O universal |
-| compatibilidade | `hkidados compat` | 11 BLOQUEADO, 2 PARCIAL, 5 OK, 1 NÃO TESTADO |
+| extração | `hkidados userland` | 1.155 + 2.025 entradas, 18,4 MB + 1,2 GB, 7 s, sem 7-Zip |
+| userland | idem | 387 Mach-O arm64e; `launchd` iOS 27.2.0 com 32 entitlements |
+| decmpfs | idem | 869 fluxos, todos LZBITMAP, **869 descomprimidos**, 0 falhas |
+| APFS selado | idem | 5.023 nós com SHA-256 conferido; 1.155 arquivos idênticos ao 7-Zip |
+| compatibilidade | `hkidados compat` | ver `reports/compat.md` (gerado de novo nesta rodada) |
 | kernel em QEMU | `scripts/hakios-boot-open.sh` | `bsd_init: done`, processo 1 executou |
-| testes unitários | `make test` | 25 testes, 24 ok, 1 pulado |
+| testes unitários | `make test` | 33 testes, 29 ok, 4 pulados sem IPSW |
 
 ## 7.2 O boot do kernel comunitário, em detalhe
 
@@ -60,8 +61,12 @@ provar.
 | APFS com prefixo | RestoreRamDisk dava `unknown` | procurar `NXSB` nos primeiros 4096 bytes e reportar `apfs_offset` |
 | AEA | campos `wkms.*` com nome estranho | ler o campo como par comprimento/valor e reportar `undecodable` |
 | `find_fat` | não achava o cabeçalho no último offset possível | limite `len-7`, não `len-8` |
-| 7-Zip e APFS selado | leitor do HakiOS para no nó selado | usar 7-Zip só nesse caso, e dizer que usou |
-| arquivos com 0 byte no cryptex | 7-Zip não remonta `decmpfs` | detectar e documentar; não fingir que extraiu |
+| APFS selado | leitor do HakiOS para no nó raiz (`bad Fletcher-64 checksum`) | `apfs_sealed.py`: nó sem cabeçalho, filho com SHA-256, árvore de extents |
+| hash de filho sempre errado | comparava 32 bytes com 8 | comparar `digest()[:8]` com `hash8[:8]` |
+| arquivos com 0 byte no cryptex | 7-Zip não remonta `decmpfs` | `libzbitmap.c` do HakiOS + `unzbm.c`/ctypes: 869/869 |
+| tipo 9 virava 0 byte | o leitor devolvia vazio antes de olhar o atributo | só usar a árvore de extents quando há `dstream` |
+| ramdisk "não é APFS" | é um IM4P de 27 bytes em volta do APFS | `im4p.locate` + `apfsx.to_raw` |
+| `im4p.locate` trocava offset e tamanho | `_der_length` devolve `(comprimento, posição)` | desempacotar na ordem certa |
 
 ## 7.4 O que não foi testado
 
@@ -71,16 +76,16 @@ provar.
 | boot da userland do iPadOS | volume do sistema em AEA |
 | `SpringBoard`/`BackBoard` | não estão em nenhuma imagem legível |
 | recompilar o kernel | falta a toolchain do theos; usei `prebuilt/` |
-| montar o APFS selado com o leitor do HakiOS | ele não suporta a árvore por hash |
-| descomprimir `decmpfs` tipo 14 | não há decodificador LZBITMAP no 7-Zip nem no HakiOS |
+| decifrar o volume `OS` (AEA) | a chave é do `wkms`, autenticada pelo aparelho |
+| montar o volume selado (em vez de extrair) | o projeto lê e extrai; não há driver APFS no kernel comunitário |
 
 ## 7.5 Como repetir
 
 ```sh
-make test                     # 25 testes, sem IPSW
+make test                     # 33 testes, sem IPSW
 make doctor                   # o que falta nesta máquina
 make analyze                  # usa cache/*.ipsw
-make userland                 # extrai e inventaria
+make userland                 # extrai (leitor próprio), descomprime e inventaria
 make compat                   # gera a tabela
 make boot-open                # kernel do HakiOS no QEMU (precisa de qemu + AAVMF)
 ```

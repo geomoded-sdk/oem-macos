@@ -256,6 +256,8 @@ def inventory_tree(root: str, max_binaries: int = 4000) -> dict:
     decmpfs_containers: dict[str, int] = {}
     decmpfs_files = 0
     fat_headers = 0
+    fat_binaries = 0
+    empty_files = 0
     for base, dirs, names in os.walk(root):
         directories += len(dirs)
         for name in names:
@@ -266,6 +268,8 @@ def inventory_tree(root: str, max_binaries: int = 4000) -> dict:
             except OSError:
                 continue
             total += size
+            if size == 0:
+                empty_files += 1
             if name.endswith(":com.apple.decmpfs"):
                 decmpfs_files += 1
                 try:
@@ -295,7 +299,9 @@ def inventory_tree(root: str, max_binaries: int = 4000) -> dict:
                 with open(full, "rb") as handle:
                     head = handle.read(32)
                     magic = int.from_bytes(head[:4], "little")
-                    if magic != macho.MH_MAGIC_64:
+                    magic_be = int.from_bytes(head[:4], "big")
+                    is_fat = magic_be in (macho.FAT_MAGIC, macho.FAT_MAGIC_64)
+                    if not is_fat and magic != macho.MH_MAGIC_64:
                         continue
                     handle.seek(0)
                     data = handle.read(min(size, 1 << 20))
@@ -303,7 +309,9 @@ def inventory_tree(root: str, max_binaries: int = 4000) -> dict:
             except (OSError, ValueError):
                 continue
             binaries += 1
-            arch_counts[parsed.arch] = arch_counts.get(parsed.arch, 0) + 1
+            fat_binaries += 1 if is_fat else 0
+            for slice_ in (parsed.fat_slices or [parsed]):
+                arch_counts[slice_.arch] = arch_counts.get(slice_.arch, 0) + 1
             if parsed.platform:
                 platform_counts[parsed.platform] = platform_counts.get(parsed.platform, 0) + 1
             if parsed.minos:
@@ -319,6 +327,8 @@ def inventory_tree(root: str, max_binaries: int = 4000) -> dict:
         "platforms": platform_counts,
         "minos": dict(sorted(minos_counts.items(), key=lambda kv: -kv[1])[:10]),
         "chained_fixups": chained,
+        "fat_binaries": fat_binaries,
+        "empty_files": empty_files,
         "launchd": sorted(launchds),
         "decmpfs": {
             "streams": decmpfs_files,

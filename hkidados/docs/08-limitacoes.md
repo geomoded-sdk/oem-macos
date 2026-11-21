@@ -25,23 +25,28 @@ inventar resultado.
 | arm64 (HakiOS) × arm64e (alvo) | PAC/`ptrauth` não suportado | port para arm64e | parcialmente |
 | boot assinado no iPad | nada executa sem a Apple | quebrar o secure boot (não fazemos) | não |
 | drivers AIC/DART/ANS/DCP/AGX/touch | sem tela, sem disco, sem entrada | engenharia reversa de cada um | parcialmente |
-| leitor APFS do HakiOS e volume selado | só o 7-Zip lê o cryptex | árvore por hash no leitor | **sim** |
-| `decmpfs` tipo 14 (LZBITMAP) | arquivos do cryptex com 0 byte | decodificador LZBITMAP | **sim** |
 | kernel não recompilado aqui | não sei se o build local funciona | toolchain do theos (~12 GB) | **sim** |
 
-## 8.3 O que dá para avançar sozinho
+## 8.3 O que dava para avançar sozinho — e foi feito
 
-Três coisas, em ordem de valor:
+Três itens dependiam só de software nosso. Dois estão fechados:
 
-1. **Decodificador LZBITMAP.** O formato é `ZBM` + bitmap + LZVN. Com ele, os 869
-   arquivos do cryptex de App passam a ter conteúdo — e dá para comparar o
-   `launchd`/`MobileSafari` reais com o que o kernel comunitário espera.
-2. **Árvore APFS selada no leitor do HakiOS.** O `apfs.py` já sabe ler a árvore
-   por object-id; falta a variante por hash (`BTNODE_NOHEADER`, filhos de 32
-   bytes). Isso tiraria a dependência do 7-Zip e permitiria ler o volume selado
-   em qualquer plataforma.
-3. **Repetir tudo com o IPSW 16.5 que o HakiOS já usa.** É o único caso em que
-   kernel e userland são da mesma geração; se algo for possível, é ali.
+1. **Decodificador LZBITMAP — feito.** O `libzbitmap.c` que o HakiOS já trazia
+   foi compilado (`libzbitmap.so`, chamado por `ctypes`) e o laço de blocos do
+   `unzbm.c` foi portado para o `decmpfs.decompress`. Os **869 fluxos** do
+   cryptex de App descomprimem, com o tamanho de cada bloco conferido. Prova:
+   `tests/test_apfs_sealed.py` e a comparação byte a byte com o `unzbm`.
+2. **Árvore APFS selada — feito.** O `apfs_sealed.py` lê a árvore com
+   `APFS_BTREE_NOHEADER` + `APFS_BTREE_HASHED` e a árvore de extents
+   (`apfs_fext_tree_oid`), seguindo `apfs_lib.c` da Apple. O cryptex sai inteiro
+   sem o 7-Zip, com **5.023 hashes de nó conferidos** e resultado idêntico ao do
+   7-Zip. O ramdisk, que é APFS comum embrulhado em IM4P, também sai inteiro.
+3. **Repetir tudo com o IPSW 16.5 que o HakiOS já usa — continua aberto.** É o
+   único caso em que kernel e userland são da mesma geração; se algo for
+   possível, é ali.
+
+O que sobrou na tabela do 8.2 não é código nosso: depende da Apple (assinatura,
+SEP, AEA) ou de drivers para hardware que não existe neste ambiente.
 
 ## 8.4 O que este projeto deliberadamente não faz
 
