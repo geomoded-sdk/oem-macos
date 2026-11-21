@@ -26,6 +26,7 @@ rodar sem rede.
 | userland | idem | 387 Mach-O arm64e; `launchd` iOS 27.2.0 com 32 entitlements |
 | decmpfs | idem | 869 fluxos, todos LZBITMAP, **869 descomprimidos**, 0 falhas |
 | APFS selado | idem | 5.023 nós com SHA-256 conferido; 1.155 arquivos idênticos ao 7-Zip |
+| dependências | `hkidados deps` | ramdisk: 230 de 308 resolvem na árvore; cryptex: 0 de 114 |
 | compatibilidade | `hkidados compat` | ver `reports/compat.md` (gerado de novo nesta rodada) |
 | kernel em QEMU | `scripts/hakios-boot-open.sh` | `bsd_init: done`, processo 1 executou |
 | testes unitários | `make test` | 33 testes, 29 ok, 4 pulados sem IPSW |

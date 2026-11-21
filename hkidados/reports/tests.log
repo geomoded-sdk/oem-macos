@@ -17,6 +17,8 @@ test_sealed_node_is_recognised (test_formats.ApfsDetectionTest.test_sealed_node_
 test_bad_magic_is_rejected (test_formats.DecmpfsTest.test_bad_magic_is_rejected) ... ok
 test_header_names_the_compression (test_formats.DecmpfsTest.test_header_names_the_compression) ... ok
 test_resource_fork_container_and_fat_prefix (test_formats.DecmpfsTest.test_resource_fork_container_and_fat_prefix) ... ok
+test_dylibs_are_parsed_and_resolved (test_formats.DepsTest.test_dylibs_are_parsed_and_resolved) ... ok
+test_symlinked_binary_is_skipped (test_formats.DepsTest.test_symlinked_binary_is_skipped) ... ok
 test_classic_form (test_formats.Im4pTest.test_classic_form) ... ok
 test_lzfse_without_module_is_explained (test_formats.Im4pTest.test_lzfse_without_module_is_explained) ... ok
 test_wrapped_form (test_formats.Im4pTest.test_wrapped_form) ... ok
@@ -34,6 +36,6 @@ test_truncated_member_raises (test_io.ZipTest.test_truncated_member_raises) ... 
 test_zip64_extra (test_io.ZipTest.test_zip64_extra) ... ok
 
 ----------------------------------------------------------------------
-Ran 33 tests in 1.700s
+Ran 35 tests in 1.532s
 
 OK (skipped=4)

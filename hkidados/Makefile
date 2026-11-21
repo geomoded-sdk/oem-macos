@@ -3,7 +3,7 @@ IPSW ?= cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw
 IMAGE ?=
 JSON ?= reports/ipad13,4-24B156.json
 
-.PHONY: help doctor test analyze userland apfs unzbm compat boot-open check clean
+.PHONY: help doctor test analyze userland deps apfs unzbm compat boot-open check clean
 
 help:
 	@sed -n 's/^#  /  /p' Makefile
@@ -24,6 +24,11 @@ analyze:
 userland: unzbm
 	./bin/hkidados userland $(IPSW) --decompress --unzbm build/bin/unzbm \
 		--json reports/userland.json
+
+#  as dependências dos binários extraídos
+deps:
+	./bin/hkidados deps build/userland/restore-ramdisk --json reports/deps.json
+	./bin/hkidados deps build/userland/app-cryptex --json reports/deps-cryptex.json
 
 #  um volume APFS (cru, IM4P ou UDIF) lido e descomprimido sem o 7-Zip
 apfs:

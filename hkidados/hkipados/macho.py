@@ -33,6 +33,22 @@ LC_ENCRYPTION_INFO_64 = 0x2C
 LC_BUILD_VERSION = 0x32
 LC_DYLD_CHAINED_FIXUPS = 0x80000034
 LC_DYLD_INFO_ONLY = 0x80000022
+LC_LOAD_DYLIB = 0x0C
+LC_ID_DYLIB = 0x0D
+LC_LAZY_LOAD_DYLIB = 0x20
+LC_LOAD_WEAK_DYLIB = 0x80000018
+LC_REEXPORT_DYLIB = 0x8000001F
+LC_RPATH = 0x8000001C
+LC_LOAD_UPWARD_DYLIB = 0x80000023
+
+DYLIB_COMMANDS = {
+    LC_LOAD_DYLIB: "load",
+    LC_LOAD_WEAK_DYLIB: "weak",
+    LC_REEXPORT_DYLIB: "reexport",
+    LC_LOAD_UPWARD_DYLIB: "upward",
+    LC_LAZY_LOAD_DYLIB: "lazy",
+    LC_ID_DYLIB: "id",
+}
 
 PLATFORMS = {
     1: "macOS", 2: "iOS", 3: "tvOS", 4: "watchOS", 5: "bridgeOS",
@@ -72,6 +88,8 @@ class MachO:
     entitlements_xml: str | None = None
     entitlements_der: bytes | None = None
     fat_slices: list["MachO"] = field(default_factory=list)
+    dylibs: list[tuple[str, str]] = field(default_factory=list)
+    rpaths: list[str] = field(default_factory=list)
     error: str | None = None
 
     @property
@@ -207,6 +225,22 @@ def _parse_thin(data: bytes, bits: int) -> MachO:
             result.encrypted = cryptid != 0
         elif cmd == LC_DYLD_CHAINED_FIXUPS:
             result.chained_fixups = True
+        elif cmd in DYLIB_COMMANDS and cmdsize >= 24:
+            offset = struct.unpack_from("<I", data, body)[0]
+            if 0 < offset < cmdsize:
+                start = at + offset
+                end = data.find(b"\0", start, at + cmdsize)
+                name = data[start:end if end >= 0 else at + cmdsize]
+                result.dylibs.append((DYLIB_COMMANDS[cmd],
+                                      name.decode("utf-8", "surrogateescape")))
+        elif cmd == LC_RPATH and cmdsize >= 12:
+            offset = struct.unpack_from("<I", data, body)[0]
+            if 0 < offset < cmdsize:
+                start = at + offset
+                end = data.find(b"\0", start, at + cmdsize)
+                result.rpaths.append(
+                    data[start:end if end >= 0 else at + cmdsize]
+                    .decode("utf-8", "surrogateescape"))
         elif cmd == LC_CODE_SIGNATURE and cmdsize >= 16:
             code_signature = struct.unpack_from("<II", data, body)
         at += cmdsize

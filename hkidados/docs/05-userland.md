@@ -173,3 +173,39 @@ volume do sistema, mas sem o conteúdo. É o máximo que se consegue sem a chave
 2. O `launchd` pede serviços que o kernel comunitário não oferece.
 3. A interface não está em nenhuma imagem legível; não há como "iniciar o
    SpringBoard" a partir do que se pode extrair legalmente.
+
+## 5.5 As dependências, medidas
+
+O `hkidados deps` resolve cada `LC_LOAD_DYLIB` de cada Mach-O extraído contra a
+própria árvore. O resultado não é uma opinião sobre "o que falta": é a lista.
+
+| árvore | binários | bibliotecas distintas | presentes na árvore | ausentes |
+|---|---|---|---|---|
+| RestoreRamDisk | 372 | 308 | **230** | 78 |
+| Cryptex de App | 17 | 114 | **0** | 114 |
+
+No ramdisk, 230 de 308 resolvem dentro da própria árvore — inclusive
+`/usr/lib/libSystem.B.dylib` (300 binários), `CoreFoundation` (202), `IOKit`
+(148) e `libobjc.A.dylib` (137). O ramdisk é quase autossuficiente, o que faz
+sentido: ele precisa montar APFS e restaurar o sistema sem o sistema.
+
+As 78 que faltam se dividem em duas causas, e a diferença importa:
+
+- **66 são do dyld shared cache** (`libsandbox.1.dylib`, `libRosetta.dylib`,
+  `libswiftCoreAudio.dylib`, `FrontBoardServices`, `RunningBoardServices`,
+  `TCC`, …). Desde o iOS 13 essas bibliotecas não existem como arquivo: são
+  fundidas num cache gerado na instalação, em
+  `/System/Library/Caches/com.apple.dyld/dyld_shared_cache_arm64e`, que fica no
+  volume do sistema (AEA). Nenhuma imagem legível as contém.
+- **12 faltam por outro motivo** e são igualmente honestas: frameworks do
+  `DriverKit` (`AppleWLANPrime`, `MobileBluetoothDK`), `TapToRadarKit` de
+  `/AppleInternal`, e frameworks que só existem no volume do sistema
+  (`CoreTelephony`, `JavaScriptCore`, `SwiftData`, `MetricKit`).
+
+O cryptex de App é o oposto: **0 de 114**. Um bundle de app não carrega o
+sistema; ele pede `UIKit`, `Foundation`, `WebKit`, `SafariServices` ao volume do
+sistema. Isso é a prova, medida, de que "iniciar o Safari do cryptex" não é
+questão de montar o cryptex: falta o sistema inteiro.
+
+O `dyld` em si está no ramdisk (`usr/lib/dyld`, 1.446.480 bytes), então o
+carregador existe. O que não existe é o cache que ele espera encontrar.

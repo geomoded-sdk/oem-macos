@@ -63,7 +63,7 @@ Três entregas, todas verificáveis:
 - o kernel comunitário **iniciou em QEMU**: `XNULOADER v3` → Darwin 22.5.0 →
   `bsd_init: done` → processo 1 imprimindo `Hello from user space on Darwin!`
   (`reports/qemu-open.log`);
-- os 33 testes passam (4 pulados sem o IPSW).
+- os 35 testes passam (4 pulados sem o IPSW).
 
 **O que não funcionou, e por quê:**
 
@@ -90,6 +90,9 @@ make doctor                   # o que falta nesta máquina
 
 # só o que é legível, com inventário
 ./bin/hkidados userland cache/*.ipsw --out build/userland --json reports/userland.json
+
+# dependências de cada binário: o que a árvore cobre e o que só o dyld cache tem
+./bin/hkidados deps build/userland/restore-ramdisk --json reports/deps.json
 
 # o veredito (sai com código 1 quando algo obrigatório está bloqueado)
 ./bin/hkidados compat cache/*.ipsw --userland build/userland --md reports/compat.md
@@ -119,6 +122,7 @@ hkidados/
 │   ├── apfsx.py               APFS cru, IM4P e UDIF: tira o embrulho
 │   ├── apfs_sealed.py         árvore APFS selada (hash) e árvore de extents
 │   ├── decmpfs.py             LZBITMAP: compila o do HakiOS e descomprime
+│   ├── deps.py                dependências dos Mach-O contra a árvore extraída
 │   ├── analyze.py             o relatório
 │   ├── compat.py              as regras de compatibilidade
 │   ├── cli.py
@@ -126,7 +130,7 @@ hkidados/
 ├── scripts/                   clone do HakiOS, boot em QEMU
 ├── docs/                      01..08 (ver abaixo)
 ├── reports/                   saídas reais: JSON e logs
-└── tests/                     unittest (33 testes)
+└── tests/                     unittest (35 testes)
 ```
 
 ### Documentação

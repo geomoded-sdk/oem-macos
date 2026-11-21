@@ -9,7 +9,8 @@ import shutil
 import sys
 import urllib.request
 
-from . import __version__, aea, analyze, apfs_sealed, apfsx, compat, decmpfs, im4p, macho
+from . import (__version__, aea, analyze, apfs_sealed, apfsx, compat, decmpfs, deps,
+               im4p, macho)
 from .manifest import BuildManifest
 from .source import open_source
 from .zipx import ZipArchive, human_size
@@ -268,6 +269,26 @@ def cmd_userland(args) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- deps
+
+def cmd_deps(args) -> int:
+    """As bibliotecas que os binários extraídos pedem, e quais existem na árvore."""
+    report = deps.analyze_tree(args.tree, args.limit)
+    print(deps.summary(report))
+    for row in report["binaries"]:
+        if not args.verbose:
+            break
+        missing = [d["path"] for d in row["dylibs"] if not d["present"]]
+        print(f"  {row['path']}: {len(row['dylibs'])} dependências, "
+              f"{len(missing)} ausentes")
+    if args.json:
+        os.makedirs(os.path.dirname(os.path.abspath(args.json)), exist_ok=True)
+        with open(args.json, "w", encoding="utf-8") as handle:
+            json.dump(report, handle, indent=2, ensure_ascii=False)
+            handle.write("\n")
+    return 0
+
+
 # --------------------------------------------------------------------------- apfs
 
 def cmd_apfs(args) -> int:
@@ -400,6 +421,13 @@ def build_parser() -> argparse.ArgumentParser:
                           help="descomprimir os arquivos decmpfs LZBITMAP (usa o unzbm do HakiOS)")
     userland.add_argument("--unzbm", default="build/bin/unzbm", help="onde compilar o unzbm")
     userland.set_defaults(func=cmd_userland)
+
+    deps_cmd = sub.add_parser("deps", help="dependências dos binários extraídos")
+    deps_cmd.add_argument("tree")
+    deps_cmd.add_argument("--limit", type=int, default=4000)
+    deps_cmd.add_argument("--verbose", action="store_true")
+    deps_cmd.add_argument("--json", default=None)
+    deps_cmd.set_defaults(func=cmd_deps)
 
     apfs_cmd = sub.add_parser("apfs", help="ler um volume APFS (inclusive selado) sem o 7-Zip")
     apfs_cmd.add_argument("image")

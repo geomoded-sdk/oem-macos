@@ -4,7 +4,10 @@ import plistlib
 import struct
 import unittest
 
-from hkipados import aea, apfsx, decmpfs, im4p, macho
+import os
+import tempfile
+
+from hkipados import aea, apfsx, decmpfs, deps, im4p, macho
 from hkipados.manifest import BuildManifest
 from hkipados.source import LocalSource
 
@@ -111,6 +114,44 @@ class MachOTest(unittest.TestCase):
     def test_rejects_garbage(self):
         with self.assertRaises(ValueError):
             macho.parse(b"not a mach-o at all............")
+
+
+def build_linked_macho(name: str) -> bytes:
+    """Um MH_EXECUTE mínimo com um LC_LOAD_DYLIB apontando para NAME."""
+    payload = name.encode() + b"\0"
+    size = (24 + len(payload) + 7) & ~7
+    command = struct.pack("<IIIIII", macho.LC_LOAD_DYLIB, size, 24, 0, 0x10000, 0x10000)
+    command += payload.ljust(size - 24, b"\0")
+    header = struct.pack("<IiiIIIII", macho.MH_MAGIC_64, macho.CPU_TYPE_ARM64,
+                         macho.CPU_SUBTYPE_ARM64E, 2, 1, len(command), 0, 0)
+    return header + command
+
+
+class DepsTest(unittest.TestCase):
+    def test_dylibs_are_parsed_and_resolved(self):
+        with tempfile.TemporaryDirectory() as root:
+            os.makedirs(os.path.join(root, "bin"))
+            with open(os.path.join(root, "bin", "tool"), "wb") as handle:
+                handle.write(build_linked_macho("/usr/lib/libSystem.B.dylib"))
+            report = deps.analyze_tree(root)
+            self.assertEqual(report["binaries_scanned"], 1)
+            self.assertEqual(report["dylibs_unique"], 1)
+            self.assertEqual(report["dylibs_present"], 0)
+            self.assertEqual(report["missing_in_shared_cache"], ["/usr/lib/libSystem.B.dylib"])
+            os.makedirs(os.path.join(root, "usr", "lib"))
+            with open(os.path.join(root, "usr", "lib", "libSystem.B.dylib"), "wb") as handle:
+                handle.write(b"not really a mach-o")
+            report = deps.analyze_tree(root)
+            self.assertEqual(report["dylibs_present"], 1)
+            self.assertEqual(report["missing"], {})
+
+    def test_symlinked_binary_is_skipped(self):
+        with tempfile.TemporaryDirectory() as root:
+            with open(os.path.join(root, "real"), "wb") as handle:
+                handle.write(build_linked_macho("/usr/lib/libobjc.A.dylib"))
+            os.symlink("real", os.path.join(root, "link"))
+            report = deps.analyze_tree(root)
+            self.assertEqual([row["path"] for row in report["binaries"]], ["real"])
 
 
 class AeaTest(unittest.TestCase):
