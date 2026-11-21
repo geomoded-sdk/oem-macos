@@ -220,3 +220,16 @@ Facts that cost time, so they are not re-derived:
   `-serial file:...` in anything time-limited. `run.sh` also defaults to `-m 6G`; 3G fits.
 - The firmware roms matter: `qemu-system-arm` alone boots to `BdsDxe: no mapping found`
   until `ipxe-qemu` is installed (`/usr/share/qemu/efi-virtio.rom`).
+- A ramdisk bigger than the payload can still be the root: `PAYLOAD_MAX_SIZE` is 64 MiB
+  (minus 1 MiB of panic log), so `rdres=<hex size>` in the payload plus
+  `-device loader,file=rd.apfs,addr=<phys_base + 0x08000000>` (0x50000000 at `-m 4G`,
+  where the loader prints `phys window 48000000`) makes it `md0`. Without a `ramdisk`
+  entry the resident image becomes the root. `scripts/try-ipados-root.sh` does this and
+  the HakiOS APFS driver **mounts the iPadOS 27 volume**: `1260 files, 459 directories`,
+  the same counts `hkipados/apfs_sealed.py` gets, and `/sbin/launchd` then stops at
+  `errno 86` (`EBADARCH`). So mounting and init lookup are solved; only the arm64e ABI
+  is not.
+- The iPad13,4 identity has **two** ramdisks: `141-10399-248.dmg` for Erase (1,260 files)
+  and `141-09491-250.dmg` for Customer Upgrade (1,519). Taking the first `rdsk` member
+  of the ZIP silently boots another variant's ramdisk; read the path from the
+  BuildManifest for the variant you mean.
