@@ -164,3 +164,32 @@ It calls `install_host_config` against an empty directory with only `arch-chroot
   directory); the long-path fallbacks are not implemented.
 - The manifest installs three vendors' Vulkan drivers (~75 MiB); a per-vendor profile would
   save 30–60 MiB.
+
+## `hkidados/` is a separate project
+
+`hkidados/` (HkiPadOS) is **not** part of the OEM layer: its own MIT licence, its own
+README, no shared code. It reuses the community HakiOS XNU
+(`oosexgang/hakios-xnu-kernel`, pinned `63fc2b4`) and analyses the iPadOS IPSW for
+iPad13,4. Do not fold it into the `make check` pipeline or the installer.
+
+Facts that cost time, so they are not re-derived:
+
+- The iPadOS 27 `OS` (8.3 GB) and `Cryptex1,SystemOS` (2.4 GB) images are **AEA**; the key
+  comes from `wkms.sd.apple.com` for an attested device. Only `Cryptex1,AppOS` (16 MiB) and
+  `RestoreRamDisk` (245 MB) are readable.
+- The HakiOS `tools/apfs/apfs.py` cannot open a **sealed** APFS tree (no checksum on the
+  node, `BTNODE_NOHEADER`, children ordered by hash). 7-Zip 23+ can, so `hkipados/apfsx.py`
+  uses it there and says so.
+- 7-Zip extracts every App-cryptex file as **0 bytes** plus `name:com.apple.decmpfs` and a
+  resource fork: all 869 are decmpfs type 14 = **LZBITMAP** (`ZBM\x09`). Nothing in 7-Zip or
+  HakiOS decodes it.
+- `RestoreRamDisk` is APFS at **offset 27**, not 0; 383 Mach-O, all arm64e, `launchd` is
+  iOS 27.2.0 with 32 entitlements (`pivot-root`, `graftdmg`, `load-trust-cache`).
+- Target kernel is `xnu-13432.42.3` (`MH_FILESET`, arm64e); HakiOS is `xnu-8796.121.2`
+  arm64 (`DEVELOPMENT_ARM64_BCM2837`); the newest open-source XNU tag is `12377.121.6`.
+- The open kernel **does** boot under QEMU: AAVMF + `prebuilt/loader.efi` +
+  `xnuloader/mkpayload.py` with `prebuilt/hakios-kernel` and `prebuilt/userland/hello`
+  reaches `bsd_init: done` and runs pid 1 (`Hello from user space on Darwin!`). Needs
+  `qemu-system-arm` and `qemu-efi-aarch64`; `make qemu-open` would rebuild and is not needed.
+- The DeviceTree decompresses with `lzfse` to 260 KB and names the hardware: `aic,1`,
+  `dart,t8020`, `ans`, `gpu,t8103`, `dcp`, `sep`, `ane,t8020`, `wlan-pcie,bcm4387`.
