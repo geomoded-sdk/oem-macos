@@ -164,3 +164,72 @@ It calls `install_host_config` against an empty directory with only `arch-chroot
   directory); the long-path fallbacks are not implemented.
 - The manifest installs three vendors' Vulkan drivers (~75 MiB); a per-vendor profile would
   save 30–60 MiB.
+
+## `hkidados/` is a separate project
+
+`hkidados/` (HkiPadOS) is **not** part of the OEM layer: its own MIT licence, its own
+README, no shared code. It reuses the community HakiOS XNU
+(`oosexgang/hakios-xnu-kernel`, pinned `63fc2b4`) and analyses the iPadOS IPSW for
+iPad13,4. Do not fold it into the `make check` pipeline or the installer.
+
+Facts that cost time, so they are not re-derived:
+
+- The iPadOS 27 `OS` (8.3 GB) and `Cryptex1,SystemOS` (2.4 GB) images are **AEA**; the key
+  comes from `wkms.sd.apple.com` for an attested device. Only `Cryptex1,AppOS` (16 MiB) and
+  `RestoreRamDisk` (245 MB) are readable.
+- The HakiOS `tools/apfs/apfs.py` cannot open a **sealed** APFS tree (no checksum on the
+  node, `BTNODE_NOHEADER`, children ordered by hash). `hkipados/apfs_sealed.py` now does, so
+  the 7-Zip is only a fallback. Two facts that make it work: the sealed tree also has
+  `APFS_BTREE_HASHED` (child entry = 8-byte oid *offset* + 32-byte SHA-256 of the child,
+  compared as `digest()[:8]`), and the extents are **not** in the fs tree — they live in a
+  separate physical tree at `apfs_fext_tree_oid` (offset `0x408` of the superblock) with
+  16-byte keys `(stream id, logical offset)` and no `j_key` type field.
+- All 869 App-cryptex files are decmpfs type 14 = **LZBITMAP**. HakiOS already shipped
+  `libzbitmap.c`/`unzbm.c` (Corellium, MIT); `hkipados/decmpfs.py` compiles them and calls
+  the library through `ctypes`, so the files decode in memory during the APFS read.
+  Resource-fork block table: `[table_size, ..., fork_len]`, then the blocks; a block that
+  did not shrink is `0xff` + literal bytes.
+- `RestoreRamDisk` is not a `.dmg`: it is an **IM4P** (`type rdsk`, 27-byte DER header) with
+  the raw APFS payload behind it. `im4p.locate()` returns `(length, offset)` order from
+  `_der_length` — the tuple is easy to unpack backwards.
+- `RestoreRamDisk` extracts to 1,260 files + 306 symlinks + 459 dirs (1,236,840,790 bytes)
+  and 387 arm64e Mach-O; `launchd` is iOS 27.2.0 with 32 entitlements (`pivot-root`,
+  `graftdmg`, `load-trust-cache`). 7-Zip writes 0-byte files where the volume has symlinks
+  (10 cases), which is why its Mach-O count is 383 — do not trust it for symlink-heavy trees.
+- The App cryptex is 1,155 files / 18,422,104 bytes with 5,023 node hashes verified; the
+  reader's output is byte-identical to 7-Zip + `unzbm`, and both images extract in ~7 s.
+- Target kernel is `xnu-13432.42.3` (`MH_FILESET`, arm64e); HakiOS is `xnu-8796.121.2`
+  arm64 (`DEVELOPMENT_ARM64_BCM2837`); the newest open-source XNU tag is `12377.121.6`.
+- The open kernel **does** boot under QEMU: AAVMF + `prebuilt/loader.efi` +
+  `xnuloader/mkpayload.py` with `prebuilt/hakios-kernel` and `prebuilt/userland/hello`
+  reaches `bsd_init: done` and runs pid 1 (`Hello from user space on Darwin!`). Needs
+  `qemu-system-arm` and `qemu-efi-aarch64`; `make qemu-open` would rebuild and is not needed.
+- The DeviceTree decompresses with `lzfse` to 260 KB and names the hardware: `aic,1`,
+  `dart,t8020`, `ans`, `gpu,t8103`, `dcp`, `sep`, `ane,t8020`, `wlan-pcie,bcm4387`.
+- The iPadOS init in that kernel, measured one boot per case by
+  `scripts/try-ipados-init.sh` (logs in `reports/init-attempts/`):
+  - `hello` (arm64, static) runs; the **same** binary with only the cpusubtype flipped to
+    arm64e gets `errno 86` — so 86 is `EBADARCH` and it is the ABI the kernel refuses, not
+    the binary. `sbin/launchd` from the ramdisk gets the same 86.
+  - An arm64 slice with the cpusubtype zeroed passes that check and dies in
+    `namespace 9 code 0x1`, which is `OS_REASON_EXEC` / `EXEC_EXIT_REASON_BAD_MACHO` in
+    `bsd/sys/reason.h` of xnu-8796 (read from the Apple repo through the GitHub API;
+    `raw.githubusercontent.com` returns empty here). Namespace 9 is **not** DYLD.
+- `qemu/run.sh` uses `-serial stdio`; when `timeout` kills QEMU the 4 KiB stdio buffer is
+  lost and the log comes out **empty** although the kernel printed everything. Use
+  `-serial file:...` in anything time-limited. `run.sh` also defaults to `-m 6G`; 3G fits.
+- The firmware roms matter: `qemu-system-arm` alone boots to `BdsDxe: no mapping found`
+  until `ipxe-qemu` is installed (`/usr/share/qemu/efi-virtio.rom`).
+- A ramdisk bigger than the payload can still be the root: `PAYLOAD_MAX_SIZE` is 64 MiB
+  (minus 1 MiB of panic log), so `rdres=<hex size>` in the payload plus
+  `-device loader,file=rd.apfs,addr=<phys_base + 0x08000000>` (0x50000000 at `-m 4G`,
+  where the loader prints `phys window 48000000`) makes it `md0`. Without a `ramdisk`
+  entry the resident image becomes the root. `scripts/try-ipados-root.sh` does this and
+  the HakiOS APFS driver **mounts the iPadOS 27 volume**: `1260 files, 459 directories`,
+  the same counts `hkipados/apfs_sealed.py` gets, and `/sbin/launchd` then stops at
+  `errno 86` (`EBADARCH`). So mounting and init lookup are solved; only the arm64e ABI
+  is not.
+- The iPad13,4 identity has **two** ramdisks: `141-10399-248.dmg` for Erase (1,260 files)
+  and `141-09491-250.dmg` for Customer Upgrade (1,519). Taking the first `rdsk` member
+  of the ZIP silently boots another variant's ramdisk; read the path from the
+  BuildManifest for the variant you mean.

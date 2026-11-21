@@ -1,0 +1,2333 @@
+{
+  "root": "build/userland/app-cryptex",
+  "binaries": [
+    {
+      "path": "System/Library/DataClassMigrators/MobileSafari.migrator/MobileSafari",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/BusinessChatService.framework/BusinessChatService",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Contacts.framework/Contacts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Security.framework/Security",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/DataClassMigrators/CloudTabsMigrator.migrator/CloudTabsMigrator",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/TCC.framework/TCC",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/Accounts/Notification/CloudBookmarksAccountsNotifier.bundle/CloudBookmarksAccountsNotifier",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/PreferenceBundles/MobileSafariSettings.bundle/MobileSafariSettings",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/AppStoreComponents.framework/AppStoreComponents",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PasswordManagerUI.framework/PasswordManagerUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSystemSettingsUI.framework/AppSystemSettingsUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/BrowserKit.framework/BrowserKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UniformTypeIdentifiers.framework/UniformTypeIdentifiers",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/IconServices.framework/IconServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/ScreenTimeCore.framework/ScreenTimeCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/DocumentManagerCore.framework/DocumentManagerCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/OnBoardingKit.framework/OnBoardingKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/NanoPreferencesSync.framework/NanoPreferencesSync",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Contacts.framework/Contacts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ContactsUI.framework/ContactsUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreSpotlight.framework/CoreSpotlight",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PlugInKit.framework/PlugInKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ExtensionKit.framework/ExtensionKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/ManagedConfiguration.framework/ManagedConfiguration",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/Preferences.framework/Preferences",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariFoundation.framework/SafariFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Security.framework/Security",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Combine.framework/Combine",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SwiftUI.framework/SwiftUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PreferencesExtended.framework/PreferencesExtended",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/Settings.framework/Settings",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/UIFoundation.framework/UIFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAVFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCallKit.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCompression.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio_Private.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreImage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreLocation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreMIDI.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftIntents.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMLCompute.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetalKit.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftModelIO.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftNaturalLanguage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSpatial.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Concurrency.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/UsageBundles/SafariUsageBundle.bundle/SafariUsageBundle",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/Preferences.framework/Preferences",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/Assistant/Plugins/WebSearch.assistantBundle/WebSearch",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/AssistantServices.framework/AssistantServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SAObjects.framework/SAObjects",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "System/Library/Assistant/Plugins/Safari.assistantBundle/Safari",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SAObjects.framework/SAObjects",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/AuthenticationServicesAgent",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariFoundation.framework/SafariFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CryptoKit.framework/CryptoKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/FoundationModels.framework/FoundationModels",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Security.framework/Security",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AuthenticationServicesCore.framework/AuthenticationServicesCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/CBORLibrary.framework/CBORLibrary",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/PrivateCloudCompute.framework/PrivateCloudCompute",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCompression.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreImage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreLocation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreMIDI.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftIntents.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSpatial.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Concurrency.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/SafariBookmarksSyncAgent",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libCTGreenTeaLogger.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libsqlite3.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAVFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCompression.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreImage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreLocation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreMIDI.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftIntents.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMLCompute.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftNaturalLanguage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSpatial.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Concurrency.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/browserkitd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/Frameworks/BrowserKit.framework/BrowserKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/BrowserEngineCore.framework/BrowserEngineCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/StorageContainersPrivate.framework/StorageContainersPrivate",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAVFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCompression.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreImage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreLocation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreMIDI.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftIntents.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSpatial.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSystem.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Concurrency.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/com.apple.Safari.History",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/guidedbrowsingd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAVFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCompression.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio_Private.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreImage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreLocation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreMIDI.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftIntents.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMLCompute.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetalKit.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftModelIO.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftNaturalLanguage.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftSpatial.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Concurrency.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/passwordbreachd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/safarifetcherd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/webbookmarksd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/liblockdown.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileInstallation.framework/MobileInstallation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/BrowserEngineKit.framework/BrowserEngineKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ExtensionKit.framework/ExtensionKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Accounts.framework/Accounts",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libMobileGestalt.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/UIKit.framework/UIKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/ManagedConfiguration.framework/ManagedConfiguration",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/BrowserEngineCore.framework/BrowserEngineCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/webinspectord",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/System/Library/Frameworks/Foundation.framework/Foundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libobjc.A.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/PrivateFrameworks/RemotePairingDevice.framework/RemotePairingDevice",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftAccelerate.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreAudio.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftCoreFoundation.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftDispatch.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftMetal.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftOSLog.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftObjectiveC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftQuartzCore.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftXPC.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswift_Builtin_float.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftos.dylib",
+          "kind": "weak",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/swift/libswiftsimd.dylib",
+          "kind": "weak",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    },
+    {
+      "path": "usr/libexec/webpushd",
+      "arch": "arm64e",
+      "dylibs": [
+        {
+          "path": "/usr/lib/swift/libswiftCore.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/System/Library/Frameworks/WebKit.framework/WebKit",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libc++.1.dylib",
+          "kind": "load",
+          "present": false
+        },
+        {
+          "path": "/usr/lib/libSystem.B.dylib",
+          "kind": "load",
+          "present": false
+        }
+      ],
+      "rpaths": []
+    }
+  ],
+  "binaries_scanned": 17,
+  "dylibs_unique": 114,
+  "dylibs_present": 0,
+  "dylibs_missing": 114,
+  "missing_in_shared_cache": [
+    "/System/Library/PrivateFrameworks/AppStoreComponents.framework/AppStoreComponents",
+    "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport",
+    "/System/Library/PrivateFrameworks/AppSystemSettingsUI.framework/AppSystemSettingsUI",
+    "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount",
+    "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService",
+    "/System/Library/PrivateFrameworks/AssistantServices.framework/AssistantServices",
+    "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit",
+    "/System/Library/PrivateFrameworks/AuthenticationServicesCore.framework/AuthenticationServicesCore",
+    "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent",
+    "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard",
+    "/System/Library/PrivateFrameworks/BusinessChatService.framework/BusinessChatService",
+    "/System/Library/PrivateFrameworks/CBORLibrary.framework/CBORLibrary",
+    "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete",
+    "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration",
+    "/System/Library/PrivateFrameworks/DocumentManagerCore.framework/DocumentManagerCore",
+    "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices",
+    "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices",
+    "/System/Library/PrivateFrameworks/IconServices.framework/IconServices",
+    "/System/Library/PrivateFrameworks/ManagedConfiguration.framework/ManagedConfiguration",
+    "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset",
+    "/System/Library/PrivateFrameworks/MobileInstallation.framework/MobileInstallation",
+    "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari",
+    "/System/Library/PrivateFrameworks/NanoPreferencesSync.framework/NanoPreferencesSync",
+    "/System/Library/PrivateFrameworks/OnBoardingKit.framework/OnBoardingKit",
+    "/System/Library/PrivateFrameworks/PasswordManagerUI.framework/PasswordManagerUI",
+    "/System/Library/PrivateFrameworks/PlugInKit.framework/PlugInKit",
+    "/System/Library/PrivateFrameworks/Preferences.framework/Preferences",
+    "/System/Library/PrivateFrameworks/PreferencesExtended.framework/PreferencesExtended",
+    "/System/Library/PrivateFrameworks/PrivateCloudCompute.framework/PrivateCloudCompute",
+    "/System/Library/PrivateFrameworks/RemotePairingDevice.framework/RemotePairingDevice",
+    "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices",
+    "/System/Library/PrivateFrameworks/SAObjects.framework/SAObjects",
+    "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore",
+    "/System/Library/PrivateFrameworks/SafariFoundation.framework/SafariFoundation",
+    "/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing",
+    "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared",
+    "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI",
+    "/System/Library/PrivateFrameworks/ScreenTimeCore.framework/ScreenTimeCore",
+    "/System/Library/PrivateFrameworks/Settings.framework/Settings",
+    "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking",
+    "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices",
+    "/System/Library/PrivateFrameworks/StorageContainersPrivate.framework/StorageContainersPrivate",
+    "/System/Library/PrivateFrameworks/TCC.framework/TCC",
+    "/System/Library/PrivateFrameworks/UIFoundation.framework/UIFoundation",
+    "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks",
+    "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector",
+    "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy",
+    "/System/Library/PrivateFrameworks/WebUI.framework/WebUI",
+    "/usr/lib/libCTGreenTeaLogger.dylib",
+    "/usr/lib/libMobileGestalt.dylib",
+    "/usr/lib/libSystem.B.dylib",
+    "/usr/lib/libc++.1.dylib",
+    "/usr/lib/liblockdown.dylib",
+    "/usr/lib/libobjc.A.dylib",
+    "/usr/lib/libsqlite3.dylib",
+    "/usr/lib/swift/libswiftAVFoundation.dylib",
+    "/usr/lib/swift/libswiftAccelerate.dylib",
+    "/usr/lib/swift/libswiftCallKit.dylib",
+    "/usr/lib/swift/libswiftCompression.dylib",
+    "/usr/lib/swift/libswiftCore.dylib",
+    "/usr/lib/swift/libswiftCoreAudio.dylib",
+    "/usr/lib/swift/libswiftCoreAudio_Private.dylib",
+    "/usr/lib/swift/libswiftCoreFoundation.dylib",
+    "/usr/lib/swift/libswiftCoreImage.dylib",
+    "/usr/lib/swift/libswiftCoreLocation.dylib",
+    "/usr/lib/swift/libswiftCoreMIDI.dylib",
+    "/usr/lib/swift/libswiftDispatch.dylib",
+    "/usr/lib/swift/libswiftIntents.dylib",
+    "/usr/lib/swift/libswiftMLCompute.dylib",
+    "/usr/lib/swift/libswiftMetal.dylib",
+    "/usr/lib/swift/libswiftMetalKit.dylib",
+    "/usr/lib/swift/libswiftModelIO.dylib",
+    "/usr/lib/swift/libswiftNaturalLanguage.dylib",
+    "/usr/lib/swift/libswiftOSLog.dylib",
+    "/usr/lib/swift/libswiftObjectiveC.dylib",
+    "/usr/lib/swift/libswiftQuartzCore.dylib",
+    "/usr/lib/swift/libswiftSpatial.dylib",
+    "/usr/lib/swift/libswiftSystem.dylib",
+    "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib",
+    "/usr/lib/swift/libswiftXPC.dylib",
+    "/usr/lib/swift/libswift_Builtin_float.dylib",
+    "/usr/lib/swift/libswift_Concurrency.dylib",
+    "/usr/lib/swift/libswiftos.dylib",
+    "/usr/lib/swift/libswiftsimd.dylib"
+  ],
+  "missing_elsewhere": [
+    "/System/Library/Frameworks/Accounts.framework/Accounts",
+    "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices",
+    "/System/Library/Frameworks/BrowserEngineCore.framework/BrowserEngineCore",
+    "/System/Library/Frameworks/BrowserEngineKit.framework/BrowserEngineKit",
+    "/System/Library/Frameworks/BrowserKit.framework/BrowserKit",
+    "/System/Library/Frameworks/CFNetwork.framework/CFNetwork",
+    "/System/Library/Frameworks/CloudKit.framework/CloudKit",
+    "/System/Library/Frameworks/Combine.framework/Combine",
+    "/System/Library/Frameworks/Contacts.framework/Contacts",
+    "/System/Library/Frameworks/ContactsUI.framework/ContactsUI",
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation",
+    "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics",
+    "/System/Library/Frameworks/CoreServices.framework/CoreServices",
+    "/System/Library/Frameworks/CoreSpotlight.framework/CoreSpotlight",
+    "/System/Library/Frameworks/CryptoKit.framework/CryptoKit",
+    "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation",
+    "/System/Library/Frameworks/ExtensionKit.framework/ExtensionKit",
+    "/System/Library/Frameworks/Foundation.framework/Foundation",
+    "/System/Library/Frameworks/FoundationModels.framework/FoundationModels",
+    "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+    "/System/Library/Frameworks/ImageIO.framework/ImageIO",
+    "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore",
+    "/System/Library/Frameworks/QuartzCore.framework/QuartzCore",
+    "/System/Library/Frameworks/SafariServices.framework/SafariServices",
+    "/System/Library/Frameworks/Security.framework/Security",
+    "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou",
+    "/System/Library/Frameworks/SwiftUI.framework/SwiftUI",
+    "/System/Library/Frameworks/UIKit.framework/UIKit",
+    "/System/Library/Frameworks/UniformTypeIdentifiers.framework/UniformTypeIdentifiers",
+    "/System/Library/Frameworks/WebKit.framework/WebKit"
+  ],
+  "present": {},
+  "missing": {
+    "/System/Library/Frameworks/Accounts.framework/Accounts": 7,
+    "/System/Library/Frameworks/AuthenticationServices.framework/AuthenticationServices": 2,
+    "/System/Library/Frameworks/BrowserEngineCore.framework/BrowserEngineCore": 2,
+    "/System/Library/Frameworks/BrowserEngineKit.framework/BrowserEngineKit": 1,
+    "/System/Library/Frameworks/BrowserKit.framework/BrowserKit": 2,
+    "/System/Library/Frameworks/CFNetwork.framework/CFNetwork": 4,
+    "/System/Library/Frameworks/CloudKit.framework/CloudKit": 1,
+    "/System/Library/Frameworks/Combine.framework/Combine": 1,
+    "/System/Library/Frameworks/Contacts.framework/Contacts": 2,
+    "/System/Library/Frameworks/ContactsUI.framework/ContactsUI": 1,
+    "/System/Library/Frameworks/CoreFoundation.framework/CoreFoundation": 14,
+    "/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics": 2,
+    "/System/Library/Frameworks/CoreServices.framework/CoreServices": 7,
+    "/System/Library/Frameworks/CoreSpotlight.framework/CoreSpotlight": 1,
+    "/System/Library/Frameworks/CryptoKit.framework/CryptoKit": 1,
+    "/System/Library/Frameworks/ExtensionFoundation.framework/ExtensionFoundation": 2,
+    "/System/Library/Frameworks/ExtensionKit.framework/ExtensionKit": 2,
+    "/System/Library/Frameworks/Foundation.framework/Foundation": 16,
+    "/System/Library/Frameworks/FoundationModels.framework/FoundationModels": 1,
+    "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit": 1,
+    "/System/Library/Frameworks/ImageIO.framework/ImageIO": 1,
+    "/System/Library/Frameworks/JavaScriptCore.framework/JavaScriptCore": 5,
+    "/System/Library/Frameworks/QuartzCore.framework/QuartzCore": 1,
+    "/System/Library/Frameworks/SafariServices.framework/SafariServices": 6,
+    "/System/Library/Frameworks/Security.framework/Security": 3,
+    "/System/Library/Frameworks/SharedWithYou.framework/SharedWithYou": 1,
+    "/System/Library/Frameworks/SwiftUI.framework/SwiftUI": 1,
+    "/System/Library/Frameworks/UIKit.framework/UIKit": 10,
+    "/System/Library/Frameworks/UniformTypeIdentifiers.framework/UniformTypeIdentifiers": 1,
+    "/System/Library/Frameworks/WebKit.framework/WebKit": 7,
+    "/System/Library/PrivateFrameworks/AppStoreComponents.framework/AppStoreComponents": 1,
+    "/System/Library/PrivateFrameworks/AppSupport.framework/AppSupport": 7,
+    "/System/Library/PrivateFrameworks/AppSystemSettingsUI.framework/AppSystemSettingsUI": 1,
+    "/System/Library/PrivateFrameworks/AppleAccount.framework/AppleAccount": 4,
+    "/System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService": 1,
+    "/System/Library/PrivateFrameworks/AssistantServices.framework/AssistantServices": 1,
+    "/System/Library/PrivateFrameworks/AuthKit.framework/AuthKit": 2,
+    "/System/Library/PrivateFrameworks/AuthenticationServicesCore.framework/AuthenticationServicesCore": 1,
+    "/System/Library/PrivateFrameworks/BackgroundTaskAgent.framework/BackgroundTaskAgent": 1,
+    "/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard": 1,
+    "/System/Library/PrivateFrameworks/BusinessChatService.framework/BusinessChatService": 1,
+    "/System/Library/PrivateFrameworks/CBORLibrary.framework/CBORLibrary": 1,
+    "/System/Library/PrivateFrameworks/CacheDelete.framework/CacheDelete": 1,
+    "/System/Library/PrivateFrameworks/DataMigration.framework/DataMigration": 2,
+    "/System/Library/PrivateFrameworks/DocumentManagerCore.framework/DocumentManagerCore": 1,
+    "/System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices": 3,
+    "/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices": 1,
+    "/System/Library/PrivateFrameworks/IconServices.framework/IconServices": 1,
+    "/System/Library/PrivateFrameworks/ManagedConfiguration.framework/ManagedConfiguration": 2,
+    "/System/Library/PrivateFrameworks/MobileAsset.framework/MobileAsset": 1,
+    "/System/Library/PrivateFrameworks/MobileInstallation.framework/MobileInstallation": 1,
+    "/System/Library/PrivateFrameworks/MobileSafari.framework/MobileSafari": 6,
+    "/System/Library/PrivateFrameworks/NanoPreferencesSync.framework/NanoPreferencesSync": 1,
+    "/System/Library/PrivateFrameworks/OnBoardingKit.framework/OnBoardingKit": 1,
+    "/System/Library/PrivateFrameworks/PasswordManagerUI.framework/PasswordManagerUI": 1,
+    "/System/Library/PrivateFrameworks/PlugInKit.framework/PlugInKit": 1,
+    "/System/Library/PrivateFrameworks/Preferences.framework/Preferences": 2,
+    "/System/Library/PrivateFrameworks/PreferencesExtended.framework/PreferencesExtended": 1,
+    "/System/Library/PrivateFrameworks/PrivateCloudCompute.framework/PrivateCloudCompute": 1,
+    "/System/Library/PrivateFrameworks/RemotePairingDevice.framework/RemotePairingDevice": 1,
+    "/System/Library/PrivateFrameworks/RunningBoardServices.framework/RunningBoardServices": 3,
+    "/System/Library/PrivateFrameworks/SAObjects.framework/SAObjects": 2,
+    "/System/Library/PrivateFrameworks/SafariCore.framework/SafariCore": 12,
+    "/System/Library/PrivateFrameworks/SafariFoundation.framework/SafariFoundation": 2,
+    "/System/Library/PrivateFrameworks/SafariSafeBrowsing.framework/SafariSafeBrowsing": 2,
+    "/System/Library/PrivateFrameworks/SafariShared.framework/SafariShared": 4,
+    "/System/Library/PrivateFrameworks/SafariSharedUI.framework/SafariSharedUI": 2,
+    "/System/Library/PrivateFrameworks/ScreenTimeCore.framework/ScreenTimeCore": 1,
+    "/System/Library/PrivateFrameworks/Settings.framework/Settings": 1,
+    "/System/Library/PrivateFrameworks/SoftLinking.framework/SoftLinking": 2,
+    "/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices": 3,
+    "/System/Library/PrivateFrameworks/StorageContainersPrivate.framework/StorageContainersPrivate": 1,
+    "/System/Library/PrivateFrameworks/TCC.framework/TCC": 1,
+    "/System/Library/PrivateFrameworks/UIFoundation.framework/UIFoundation": 1,
+    "/System/Library/PrivateFrameworks/WebBookmarks.framework/WebBookmarks": 6,
+    "/System/Library/PrivateFrameworks/WebInspector.framework/WebInspector": 1,
+    "/System/Library/PrivateFrameworks/WebKitLegacy.framework/WebKitLegacy": 4,
+    "/System/Library/PrivateFrameworks/WebUI.framework/WebUI": 5,
+    "/usr/lib/libCTGreenTeaLogger.dylib": 1,
+    "/usr/lib/libMobileGestalt.dylib": 5,
+    "/usr/lib/libSystem.B.dylib": 17,
+    "/usr/lib/libc++.1.dylib": 6,
+    "/usr/lib/liblockdown.dylib": 1,
+    "/usr/lib/libobjc.A.dylib": 16,
+    "/usr/lib/libsqlite3.dylib": 1,
+    "/usr/lib/swift/libswiftAVFoundation.dylib": 4,
+    "/usr/lib/swift/libswiftAccelerate.dylib": 6,
+    "/usr/lib/swift/libswiftCallKit.dylib": 1,
+    "/usr/lib/swift/libswiftCompression.dylib": 5,
+    "/usr/lib/swift/libswiftCore.dylib": 7,
+    "/usr/lib/swift/libswiftCoreAudio.dylib": 6,
+    "/usr/lib/swift/libswiftCoreAudio_Private.dylib": 2,
+    "/usr/lib/swift/libswiftCoreFoundation.dylib": 6,
+    "/usr/lib/swift/libswiftCoreImage.dylib": 5,
+    "/usr/lib/swift/libswiftCoreLocation.dylib": 5,
+    "/usr/lib/swift/libswiftCoreMIDI.dylib": 5,
+    "/usr/lib/swift/libswiftDispatch.dylib": 6,
+    "/usr/lib/swift/libswiftIntents.dylib": 5,
+    "/usr/lib/swift/libswiftMLCompute.dylib": 3,
+    "/usr/lib/swift/libswiftMetal.dylib": 6,
+    "/usr/lib/swift/libswiftMetalKit.dylib": 2,
+    "/usr/lib/swift/libswiftModelIO.dylib": 2,
+    "/usr/lib/swift/libswiftNaturalLanguage.dylib": 3,
+    "/usr/lib/swift/libswiftOSLog.dylib": 6,
+    "/usr/lib/swift/libswiftObjectiveC.dylib": 6,
+    "/usr/lib/swift/libswiftQuartzCore.dylib": 6,
+    "/usr/lib/swift/libswiftSpatial.dylib": 5,
+    "/usr/lib/swift/libswiftSystem.dylib": 1,
+    "/usr/lib/swift/libswiftUniformTypeIdentifiers.dylib": 6,
+    "/usr/lib/swift/libswiftXPC.dylib": 6,
+    "/usr/lib/swift/libswift_Builtin_float.dylib": 6,
+    "/usr/lib/swift/libswift_Concurrency.dylib": 5,
+    "/usr/lib/swift/libswiftos.dylib": 6,
+    "/usr/lib/swift/libswiftsimd.dylib": 6
+  }
+}

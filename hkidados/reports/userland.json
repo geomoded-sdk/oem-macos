@@ -1,0 +1,174 @@
+{
+  "source": "cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw",
+  "trees": {
+    "Cryptex1,AppOS": {
+      "root": "build/userland/app-cryptex",
+      "files": 1155,
+      "directories": 153,
+      "bytes": 18422104,
+      "binaries_scanned": 15,
+      "architectures": {
+        "arm64e": 15,
+        "arm64": 15
+      },
+      "platforms": {
+        "iOS": 15
+      },
+      "minos": {
+        "27.2.0": 15
+      },
+      "chained_fixups": 15,
+      "fat_binaries": 15,
+      "empty_files": 2,
+      "launchd": [],
+      "decmpfs": {
+        "streams": 0,
+        "types": {},
+        "containers": {},
+        "fat_headers_in_literal_prefix": 0
+      },
+      "symlinks": 0,
+      "errors": [],
+      "nodes": 5023,
+      "decmpfs_streams": 869,
+      "fext_tree_oid": 7,
+      "hash_checked": 5023,
+      "fext_nodes": 1106,
+      "fext_hash_checked": 0,
+      "reader": "apfs",
+      "volume": "AppCryptex",
+      "sealed": true,
+      "seven_zip": {
+        "available": true,
+        "tool": "/usr/bin/7z",
+        "returncode": 0,
+        "type": "APFS",
+        "physical_size": 16777216,
+        "volume_name": "AppCryptex",
+        "num_files": "858",
+        "num_directories": "153",
+        "num_symlinks": "0",
+        "incompatible_features": "NORMALIZATION_INSENSITIVE SEALED_VOLUME",
+        "block_size": "4096",
+        "fs_alloc_count": "3038",
+        "entries": 0
+      },
+      "image": "build/userland/141-08824-252.dmg",
+      "lzbitmap": {
+        "streams": 869,
+        "decoded": 869,
+        "failed": 0,
+        "bytes": 18422104,
+        "failures": []
+      }
+    },
+    "RestoreRamDisk": {
+      "root": "build/userland/restore-ramdisk",
+      "files": 1260,
+      "directories": 459,
+      "bytes": 1236840790,
+      "binaries_scanned": 387,
+      "architectures": {
+        "arm64e": 387
+      },
+      "platforms": {
+        "iOS": 355,
+        "driverKit": 32
+      },
+      "minos": {
+        "27.2.0": 386,
+        "18.0.0": 1
+      },
+      "chained_fixups": 387,
+      "fat_binaries": 0,
+      "empty_files": 0,
+      "launchd": [
+        "build/userland/restore-ramdisk/sbin/launchd"
+      ],
+      "decmpfs": {
+        "streams": 0,
+        "types": {},
+        "containers": {},
+        "fat_headers_in_literal_prefix": 0
+      },
+      "symlinks": 306,
+      "errors": [],
+      "nodes": 8948,
+      "decmpfs_streams": 0,
+      "hash_checked": 0,
+      "reader": "apfs",
+      "volume": "ramdisk",
+      "sealed": false,
+      "seven_zip": {
+        "available": true,
+        "tool": "/usr/bin/7z",
+        "returncode": 0,
+        "type": "APFS",
+        "physical_size": 245366784,
+        "volume_name": "ramdisk",
+        "num_files": "1260",
+        "num_directories": "459",
+        "num_symlinks": "306",
+        "incompatible_features": "NORMALIZATION_INSENSITIVE",
+        "block_size": "4096",
+        "fs_alloc_count": "47151",
+        "entries": 0
+      },
+      "image": "build/userland/141-10399-248.dmg",
+      "lzbitmap": {
+        "streams": 0,
+        "decoded": 0,
+        "failed": 0,
+        "bytes": 1236840790,
+        "failures": []
+      }
+    }
+  },
+  "launchd_macho": {
+    "arch": "arm64e",
+    "cputype": "0x0100000c",
+    "cpusubtype": "0x80000002",
+    "ptrauth_abi": true,
+    "filetype": "execute",
+    "platform": "iOS",
+    "minos": "27.2.0",
+    "sdk": "27.2.0",
+    "chained_fixups": true,
+    "encrypted": false,
+    "entitlements": [
+      "com.apple.apfs.get-dev-by-role",
+      "com.apple.developer.hardened-process",
+      "com.apple.developer.hardened-process.hardened-heap",
+      "com.apple.developer.lockdown-mode.state",
+      "com.apple.private.amfi.can-allow-non-platform",
+      "com.apple.private.delegate-signals",
+      "com.apple.private.endpoint-security.submit.bootstrap",
+      "com.apple.private.iokit.system-nvram-allow",
+      "com.apple.private.kernel.darkboot",
+      "com.apple.private.kernel.system-override",
+      "com.apple.private.persona-mgmt",
+      "com.apple.private.pmap.load-trust-cache",
+      "com.apple.private.record_system_event",
+      "com.apple.private.roots-installed-read-write",
+      "com.apple.private.security.disk-device-access",
+      "com.apple.private.security.signal-critical-processes",
+      "com.apple.private.security.signal-exempt",
+      "com.apple.private.security.storage.driverkitd",
+      "com.apple.private.security.storage.launchd",
+      "com.apple.private.security.system-mount-authority",
+      "com.apple.private.set-atm-diagnostic-flag",
+      "com.apple.private.shared-region.config",
+      "com.apple.private.spawn-panic-crash-behavior",
+      "com.apple.private.spawn-subsystem-root",
+      "com.apple.private.vfs.allow-low-space-writes",
+      "com.apple.private.vfs.graftdmg",
+      "com.apple.private.vfs.pivot-root",
+      "com.apple.rootless.restricted-block-devices",
+      "com.apple.rootless.storage.early_boot_mount",
+      "com.apple.rootless.volume.Preboot",
+      "com.apple.security.network.server",
+      "com.apple.security.script-restrictions"
+    ],
+    "path": "build/userland/restore-ramdisk/sbin/launchd"
+  }
+}

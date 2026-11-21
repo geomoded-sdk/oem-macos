@@ -1,0 +1,12 @@
+# firmware: nunca versionado
+cache/
+build/
+*.ipsw
+*.dmg
+*.aea
+
+# saídas de execução
+reports/*.raw
+__pycache__/
+*.pyc
+.venv/

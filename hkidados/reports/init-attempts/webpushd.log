@@ -1,0 +1,6 @@
+load_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+load_init_program: attempting to load /sbin/launchd
+panic(cpu 0 caller 0xfffffff007aea1ac): unexpected SIGKILL of init  with reason -- namespace 9 code 0x1 description none
+[    6.159287]: bsd_init: bsd_do_post - doneload_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+[    6.170950]: load_init_program: attempting to load /sbin/launchd
+panic(cpu 0 caller 0xfffffff007aea1ac): unexpected SIGKILL of init  with reason -- namespace 9 code 0x1 description none

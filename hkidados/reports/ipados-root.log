@@ -1,0 +1,463 @@
+UEFI firmware (version 2025.02-8+deb13u1 built at 18:06:17 on Nov  8 2025)
+[2J[01;01H[=3h[2J[01;01H[2J[01;01H[=3h[2J[01;01HBdsDxe: loading Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+BdsDxe: starting Boot0001 "UEFI Misc Device" from PciRoot(0x0)/Pci(0x2,0x0)
+== XNULOADER v3 ==
+   #   #   ###   #   #  #####   ###    ####
+   #   #  #   #  #  #     #    #   #  #
+   #####  #####  ###      #    #   #   ###
+   #   #  #   #  #  #     #    #   #      #
+   #   #  #   #  #   #  #####   ###   ####
+   hello hakios-kernel!
+   kernel.ver=2.3.4-hakios-darwin22.5-g63fc2b46
+CurrentEL=1 MIDR=414fd0b1 MMFR0=101122 CNTFRQ=62500000 image=a1000000
+platform qemu-virt
+payload entry 'kernel' size 1007c98
+payload entry 'cmdline' size 7
+payload entry 'rdres' size 8
+payload entry 'kernel.ver' size 22
+kernel va fffffff007004000..fffffff008408000 entry fffffff0074424a8
+largest free block 48000000 size 58000000
+phys window 48000000 size 58000000, claim status 0
+kernel loaded at pa 4b004000..4c408000
+resident ramdisk at pa 50000000 size ea00000
+return slot patched at 4b4437f0, checkpoint 0
+cmdline: 78 of 607 characters
+cores for the kernel, in the order it takes them: 0
+device tree 5ea00000 len 2ea8, boot_args 5ea10000, top 5ea14000
+cmdline: debug=0x8 serial=3 rd=md0 hakios_kver=2.3.4-hakios-darwin22.5-g63fc2b46 cpus=1
+jumping to 4b4424a8
+Darwin Kernel Version 22.5.0: Sun Oct 25 22:52:46 PDT 2026; shimoku:xnu-8796.121.2[xnu-8796.121.2-dirty]/BUILD/obj/DEVELOPMENT_ARM64_BCM2837
+pmap_startup() init/release time: 10560 microsec
+pmap_startup() delayed init/release of 0 pages
+vm_page_bootstrap: 66618 free pages, 23494 wired pages, (up to 0 of which are delayed free)
+VM boostrap: 102 maps, 204 entries and 512 holes available
+Maximum number of VM swap files: 5
+ipc_kernel_map          : 0xfffffff0a4000000 - 0xfffffff0a6000000 (32M)
+io_submap               : 0xfffffff0a6000000 - 0xfffffff0a6800000 (8M)
+zone_meta               : 0xfffffff0a6800000 - 0xfffffff0a8334000 (27M)
+zones                   : 0xfffffff0a8334000 - 0xfffffff6a8334000 (24G)
+ipc_kernel_copy_map     : 0xfffffff6a8334000 - 0xfffffff6a8b34000 (8M)
+bufferhdr               : 0xfffffff6a8b34000 - 0xfffffff6a8bf8000 (784K)
+gIOKitPageableFixed0    : 0xfffffff6a8bf8000 - 0xfffffff6aebf8000 (96M)
+kmem_ptr_range_meta     : 0xfffffff6aebf8000 - 0xfffffff6aecdc000 (912K)
+gIOKitPageableFixed2    : 0xfffffff6aecdc000 - 0xfffffff6b4cdc000 (96M)
+mb                      : 0xfffffff6b4cdc000 - 0xfffffff6b8cdc000 (64M)
+kmem_sprayqtn_range     : 0xfffffff6b8cdc000 - 0xfffffff6d97b8000 (522M)
+compressor              : 0xfffffff6d97b8000 - 0xfffffff7597bc000 (2048M)
+kmem_data_range         : 0xfffffff7597bc000 - 0xfffffffac4b74000 (13G)
+kmem_ptr_range          : 0xfffffffac4b74000 - 0xfffffffbf34b4000 (4841M)
+gIOKitPageableFixed3    : 0xfffffffbf34b4000 - 0xfffffffbf94b4000 (96M)
+gIOKitPageableFixed1    : 0xfffffffbf94b4000 - 0xfffffffbff4b4000 (96M)
+bsd_pageable            : 0xfffffffbff4b4000 - 0xfffffffbffdfc000 (9M)
+kmem_large_ranges[1]    : 0 - 0 (0B)
+kmem_large_ranges[2]    : 0 - 0 (0B)
+kmem_large_ranges[3]    : 0 - 0 (0B)
+kmem_large_ranges[4]    : 0xfffffff6bce37800 - 0xfffffff6d97b8000 (457M)
+kmem_large_ranges[5]    : 0xfffffff7c6e33000 - 0xfffffffac4b74000 (11G)
+"vm_compressor_mode" is 2
+zone_init: pgzalloc  0xfffffff0a8334000:0xfffffff0a8b60000 (8M) [261 slots]
+zone_init: map VM    0xfffffff0a8b60000:0xfffffff18f08c000 (3685M)
+zone_init: map RO    0xfffffff18f08c000:0xfffffff1dbcf0000 (1228M)
+zone_init: map GEN0  0xfffffff1dbcf0000:0xfffffff2c221c000 (3685M)
+zone_init: map GEN1  0xfffffff2c221c000:0xfffffff3a8748000 (3685M)
+zone_init: map GEN2  0xfffffff3a8748000:0xfffffff48ec74000 (3685M)
+zone_init: map GEN3  0xfffffff48ec74000:0xfffffff5751a0000 (3685M)
+zone_init: map DATA  0xfffffff5751a0000:0xfffffff6a8334000 (4913M)
+zone_init: metadata  0xfffffff0a6810000:0xfffffff0a8010000 (24M)
+zone_init: metabits  0xfffffff0a8010000:0xfffffff0a8324000 (3152K)
+zone_init: extra     0:0 (0B)
+VM bootstrap done: 90 maps, 163 entries and 501 holes left
+Long logs support configured: size: 16384
+Firehose configured: 16 chunks, 8 io pages
+OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes
+OSLog stream verification: 0
+Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144
+standard timeslicing quantum is 10000 us
+standard background quantum is 2500 us
+mig_table_max_displ = 54 mach_kobj_count = 371
+kdp_core zlib memory 0x8000
+Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial
+iBoot version: iBoot-8422.100.650
+iBoot Stage 2 version: 
+IONVRAM.cpp:initImageFormat:1364 - NVRAM size is 8192 bytes
+IONVRAM.cpp:getNVRAMProperties:1176 - _bankSize=0x2000, _bankCount=0x1, _currentBank=0
+IONVRAMCHRPHandler.cpp:unserializeImage:479 - NVRAM : commonPartitionOffset - 0x30, commonPartitionSize - 0x1fd0, systemPartitionOffset - 0xffffffff, systemPartitionSize - 0
+minicrypto: registered (md5, sha1, sha2, hmac, aes-ecb/cbc/ctr, hmac-drbg prng); no xts/gcm, no RSA
+calling mpo_policy_init for vnguard
+Security policy loaded: Guarded vnode policy (vnguard)
+calling mpo_policy_init for AMFI
+Security policy loaded: Apple Mobile File Integrity (stand-in) (AMFI)
+calling mpo_policy_init for Sandbox
+Security policy loaded: Seatbelt sandbox policy (stand-in) (Sandbox)
+No POST boot-arg set.
+GenericARMPE: platform "device-tree"
+GenericARMCPU: cpu 0 (phys id 0x0) registered
+Copyright (c) 1982, 1986, 1989, 1991, 1993
+	The Regents of the University of California. All rights reserved.
+MAC Framework successfully initialized
+using 1338 buffer headers and 1338 cluster IO buffer headers
+ktriage_register_subsystem_strings: set subsystem 8 strings
+mcache: 1 CPU(s), 64 bytes CPU cache line size
+mbinit: done [64 MB total pool size, (42/21) split]
+dlil_init: Waiting for all the create dlil kernel threads to get scheduled at least once.
+dlil_init: All the created dlil kernel threads have been scheduled at least once. Proceeding.
+ifnet_attach: All kernel threads created for interface lo0 have been scheduled at least once. Proceeding.
+skip attaching fsw to lo0 using legacy TX modelMiniIOMobileFramebuffer: no usable boot framebuffer (0x0, depth 0)
+!BSD
+Added memory device md0/rmd0 (01000000/0D000000) at FFFFFFF00C000000 for 000000000EA00000
+BSD root: md0, major 1, minor 0
+apfs: device 1,0: requests to it cost next to nothing (a disk in memory)
+apfs: 1 threads on a request of many pieces (0 helpers)
+apfs: volume 0 "ramdisk" of container 0 (at 0 MB): 1260 files, 459 directories, 47151 blocks of 4096 used
+VM Swap Subsystem is ON
+No POST boot-arg set.
+load_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+load_init_program: attempting to load /sbin/launchd
+load_init_program: failed loading /sbin/launchd: errno 86
+panic(cpu 0 caller 0xfffffff0077aae74): Process 1 exec of /sbin/launchd failed, errno 86 @kern_exec.c:7154
+Debugger message: panic
+Device: Not set yet
+Hardware Model: Not set yet
+ECID: 0000052445730001
+Boot args: debug=0x8 serial=3 rd=md0 hakios_kver=2.3.4-hakios-darwin22.5-g63fc2b46 cpus=1
+Memory ID: 0x0
+OS release type: Not set yet
+OS version: Not set yet
+Kernel version: Darwin Kernel Version 22.5.0: Sun Oct 25 22:52:46 PDT 2026; shimoku:xnu-8796.121.2[xnu-8796.121.2-dirty]/BUILD/obj/DEVELOPMENT_ARM64_BCM2837
+Kernel UUID: D216EA21-E9A7-3450-87D3-B80DDBAE487F
+Boot session UUID: 0D0F5008-F239-41A0-A3D8-6CBAEFDB9141
+iBoot version: iBoot-8422.100.650
+iBoot Stage 2 version: 
+secure boot?: NO
+roots installed: 0
+Paniclog version: 14
+Kernel text base:  0xfffffff007004000
+mach_absolute_time: 0x17a58d18
+Epoch Time:        sec       usec
+  Boot    : 0x6b01c632 0x00000000
+  Sleep   : 0x00000000 0x00000000
+  Wake    : 0x00000000 0x00000000
+  Calendar: 0x6b01c632 0x00043723
+Zone info:
+  Zone map: 0xfffffff0a8334000 - 0xfffffff6a8334000
+  . PGZ   : 0xfffffff0a8334000 - 0xfffffff0a8b60000
+  . VM    : 0xfffffff0a8b60000 - 0xfffffff18f08c000
+  . RO    : 0xfffffff18f08c000 - 0xfffffff1dbcf0000
+  . GEN0  : 0xfffffff1dbcf0000 - 0xfffffff2c221c000
+  . GEN1  : 0xfffffff2c221c000 - 0xfffffff3a8748000
+  . GEN2  : 0xfffffff3a8748000 - 0xfffffff48ec74000
+  . GEN3  : 0xfffffff48ec74000 - 0xfffffff5751a0000
+  . DATA  : 0xfffffff5751a0000 - 0xfffffff6a8334000
+  Metadata: 0xfffffff0a6810000 - 0xfffffff0a8010000
+  Bitmaps : 0xfffffff0a8010000 - 0xfffffff0a8324000
+  Extra   : 0 - 0
+TPIDRx_ELy = {1: 0xfffffff48eb5fdc0  0: 0x0000000000000000  0ro: 0x0000000000000000 }
+CORE 0 is the one that panicked. Check the full backtrace for details.
+Compressor Info: 0% of compressed pages limit (OK) and 0% of segments limit (OK) with 0 swapfiles and OK swap space
+Panicked task 0xfffffff48eb8e6d0: 1 pages, 1 threads: pid 1: init
+Panicked thread: 0xfffffff48eb5fdc0, backtrace: 0xfffffff6b8e3f660, tid: 150
+		  lr: 0xfffffff0072d1e48  fp: 0xfffffff6b8e3f6f0
+		  lr: 0xfffffff0074501f4  fp: 0xfffffff6b8e3f710
+		  lr: 0xfffffff0074410c4  fp: 0xfffffff6b8e3f760
+		  lr: 0xfffffff007ac95a4  fp: 0xfffffff6b8e3f880
+		  lr: 0xfffffff0074405a4  fp: 0xfffffff6b8e3f890
+		  lr: 0xfffffff0072d14d4  fp: 0xfffffff6b8e3fc40
+		  lr: 0xfffffff0072d251c  fp: 0xfffffff6b8e3fcc0
+		  lr: 0xfffffff007a95694  fp: 0xfffffff6b8e3fce0
+		  lr: 0xfffffff0077aae74  fp: 0xfffffff6b8e3fe10
+		  lr: 0xfffffff007780888  fp: 0xfffffff6b8e3fe50
+		  lr: 0xfffffff0077ca044  fp: 0xfffffff6b8e3fe90
+		  lr: 0xfffffff0072c6528  fp: 0xfffffff6b8e3fef0
+		  lr: 0xfffffff0074409c0  fp: 0xfffffff6b8e3ff00
+		  lr: 0xfffffff0074407fc  fp: 0xfffffff6b8e3ff20
+		  lr: 0xfffffff0074455c0  fp: 0x0000000000000000
+** Stackshot Succeeded ** Bytes Traced 5113 (Uncompressed 14208) **
+kernel returned: log at 4bbdc9c0, 21484 bytes
+returned 21484 0
+== KERNEL LOG ==
+--- kernel message buffer ---
+[    5.803741]:  vm_cache_geometry_colors: 4
+[    5.804653]: do_cacheid() - 131072 bytes Unknown cache (I:65536 D:65536 (separate)), 8-way assoc, 64 bytes/line
+[    5.814361]: kprintf initialized
+[    5.816357]: Serial mode specified: 00000003
+[    5.817307]: initialize_screen: b=00000000, w=00000000, h=00000000, r=00000000, d=00000000
+[    5.817439]: initialize_screen: No video - forcing serial mode
+[    5.818772]: pe_arm_init_interrupts: args: 0xfffffff007b8a720
+[    5.818886]: pe_arm_map_interrupt_controller: soc_phys:  0x8000000
+[    5.818943]: pe_arm_map_interrupt_controller: failed to find the interrupt-controller.
+[    5.818994]: pe_arm_init_debug: failed to find cpu-debug-interface
+[    5.819756]: gic: v3, distributor 0xfffffff0a3884000, cpu 0's redistributor 0xfffffff0a3894000, virtual timer on PPI 27
+[    5.820942]: Darwin Kernel Version 22.5.0: Sun Oct 25 22:52:46 PDT 2026; shimoku:xnu-8796.121.2[xnu-8796.121.2-dirty]/BUILD/obj/DEVELOPMENT_ARM64_BCM2837
+[    5.837550]: pmap_startup() init/release time: 10560 microsec
+[    5.837754]: pmap_startup() delayed init/release of 0 pages
+[    5.838314]: vm_page_bootstrap: 66618 free pages, 23494 wired pages, (up to 0 of which are delayed free)
+[    5.851852]: VM boostrap: 102 maps, 204 entries and 512 holes available
+[    5.854843]: Maximum number of VM swap files: 5
+[    5.858231]: ipc_kernel_map          : 0xfffffff0a4000000 - 0xfffffff0a6000000 (32M)
+[    5.858586]: io_submap               : 0xfffffff0a6000000 - 0xfffffff0a6800000 (8M)
+[    5.858795]: zone_meta               : 0xfffffff0a6800000 - 0xfffffff0a8334000 (27M)
+[    5.858998]: zones                   : 0xfffffff0a8334000 - 0xfffffff6a8334000 (24G)
+[    5.859216]: ipc_kernel_copy_map     : 0xfffffff6a8334000 - 0xfffffff6a8b34000 (8M)
+[    5.859427]: bufferhdr               : 0xfffffff6a8b34000 - 0xfffffff6a8bf8000 (784K)
+[    5.859632]: gIOKitPageableFixed0    : 0xfffffff6a8bf8000 - 0xfffffff6aebf8000 (96M)
+[    5.859840]: kmem_ptr_range_meta     : 0xfffffff6aebf8000 - 0xfffffff6aecdc000 (912K)
+[    5.860051]: gIOKitPageableFixed2    : 0xfffffff6aecdc000 - 0xfffffff6b4cdc000 (96M)
+[    5.860270]: mb                      : 0xfffffff6b4cdc000 - 0xfffffff6b8cdc000 (64M)
+[    5.860481]: kmem_sprayqtn_range     : 0xfffffff6b8cdc000 - 0xfffffff6d97b8000 (522M)
+[    5.860693]: compressor              : 0xfffffff6d97b8000 - 0xfffffff7597bc000 (2048M)
+[    5.860903]: kmem_data_range         : 0xfffffff7597bc000 - 0xfffffffac4b74000 (13G)
+[    5.861112]: kmem_ptr_range          : 0xfffffffac4b74000 - 0xfffffffbf34b4000 (4841M)
+[    5.861332]: gIOKitPageableFixed3    : 0xfffffffbf34b4000 - 0xfffffffbf94b4000 (96M)
+[    5.861535]: gIOKitPageableFixed1    : 0xfffffffbf94b4000 - 0xfffffffbff4b4000 (96M)
+[    5.861736]: bsd_pageable            : 0xfffffffbff4b4000 - 0xfffffffbffdfc000 (9M)
+[    5.867184]: kmem_large_ranges[1]    : 0 - 0 (0B)
+[    5.867352]: kmem_large_ranges[2]    : 0 - 0 (0B)
+[    5.867465]: kmem_large_ranges[3]    : 0 - 0 (0B)
+[    5.867669]: kmem_large_ranges[4]    : 0xfffffff6bce37800 - 0xfffffff6d97b8000 (457M)
+[    5.867875]: kmem_large_ranges[5]    : 0xfffffff7c6e33000 - 0xfffffffac4b74000 (11G)
+[    5.868357]: "vm_compressor_mode" is 2
+[    5.870185]: zone_init: pgzalloc  0xfffffff0a8334000:0xfffffff0a8b60000 (8M) [261 slots]
+[    5.870844]: zone_init: map VM    0xfffffff0a8b60000:0xfffffff18f08c000 (3685M)
+[    5.871310]: zone_init: map RO    0xfffffff18f08c000:0xfffffff1dbcf0000 (1228M)
+[    5.871614]: zone_init: map GEN0  0xfffffff1dbcf0000:0xfffffff2c221c000 (3685M)
+[    5.871847]: zone_init: map GEN1  0xfffffff2c221c000:0xfffffff3a8748000 (3685M)
+[    5.872127]: zone_init: map GEN2  0xfffffff3a8748000:0xfffffff48ec74000 (3685M)
+[    5.872479]: zone_init: map GEN3  0xfffffff48ec74000:0xfffffff5751a0000 (3685M)
+[    5.872902]: zone_init: map DATA  0xfffffff5751a0000:0xfffffff6a8334000 (4913M)
+[    5.873330]: zone_init: metadata  0xfffffff0a6810000:0xfffffff0a8010000 (24M)
+[    5.873556]: zone_init: metabits  0xfffffff0a8010000:0xfffffff0a8324000 (3152K)
+[    5.873668]: zone_init: extra     0:0 (0B)
+[    5.878833]: VM bootstrap done: 90 maps, 163 entries and 501 holes left
+[    5.901139]: IOKit IOMD setownership ENABLED
+[    5.901281]: ATM subsystem is initialized
+[    5.906073]: Long logs support configured: size: 16384
+[    5.907198]: Firehose configured: 16 chunks, 8 io pages
+[    5.907615]: OSLog stream configured: stream: 8192 bytes, cache: 2112 bytes
+[    5.907719]: OSLog stream verification: 0
+[    5.909020]: Log queues configured: slot count: 8, per-slot size: 32768, total size: 262144
+[    5.909394]: Telemetry: Sampling all tasks once per 1 second
+[    5.909664]: Scheduler: Default of clutch
+[    5.909709]: Setting scheduler priority decay band limit 18
+[    5.910416]: standard timeslicing quantum is 10000 us
+[    5.910569]: standard background quantum is 2500 us
+[    5.914100]: BANK subsystem is initialized
+[    5.914728]: mig_table_max_displ = 54 mach_kobj_count = 371
+[    5.940253]: panic_trace: PE_arm_debug_enable_trace enter
+[    5.940396]: panic_trace: PE_arm_debug_enable_trace exit
+[    5.941116]: kdp_core zlib memory 0x8000
+[    5.942253]: Registered coredump handler for kernel
+[    5.942636]: Serial requested, consistent debug disabled or debug boot arg not present, configuring debugging over serial
+[    5.942655]: Initializing serial KDP
+[    5.947768]: iBoot version: iBoot-8422.100.650
+[    5.947875]: iBoot Stage 2 version: 
+[    5.983380]: IONVRAM.cpp:initImageFormat:1364 - NVRAM size is 8192 bytes
+[    5.984026]: IONVRAM.cpp:getNVRAMProperties:1176 - _bankSize=0x2000, _bankCount=0x1, _currentBank=0
+[    5.984921]: IONVRAMCHRPHandler.cpp:unserializeImage:479 - NVRAM : commonPartitionOffset - 0x30, commonPartitionSize - 0x1fd0, systemPartitionOffset - 0xffffffff, systemPartitionSize - 0
+[    5.989118]: ulock_initialize>thread_max=1536, ull_hash_buckets=512
+[    5.992132]: minicrypto: registered (md5, sha1, sha2, hmac, aes-ecb/cbc/ctr, hmac-drbg prng); no xts/gcm, no RSA
+[    5.1000317]: calling mpo_policy_init for vnguard
+[    5.1000884]: Security policy loaded: Guarded vnode policy (vnguard)
+[    5.1001051]: calling mpo_policy_init for AMFI
+[    5.1001255]: Security policy loaded: Apple Mobile File Integrity (stand-in) (AMFI)
+[    5.1001403]: calling mpo_policy_init for Sandbox
+[    5.1001604]: Security policy loaded: Seatbelt sandbox policy (stand-in) (Sandbox)
+[    6.011238]: No POST boot-arg set.
+[    6.028731]: PMRD: PMTraceWorker 0x148d34dc82d9bbd3
+[    6.039376]: PMRD: changePowerStateWithTagToPriv(ON_STATE, 10001)
+[    6.046153]: PMRD: power event 7 args 0x148d34dc83120443 0x0
+[    6.046333]: PMRD: power event 7 args 0x148d34dc83122243 0x0
+[    6.049006]: PMRD: PowerChangeOverride (OFF_STATE->ON_STATE, f, 0x2) tag 0x20064
+[    6.050818]: PMRD: sysPowerDownHandler message kIOMessageSystemCapabilityChange
+[    6.050908]: PMRD: sysPowerDownHandler cap f -> f (flags 1)
+[    6.053091]: PMRD: sysPowerDownHandler message kIOMessageSystemCapabilityChange
+[    6.053130]: PMRD: sysPowerDownHandler cap f -> f (flags 2)
+[    6.053288]: PMRD: tellChangeUp OFF_STATE->ON_STATE
+[    6.054047]: PMRD: PowerChangeDone: OFF_STATE->ON_STATE
+[    6.054116]: PMRD: Force re-evaluating aggressiveness
+[    6.054189]: PMRD: changePowerStateWithTagToPriv(ON_STATE, 30002)
+[    6.054407]: PMRD: PowerChangeOverride (ON_STATE->ON_STATE, f, 0x2) tag 0x10001
+[    6.054444]: PMRD: PowerChangeDone: ON_STATE->ON_STATE
+[    6.054557]: PMRD: PowerChangeOverride (ON_STATE->ON_STATE, f, 0x302) tag 0x40064
+[    6.054831]: PMRD: PowerChangeDone: ON_STATE->ON_STATE
+[    6.054851]: PMRD: PowerChangeOverride (ON_STATE->ON_STATE, f, 0x302) tag 0x50064
+[    6.054891]: PMRD: PowerChangeDone: ON_STATE->ON_STATE
+[    6.055050]: PMRD: adjustPowerState ON_STATE, asap 0, idleSleepEnabled 0
+[    6.055110]: PMRD: changePowerStateWithTagToPriv(ON_STATE, 60008)
+[    6.055230]: PMRD: PowerChangeOverride (ON_STATE->ON_STATE, f, 0x2) tag 0x30002
+[    6.055263]: PMRD: PowerChangeDone: ON_STATE->ON_STATE
+[    6.055351]: PMRD: PowerChangeOverride (ON_STATE->ON_STATE, f, 0x2) tag 0x60008
+[    6.055381]: PMRD: PowerChangeDone: ON_STATE->ON_STATE
+[    6.062675]: GenericARMPE: platform "device-tree"
+[    6.063995]: [0]ml_processor_register>pset_find(cluster_id=0) returned pset 0
+[    6.064036]: [0]ml_processor_register>cpu_id 0xfffffff574faa2c0 cluster_id 0 cpu_number 0 is type 0
+[    6.064368]: GenericARMCPU: cpu 0 (phys id 0x0) registered
+[    6.065948]: Copyright (c) 1982, 1986, 1989, 1991, 1993
+	The Regents of the University of California. All rights reserved.
+[    6.065991]: bsd_init: calling kauth_init
+[    6.066709]: bsd_init: calling process_name
+[    6.066835]: bsd_init: calling get_bsdthread_info
+[    6.067035]: MAC Framework successfully initialized
+[    6.067889]: bsd_init: calling kauth_cred_create
+[    6.068150]: bsd_init: calling chgproccnt
+[    6.068251]: bsd_init: calling kmem_suballoc
+[    6.068340]: bsd_init: calling bsd_bufferinit
+[    6.070843]: using 1338 buffer headers and 1338 cluster IO buffer headers
+[    6.071107]: bsd_init: calling IOKitInitializeTime
+[    6.072050]: clock_initialize_calendar system does not have monotonic clock
+[    6.072459]: bsd_init: calling vfsinit
+[    6.078890]: ktriage_register_subsystem_strings: set subsystem 8 strings
+[    6.079047]: bsd_init: calling proc_uuid_policy_init()
+[    6.081212]: mcache: 1 CPU(s), 64 bytes CPU cache line size
+[    6.081279]: bsd_init: calling mbinit
+[    6.085247]: mbinit: done [64 MB total pool size, (42/21) split]
+[    6.085415]: bsd_init: calling knote_init
+[    6.085455]: bsd_init: calling eventhandler_init
+[    6.085484]: bsd_init: calling aio_init
+[    6.086068]: bsd_init: calling pshm_cache_init
+[    6.086102]: bsd_init: calling psem_cache_init
+[    6.086188]: bsd_init: calling nwk_wq_init
+[    6.086329]: bsd_init: calling dlil_init
+[    6.086451]: SK: netagent is enabled by default for this platform
+[    6.090477]: DLIL: running SUM16 self-tests ... PASSED
+[    6.096852]: dlil_init: Waiting for all the create dlil kernel threads to get scheduled at least once.
+[    6.101295]: dlil_init: All the created dlil kernel threads have been scheduled at least once. Proceeding.
+[    6.101341]: bsd_init: calling socketinit
+[    6.101576]: bsd_init: calling domaininit
+[    6.108988]: bsd_init: calling skywalk_init
+[    6.109557]: SK[0]: skmem_region_init              seg_size 16384, md_seg_size 16384, drv_buf_seg_size 65536 [eff 81920], usr_buf_seg_size 16384
+[    6.127319]: Skywalk: running self-tests
+[    6.127375]: Skywalk: sk_copy64_8 ... PASSED
+[    6.127427]: Skywalk: sk_copy32_8 ... PASSED
+[    6.127476]: Skywalk: sk_copy64_16 ... PASSED
+[    6.127529]: Skywalk: sk_copy32_16 ... PASSED
+[    6.127575]: Skywalk: sk_copy64_20 ... PASSED
+[    6.127626]: Skywalk: sk_copy64_24 ... PASSED
+[    6.127676]: Skywalk: sk_copy64_32 ... PASSED
+[    6.127728]: Skywalk: sk_copy32_32 ... PASSED
+[    6.127777]: Skywalk: sk_copy64_40 ... PASSED
+[    6.127831]: Skywalk: sk_copy64_64x ... PASSED
+[    6.127929]: Skywalk: sk_copy64_32x ... PASSED
+[    6.128018]: Skywalk: sk_copy64_8x ... PASSED
+[    6.128101]: Skywalk: sk_copy64_4x ... PASSED
+[    6.128227]: Skywalk: sk_zero_16 ... PASSED
+[    6.128302]: Skywalk: sk_zero_32 ... PASSED
+[    6.128370]: Skywalk: sk_zero_48 ... PASSED
+[    6.128444]: Skywalk: sk_zero_128 ... PASSED
+[    6.128929]: Skywalk: memcmp mask ... PASSED
+[    6.134272]: bsd_init: calling memorystatus_freeze_init
+[    6.134326]: bsd_init: calling memorystatus_init
+[    6.135780]: bsd_init: calling sysctl_mib_init
+[    6.135989]: bsd_init: calling bsd_autoconf
+[    6.136005]: bsd_autoconf: calling kminit
+[    6.151356]: bsd_init: calling loopattach
+[    6.156612]: ifnet_attach: All kernel threads created for interface lo0 have been scheduled at least once. Proceeding.
+[    6.157799]: bsd_init: calling ether_family_init
+[    6.159509]: bsd_init: calling net_init_run
+[    6.162338]: skip attaching fsw to lo0 using legacy TX modelReinit'd ND information for interface lo0
+[    6.173838]: bsd_init: calling inittodr
+[    6.173893]: bsd_init: calling setconf
+[    6.176061]: cpu_start() cpu: 0
+[    6.177187]: MiniIOMobileFramebuffer: no usable boot framebuffer (0x0, depth 0)
+[    6.278529]: !BSD
+[    6.279883]: Added memory device md0/rmd0 (01000000/0D000000) at FFFFFFF00C000000 for 000000000EA00000
+[    6.280017]: BSD root: md0, major 1, minor 0
+[    6.280294]: bsd_init: vfs_mountroot
+[    6.287748]: apfs: device 1,0: requests to it cost next to nothing (a disk in memory)
+[    6.287991]: apfs: 1 threads on a request of many pieces (0 helpers)
+[    6.291119]: apfs: volume 0 "ramdisk" of container 0 (at 0 MB): 1260 files, 459 directories, 47151 blocks of 4096 used
+[    6.293400]: bsd_init: calling VFS_ROOT
+[    6.293881]: bsd_init: calling devfs_kernel_mount
+[    6.300682]: bsd_init: calling siginit
+[    6.300748]: bsd_init: calling bsd_utaskbootstrap
+[    6.304274]: bsd_init: calling mountroot_post_hook
+[    6.304309]: bsd_init: done
+[    6.304356]: Serial keyboard started
+[    6.304752]: vm_free_delayed_pages: initialized 0 free pages
+[    6.308064]: VM Swap Subsystem is ON
+[    6.312909]: No POST boot-arg set.
+[    6.312946]: bsd_init: bsd_do_post - doneload_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+[    6.324544]: load_init_program: attempting to load /sbin/launchd
+[    6.345346]: load_init_program: failed loading /sbin/launchd: errno 86
+--- panic buffer ---
+panic(cpu 0 caller 0xfffffff0077aae74): Process 1 exec of /sbin/launchd failed, errno 86 @kern_exec.c:7154
+Debugger message: panic
+Device: Not set yet
+Hardware Model: Not set yet
+ECID: 0000052445730001
+Boot args: debug=0x8 serial=3 rd=md0 hakios_kver=2.3.4-hakios-darwin22.5-g63fc2b46 cpus=1
+Memory ID: 0x0
+OS release type: Not set yet
+OS version: Not set yet
+Kernel version: Darwin Kernel Version 22.5.0: Sun Oct 25 22:52:46 PDT 2026; shimoku:xnu-8796.121.2[xnu-8796.121.2-dirty]/BUILD/obj/DEVELOPMENT_ARM64_BCM2837
+Kernel UUID: D216EA21-E9A7-3450-87D3-B80DDBAE487F
+Boot session UUID: 0D0F5008-F239-41A0-A3D8-6CBAEFDB9141
+iBoot version: iBoot-8422.100.650
+iBoot Stage 2 version: 
+secure boot?: NO
+roots installed: 0
+Paniclog version: 14
+Kernel text base:  0xfffffff007004000
+mach_absolute_time: 0x17a58d18
+Epoch Time:        sec       usec
+  Boot    : 0x6b01c632 0x00000000
+  Sleep   : 0x00000000 0x00000000
+  Wake    : 0x00000000 0x00000000
+  Calendar: 0x6b01c632 0x00043723
+Zone info:
+  Zone map: 0xfffffff0a8334000 - 0xfffffff6a8334000
+  . PGZ   : 0xfffffff0a8334000 - 0xfffffff0a8b60000
+  . VM    : 0xfffffff0a8b60000 - 0xfffffff18f08c000
+  . RO    : 0xfffffff18f08c000 - 0xfffffff1dbcf0000
+  . GEN0  : 0xfffffff1dbcf0000 - 0xfffffff2c221c000
+  . GEN1  : 0xfffffff2c221c000 - 0xfffffff3a8748000
+  . GEN2  : 0xfffffff3a8748000 - 0xfffffff48ec74000
+  . GEN3  : 0xfffffff48ec74000 - 0xfffffff5751a0000
+  . DATA  : 0xfffffff5751a0000 - 0xfffffff6a8334000
+  Metadata: 0xfffffff0a6810000 - 0xfffffff0a8010000
+  Bitmaps : 0xfffffff0a8010000 - 0xfffffff0a8324000
+  Extra   : 0 - 0
+TPIDRx_ELy = {1: 0xfffffff48eb5fdc0  0: 0x0000000000000000  0ro: 0x0000000000000000 }
+CORE 0 is the one that panicked. Check the full backtrace for details.
+Compressor Info: 0% of compressed pages limit (OK) and 0% of segments limit (OK) with 0 swapfiles and OK swap space
+Panicked task 0xfffffff48eb8e6d0: 1 pages, 1 threads: pid 1: init
+Panicked thread: 0xfffffff48eb5fdc0, backtrace: 0xfffffff6b8e3f660, tid: 150
+		  lr: 0xfffffff0072d1e48  fp: 0xfffffff6b8e3f6f0
+		  lr: 0xfffffff0074501f4  fp: 0xfffffff6b8e3f710
+		  lr: 0xfffffff0074410c4  fp: 0xfffffff6b8e3f760
+		  lr: 0xfffffff007ac95a4  fp: 0xfffffff6b8e3f880
+		  lr: 0xfffffff0074405a4  fp: 0xfffffff6b8e3f890
+		  lr: 0xfffffff0072d14d4  fp: 0xfffffff6b8e3fc40
+		  lr: 0xfffffff0072d251c  fp: 0xfffffff6b8e3fcc0
+		  lr: 0xfffffff007a95694  fp: 0xfffffff6b8e3fce0
+		  lr: 0xfffffff0077aae74  fp: 0xfffffff6b8e3fe10
+		  lr: 0xfffffff007780888  fp: 0xfffffff6b8e3fe50
+		  lr: 0xfffffff0077ca044  fp: 0xfffffff6b8e3fe90
+		  lr: 0xfffffff0072c6528  fp: 0xfffffff6b8e3fef0
+		  lr: 0xfffffff0074409c0  fp: 0xfffffff6b8e3ff00
+		  lr: 0xfffffff0074407fc  fp: 0xfffffff6b8e3ff20
+		  lr: 0xfffffff0074455c0  fp: 0x0000000000000000
+PMOC??0?kcd_c_type??0?kcd_c_totalout	??0?kcd_c_totalin?7?X?Y?Hbf``0?? ???????????????????b?8?dgy?c?h??b???@??? ??? 3?,?D???$.???b?r?????A????$57?hLI*6?A?!?????d`?
+? ?"????RB?gG??1????@?gp@U?????O
+5C?]???3???S??Rs??R??3??????L?????K????K??L?BV?FV&f
+?.!
+F?Ff?
+???????V?y?????fz?F?zF??\??????X}?PO?????,}??0W??_W??x? _3?x'g_#?cs???????/?h??/%5?4????B?8?(31??X?(?67?@!#1;3?8>?,???H?X?D?"?????????f?i?FI@W'?????20??2??+??@???@?b@???2???@??? Pl?V??????2?R?@??? p?X???	l??????b?d`p?????????????x?a? ??? ??X?$v??(?????b?$if??????r??????????????%?W?/????_??{{?G=H
+???b??o2:???024( ?+???\?c?????l???@68A??$?????
+??R??G???????4?????B????h????2??8?*??T????b????? ??0u?{???p??LCdq??]?Q$_?????@???`?F3D??u?v??3???q??(??*t??????|????S?KK????? ?$??@????;???&BB??v,???????R?4????_????~??B???:?r?7??D??w_?;8 :?t???w????H??"?'????????T?e??>R???????l?|H????????`?????_:T?=???B?????3+????Q,??????"???=??3???Eg??~????)????y%?y?y???%?E??)(????
+?k??MFQ5?????ra????????8??A=???B????*????t????8?+??RZ???@"???????[m?=?p???j??#?E?????2?4????7??G?/??B?/L]??-pz9??????qR"??Q????&??@?oCX?g;????D-?R?Ss???RR?R??RStSR?sr???K????A?\??X??1?-#?	?????2?4????_????~??B??????????xp?c?h???e??K_?%)? ?L???D6? ?W???????bP??p20???????????,?????o6D?#????B?_???*?	_X????ET}
+M???M?HN- 6i?}L????????#,?????o?T?=????B?_?:	??_X?&???~????????T?oS??_????Z????????o.??????B?_??????r??z#??W??P?????jq???|?c????v'.|!	7>?X??C?2??")\?k??1?????$?????`?????_?T?=???B?????????n0?'?BXLP????1??5?8??????????O????????????????????g??]???????R
+@?????T?>?????9N?r?D?B[?????,?
+???B?????????X8??????D??????B?????7????>??O?~?g??+??B\?C?????T?????????b??????b???h\???????3?1(???7??????,?????/?1?????B?_??'?l????!??&??Q??|o?????o??y ??g^???????X???:?'????&???!H?
+?/P?]??F????r??4??????@\?? ??~??B????*?????L????l????G?0Nj?'????9b ????????=X????kJ0@?%?a$????2J?4???????G?/??B?/L]C0?>??D\}r???j?????"?b?????t???_N`?p?kb???'
+??D!#3=CA??"A$?+???@?X??j?????ra?????_?T?=???B?????????_I\P? ???>1??=?`?eu?q?????[??_???????b?Q?\??X???A??1????r+?4????_#???~??B??????=?|???5??j?I??C???a1???g??+??%.???Uf~|QjAQf~QfIfUj<$I?Z???+???:???3????????????_?T?=???B?????<_?????????a??J]z?k????f??????l????d???????ra????????*??_??B?/L???5????&??????????????????u???????ra????????????A????B?o?X???????+??o??T#?z"??o?F? ???Ps??????????@i??????G?/??B?/L??^HzV??HT?:?Z?J5w????X?????b?RKT{????ra????????*??_??B?/L???6??K?*????Zz????_????7?????P????????0w???????????A????B?o?X?? ????`?!t?'~?J???_???;????????w@i???????G?/??B?/L??wHz&?|?&?J?D??o?	i?u???a?j?????ra????????*??_??B?/L?????tL??????y6~?n??KR???j?mT{????ra????????*??_??B?/L]???$?w*??;j???7Z??$??@?7?D??????ra????????*??_??B?/L??]Hzf??MTy???j??R<?_?????M~GZ?>a??,????B??????z?4???????G?/??B?/L]?>??/.????yP?????/??w?7??{???????????ra????????*??_??B?/L]?U??+7???P*???????4??A?>?j?????ra????????*??_??B?/L?v?;??MzE???????N?Z???>??1??3????v?rr208?51??????E??%?%?????a?I\??T&??f:?F?????ra??????D?8z????B?????????Nq:Q??L
+?????? ?X?1B?a??f~???z?9?y????8?????????@?!???~yP???PM?????ra??????t?8z????B????????p????`?ne???U?-?????'T???>???>????D&T{????ra?????????x???????B????*???^{??=???LC?qRs?!R
+P?/V?a?o4C4XEs??? ??????A=??[Abzj~iI|jEIjQ^bN|f~IFQjb
+X???Wz????-/??????rg@i?????L(?=???B???:????p??dDT????Z?|??P???\`\???o????=? !????????????eCT???p??-?A??[EP?????qa??????,?2?????B???:??6?p????`??	??uqu???'TZ?A??:???????~??W?Z\\Z??j??<\?????g?j?????ra??????l?8z????B?????;??s8fMT???Du??]???p????????\??????E??g]??p??????xP?????ra????????8z????B????3?{???bkNT????Z?????????=??????k????8F???a	?j??????s?4????w.???_??B?/L]?7??7XE\y??	?J??????g?n_%????\~???D?p?_!#D{?7?1????ra??????<?8z????B???????t??Qm??Ey??%??????D?_qyb???D5?X???????WNT?????ra??????|?8z????B????7???&r????d?????????]??/-3'5>?Xd????C??+?NC5??F5?????ra????????x???z????B???`U?????g????K??hT??/?Emo???V^I?????P?? ??b???*t?@?????????????#???~????????????r?@i?????\?????'#T???1(?????
+@??7?bB??b??o*?b????F??
+`??at?1?$????p??@???Da?????,A??????R??G(???G7????B??*?S??r???@E??2???????4?8zz???BO?0uh????T???0k@?vN?#?b5p???,?a`?M
+?J??????~??@?p?5Jii? ??[??H??? ????X?(ED????Q??S?V??%???t?G??vYP??5Ru???N?0???B???????????p????????
+??????}@???~????
+*1H???	?????~?8???????_??TY?{P??<P??4/;/?<??<? ??"?>???"?>??????"???????BO?0u07<?5????O?vP@U????>??R???x?I?;TS?<????2a??????a????b???q???@qIbrvqF~I|ANF|qfU*D?N?E????????n????$I'???tT???????
+??q?*@????c??????A?>`?%>-'1??"?%?Y^;"??b???X??
+** Stackshot Succeeded ** Bytes Traced 5113 (Uncompressed 14208) **
+== END OF LOG ==
