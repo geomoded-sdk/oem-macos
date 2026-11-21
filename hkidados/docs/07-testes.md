@@ -29,6 +29,7 @@ rodar sem rede.
 | dependências | `hkidados deps` | ramdisk: 230 de 308 resolvem na árvore; cryptex: 0 de 114 |
 | boot do kernel aberto | `scripts/hakios-boot-open.sh` | `BSD root: md0` → `bsd_init: done` → `Hello from user space on Darwin!` → `pid 1 exited` |
 | init do iPadOS no kernel aberto | `scripts/try-ipados-init.sh` | 4 casos: `hello` roda, `hello` arm64e dá `errno 86`, `launchd` dá `errno 86`, fatia arm64 morre em `OS_REASON_EXEC` código 1 |
+| raiz do iPadOS montada | `scripts/try-ipados-root.sh` | APFS do RestoreRamDisk monta (`1260 files, 459 directories`, os mesmos números do leitor em Python); `/sbin/launchd` lido do sistema de arquivos para em `errno 86` |
 | compatibilidade | `hkidados compat` | ver `reports/compat.md` (gerado de novo nesta rodada) |
 | kernel em QEMU | `scripts/hakios-boot-open.sh` | `bsd_init: done`, processo 1 executou |
 | testes unitários | `make test` | 33 testes, 29 ok, 4 pulados sem IPSW |

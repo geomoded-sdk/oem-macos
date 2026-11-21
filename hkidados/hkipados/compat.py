@@ -106,9 +106,13 @@ def evaluate(facts: dict) -> list[dict]:
     launchd = userland.get("launchd", [])
     results.append(_entry(
         "Userland", "Iniciar o launchd original do sistema", BLOCKED,
-        f"launchd encontrado em {launchd[0] if launchd else 'nenhum'}",
+        f"launchd encontrado em {launchd[0] if launchd else 'nenhum'}; medido em "
+        "reports/ipados-root.log: o kernel do HakiOS monta o APFS do RestoreRamDisk "
+        "(1.260 arquivos, 459 diretórios) e o exec de /sbin/launchd para em "
+        "`errno 86` (EBADARCH) antes de qualquer dyld",
         "o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. "
-        "Além disso ele é arm64e e exige AMFI/SEP e um kernel da mesma geração",
+        "Além disso ele é arm64e e o kernel aberto não tem ABI arm64e: o exec recusa "
+        "o binário antes de carregá-lo",
         "só depois de resolver kernel, AEA e AMFI"))
     results.append(_entry(
         "Userland", "Iniciar BackBoard/SpringBoard e a interface", BLOCKED,

@@ -22,7 +22,7 @@ inventar resultado.
 | AEA do `SystemOS` (2,4 GB) | sem o sistema selado | idem | não |
 | SEP substituído por stubs no HakiOS | `launchd` e `amfid` falham | SEP real | não |
 | kernel 8796 × userland 13432 | traps e syscalls faltando | Apple publicar o 13432 | não |
-| arm64 (HakiOS) × arm64e (alvo) | `EBADARCH` (errno 86) no `exec` do init; medido em `docs/06` §6.5 | port para arm64e | parcialmente |
+| arm64 (HakiOS) × arm64e (alvo) | `EBADARCH` (errno 86) no `exec` do init; medido em `docs/06` §6.5 e §6.6 | port para arm64e | parcialmente |
 | boot assinado no iPad | nada executa sem a Apple | quebrar o secure boot (não fazemos) | não |
 | drivers AIC/DART/ANS/DCP/AGX/touch | sem tela, sem disco, sem entrada | engenharia reversa de cada um | parcialmente |
 | kernel não recompilado aqui | não sei se o build local funciona | toolchain do theos (~12 GB) | **sim** |
@@ -38,6 +38,13 @@ kernel do HakiOS e guarda o que o kernel diz:
 - `sbin/launchd` do ramdisk recebe o mesmo `errno 86`;
 - uma fatia arm64 com cpusubtype zerado passa do `EBADARCH` e morre em
   `namespace 9 code 0x1` = `OS_REASON_EXEC` / `EXEC_EXIT_REASON_BAD_MACHO`.
+
+E com o ramdisk do iPadOS montado como raiz (`scripts/try-ipados-root.sh`,
+`docs/06` §6.6), o caminho deixa de ser hipotético: o driver de APFS do kernel
+aberto monta o volume do iPadOS 27 e enumera `1260 files, 459 directories` — os
+mesmos números que o leitor em Python deste projeto tirou do mesmo volume — e o
+`exec` de `/sbin/launchd` lido do sistema de arquivos para no mesmo `errno 86`.
+Ou seja: **o que falta não é montar o sistema nem achar o init; é a ABI**.
 
 ## 8.3 O que dava para avançar sozinho — e foi feito
 

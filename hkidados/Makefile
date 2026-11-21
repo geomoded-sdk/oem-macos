@@ -1,9 +1,10 @@
 PYTHON ?= python3
 IPSW ?= cache/iPad_Pro_Spring_2021_27.2.1_24B156_Restore.ipsw
+HAKIOS ?= ../vendor/hakios-xnu-kernel
 IMAGE ?=
 JSON ?= reports/ipad13,4-24B156.json
 
-.PHONY: help doctor test analyze userland deps apfs unzbm compat boot-open init-attempts check clean
+.PHONY: help doctor test analyze userland deps apfs unzbm compat boot-open init-attempts ipados-root check clean
 
 help:
 	@sed -n 's/^#  /  /p' Makefile
@@ -50,6 +51,10 @@ boot-open:
 #  o init do iPadOS nesse kernel: 4 casos, um boot cada (precisa de `make userland`)
 init-attempts:
 	scripts/try-ipados-init.sh
+
+#  o ramdisk do iPadOS montado como raiz desse kernel (precisa do IPSW e do HakiOS)
+ipados-root:
+	HAKIOS=$(HAKIOS) scripts/try-ipados-root.sh
 
 clean:
 	rm -rf build reports/*.raw

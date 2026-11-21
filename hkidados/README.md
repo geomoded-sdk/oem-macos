@@ -69,6 +69,12 @@ Três entregas, todas verificáveis:
   cpusubtype para arm64e — é o ABI, não o binário. Com o cpusubtype zerado o
   kernel aceita e o `exec` morre em `OS_REASON_EXEC` / `BAD_MACHO`
   (`reports/init-attempts/`, `docs/06` §6.5);
+- o **ramdisk do iPadOS é montado como raiz** desse kernel: o driver de APFS do
+  HakiOS lê o contêiner do iPadOS 27 e enumera `1260 files, 459 directories` —
+  os mesmos números que o leitor em Python daqui tirou do mesmo volume — e o
+  `exec` de `/sbin/launchd` lido do sistema de arquivos para no mesmo
+  `errno 86` (`reports/ipados-root.log`, `docs/06` §6.6). O que falta não é
+  montar o sistema nem achar o init: é a ABI arm64e;
 - os 35 testes passam (4 pulados sem o IPSW).
 
 **O que não funcionou, e por quê:**
@@ -109,6 +115,9 @@ make boot-open
 
 # e o init do iPadOS nesse kernel, um caso por boot (precisa de `make userland`)
 ./scripts/try-ipados-init.sh
+
+# o ramdisk do iPadOS montado como raiz desse kernel (precisa do IPSW e do HakiOS)
+make ipados-root
 
 # testes
 make test

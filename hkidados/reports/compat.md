@@ -9,7 +9,7 @@
 | Kernel | A arquitetura do binário bate com a do kernel | **BLOQUEADO** | a userland do M1 é arm64e (PAC); o port comunitário compila ARM64 sem arm64e |
 | Kernel | Os drivers de plataforma existem para o SoC do alvo | **BLOQUEADO** | GICv3, timer, UART, interrupções e o platform expert do HakiOS são dos SoCs Qualcomm/MediaTek; o M1 não tem Device Tree no formato que o loader lê |
 | Sistema de arquivos | Montar o volume do sistema do IPSW | **BLOQUEADO** | AEA com chave entregue pelo wkms da Apple, autenticada pelo dispositivo; decifrar exigiria contornar a proteção |
-| Userland | Iniciar o launchd original do sistema | **BLOQUEADO** | o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. Além disso ele é arm64e e exige AMFI/SEP e um kernel da mesma geração |
+| Userland | Iniciar o launchd original do sistema | **BLOQUEADO** | o launchd extraído é o do RestoreRamDisk; o do sistema está no volume AEA. Além disso ele é arm64e e o kernel aberto não tem ABI arm64e: o exec recusa o binário antes de carregá-lo |
 | Userland | Iniciar BackBoard/SpringBoard e a interface | **BLOQUEADO** | sem o volume do sistema não há o que iniciar; e sem os drivers de tela/touch do M1 não haveria saída |
 | Userland | Bibliotecas e frameworks oficiais disponíveis | **PARCIAL** | são componentes reais do iPadOS 27.2.1, mas apenas os que estão fora do AEA |
 | Kernel | Compilar o kernel do HakiOS neste ambiente | **NÃO TESTADO** | o build exige a toolchain do theos; o binário pré-compilado já prova o boot |

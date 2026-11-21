@@ -142,3 +142,58 @@ userland do iPadOS tropeça primeiro. O caminho que o HakiOS percorreu no
 telefone, e que serve de modelo: uma imagem APFS de sistema (`rd=md0`) com
 `/sbin/launchd` de verdade, montada a partir de um IPSW da **mesma geração** do
 kernel. Para o iPadOS 27 isso exigiria um kernel xnu-13432 e a chave do AEA.
+
+## 6.6 A raiz do iPadOS montada: o que já funciona
+
+O caso 3 acima põe o `launchd` no slot de init, mas por um caminho que não é o
+de um sistema: um Mach-O solto em `md0`. O caminho real é o `md0` ser uma
+**imagem APFS com o sistema dentro** — é o que o HakiOS faz no telefone com
+`rd=md0` e é o que o iPadOS faz com o RestoreRamDisk. Isso agora também roda
+aqui: `scripts/try-ipados-root.sh`.
+
+O ramdisk de 234 MB não cabe no payload do loader (`PAYLOAD_MAX_SIZE` é 64 MiB,
+menos 1 MiB do log de pânico). O loader tem uma saída para isso: a entrada
+`rdres=<tamanho em hex>` diz que a imagem já está na memória, em
+`phys_base + RESIDENT_RD_OFFSET`; o QEMU a põe ali com
+`-device loader,file=...,addr=0x50000000` (com `-m 4G`, `phys_base` é
+`0x48000000`). Sem entrada `ramdisk` no payload, essa imagem vira o `md0`, e o
+`md0` é a raiz.
+
+O script pega o `.dmg` **certo** no BuildManifest: o iPad13,4 tem dois ramdisks,
+`141-10399-248.dmg` na variante *Erase* (a do alvo, 1.260 arquivos) e
+`141-09491-250.dmg` na *Upgrade* (1.519). Pegar o primeiro `rdsk` do ZIP — o que
+a primeira versão do script fez — dá o ramdisk de outra variante.
+
+Trecho real do boot (`reports/ipados-root.log`):
+
+```
+phys window 48000000 size 58000000, claim status 0
+resident ramdisk at pa 50000000 size ea00000
+Added memory device md0/rmd0 (01000000/0D000000) at FFFFFFF00C000000 for 000000000EA00000
+BSD root: md0, major 1, minor 0
+apfs: device 1,0: requests to it cost next to nothing (a disk in memory)
+apfs: volume 0 "ramdisk" of container 0 (at 0 MB): 1260 files, 459 directories, 47151 blocks of 4096 used
+bsd_init: calling mountroot_post_hook
+load_init_program: attempting to load /usr/appleinternal/sbin/launchd.development
+load_init_program: attempting to load /sbin/launchd
+load_init_program: failed loading /sbin/launchd: errno 86
+panic(cpu 0 caller 0xfffffff0077aae74): Process 1 exec of /sbin/launchd failed, errno 86 @kern_exec.c:7154
+```
+
+Duas coisas acontecem nesse trecho, e as duas são medidas:
+
+1. **O APFS do iPadOS 27 monta no kernel aberto.** O driver de APFS do HakiOS lê
+   o contêiner do iPadOS 27 e enumera o volume: `1260 files, 459 directories`.
+   O leitor em Python deste projeto, que não compartilha uma linha de código com
+   o kernel, extraiu o mesmo volume como 1.260 arquivos e 459 diretórios. Dois
+   leitores independentes concordando no conteúdo é a verificação que faltava
+   para dizer que a montagem é real, e não um número impresso.
+2. **O `exec` do `/sbin/launchd` para no `EBADARCH`**, exatamente como no caso 3
+   do §6.5 — agora porém com o caminho real, `/sbin/launchd` lido de um sistema
+   de arquivos, e não um Mach-O solto no `md0`.
+
+O que continua faltando não é a montagem nem o caminho de init: é a ABI. O kernel
+aberto recusa o binário antes de qualquer `dyld`, então nem a userland, nem o
+`launchd`, nem a interface têm chance de rodar. Um kernel com ABI arm64e
+(xnu-13432 ou um port do `ptrauth` para o xnu-8796) é o pré-requisito; sem ele,
+nenhuma quantidade de trabalho na userland muda o resultado.
